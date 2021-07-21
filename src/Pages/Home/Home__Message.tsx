@@ -26,7 +26,7 @@ export function HomeMainMessage() {
             <MainMessageLine12>
                 연세대학교
                 <br />
-                온라인 스터디 서비스
+                온라인 스터디 공간
                 <br />
             </MainMessageLine12>
             <MainMessageLine3>EAGLOO</MainMessageLine3>
@@ -37,11 +37,12 @@ export function HomeMainMessage() {
 export function HomeSubMessage() {
     return (
         <SubMessage>
-            여기에는 대강의 서비스 소개가 들어갈 예정입니다
+            이제 어디서나 도서관에 있는 것처럼 함께 공부해요
             <br />
-            두 줄 쓰면 너무 정 없어 보이고
+            가상 스터디룸에서 익숙하면서도 새로운 경험을 해보세요
             <br />
-            한국인이면 세 줄 정도 써주면 딱 맞아떨어지지 않으려나 Lorem ipsum
+            EAGLOO는 비대면 온라인 시대에 발맞추어 필요한 모든 서비스를
+            제공하겠습니다
         </SubMessage>
     );
 }
