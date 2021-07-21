@@ -12,6 +12,7 @@ export default function HomeIcon() {
 
 const Container = styled.div`
     color: white;
-    font-size: 36px;
-    font-family: "SamlipHopang";
+    font-size: 30px;
+    font-weight: bold;
+    font-family: "RecipeKorea";
 `;

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import styled, { css, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -19,6 +19,11 @@ export const SlideUp = keyframes`
     to {
 transform:translateY(0px);
     }
+`;
+
+export const FullScreenContainer = styled.div`
+    width: 100%;
+    height: 100%;
 `;
 
 export const PageContainer = styled.div`

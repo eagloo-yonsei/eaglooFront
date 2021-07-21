@@ -4,9 +4,10 @@ import { useLocation } from "react-router-dom";
 import HomeIcon from "./Header__HomeIcon";
 import MiddleComponents from "./Header__MiddleComponents";
 import HeaderAuth from "./Header__Auth";
+import { headerLessPages } from "../../Constants";
 
 export default function Header() {
-    if (useLocation().pathname === "/login") return null;
+    if (headerLessPages.includes(useLocation().pathname)) return null;
     return (
         <HeaderDiv>
             <HomeIcon />

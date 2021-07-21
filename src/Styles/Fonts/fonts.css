@@ -9,3 +9,27 @@
     font-style: normal;
     src: url("./Samliphopangche.ttf");
 }
+
+@font-face {
+    font-family: "RecipeKorea";
+    font-style: normal;
+    src: url("./Recipekorea.ttf");
+}
+
+@font-face {
+    font-family: "NexonGothicLv1";
+    font-style: normal;
+    src: url("./NEXON Lv1 Gothic OTF.woff");
+}
+
+@font-face {
+    font-family: "NexonGothicLv1Light";
+    font-style: normal;
+    src: url("./NEXON Lv1 Gothic OTF Light.woff");
+}
+
+@font-face {
+    font-family: "NexonGothicLv1Bold";
+    font-style: normal;
+    src: url("./NEXON Lv1 Gothic OTF Bold.woff");
+}

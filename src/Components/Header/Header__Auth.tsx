@@ -30,8 +30,8 @@ const Container = styled.div`
 `;
 
 const LoginMessage = styled.div`
-    font-size: 15px;
-    font-family: "JejuGothic";
+    font-size: 13px;
+    font-family: ${(props) => props.theme.plainTextFont};
     color: ${(props) => props.theme.loginMessageGray};
 `;
 
@@ -43,7 +43,7 @@ const LoginButton = styled.div`
     height: 30px;
     border-radius: 15px;
     font-size: 22px;
-    font-family: "SamlipHopang";
+    font-family: ${(props) => props.theme.inButtonFont};
     color: ${(props) => props.theme.loginButtonYellow};
     background-color: white;
     margin-left: 12px;

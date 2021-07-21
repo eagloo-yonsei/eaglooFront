@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { StylelessButton, StylelessLink } from "../../Styles/StyledComponents";
+import { StylelessLink } from "../../Styles/StyledComponents";
 
 export default function MiddleComponents() {
     return (
@@ -31,7 +31,7 @@ const Container = styled.div`
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    width: 720px;
+    width: 760px;
     padding-left: 20px;
     padding-right: 40px;
 `;
@@ -39,6 +39,6 @@ const Container = styled.div`
 const LinkButton = styled(Container)`
     width: fit-content;
     color: white;
-    font-size: 15px;
-    font-family: "JejuGothic";
+    font-size: 14px;
+    font-family: ${(props) => props.theme.plainTextFont};
 `;

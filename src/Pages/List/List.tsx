@@ -20,8 +20,7 @@ const Container = styled(SlideUpPageContainer)`
     display: flex;
     position: relative;
     flex-direction: column;
-    padding: 0px 50px;
-    padding-top: 25px;
+    padding: 25px 65px 0px 70px;
 `;
 
 const UpperButtonRow = styled.div`

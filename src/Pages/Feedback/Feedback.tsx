@@ -11,5 +11,5 @@ const Container = styled(SlideUpPageContainer)`
     justify-content: center;
     align-items: center;
     font-size: 40px;
-    font-family: "JejuGothic";
+    font-family: ${(props) => props.theme.plainTextFont};
 `;

@@ -46,32 +46,27 @@ export function HomeSubMessage() {
     );
 }
 
-const JejuGothic = styled.div`
-    font-family: "JejuGothic";
-`;
-
-const SamlipHopang = styled.div`
-    font-family: "SamlipHopang";
-`;
-
-const MainMessageLine12 = styled(JejuGothic)`
-    font-size: 42px;
+const MainMessageLine12 = styled.div`
+    font-size: 38px;
+    font-family: ${(props) => props.theme.plainBoldTextFont};
     line-height: 50px;
-    letter-spacing: -2px;
+    letter-spacing: 1px;
     z-index: 10;
 `;
 
-const MainMessageLine3 = styled(SamlipHopang)`
-    font-size: 54px;
-    letter-spacing: 2px;
+const MainMessageLine3 = styled.div`
+    font-size: 42px;
+    font-family: ${(props) => props.theme.iconFont};
+    letter-spacing: 0px;
     margin-top: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
     z-index: 10;
 `;
 
-const SubMessage = styled(JejuGothic)`
-    font-size: 20px;
-    line-height: 30px;
-    margin-bottom: 45px;
+const SubMessage = styled.div`
+    font-size: 16px;
+    font-family: ${(props) => props.theme.plainLightTextFont};
+    line-height: 34px;
+    margin-bottom: 40px;
     z-index: 10;
 `;

@@ -128,7 +128,7 @@ const EaglooIcon = styled.img`
 const EaglooLabel = styled.h1`
     color: #ffffff;
     font-size: 50px;
-    font-family: "SamlipHopang";
+    font-family: ${(props) => props.theme.iconFont};
     letter-spacing: 3px;
     padding-bottom: 8px;
 `;

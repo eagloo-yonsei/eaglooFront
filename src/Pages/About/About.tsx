@@ -12,5 +12,5 @@ const Container = styled(HeaderPageContainer)`
     align-items: center;
     color: white;
     font-size: 40px;
-    font-family: "JejuGothic";
+    font-family: ${(props) => props.theme.plainTextFont};
 `;

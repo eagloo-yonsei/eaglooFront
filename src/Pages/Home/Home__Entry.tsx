@@ -53,7 +53,6 @@ const OuterDiv = styled.div`
     width: 48%;
     height: 190px;
     padding: 25px;
-    font-family: "JejuGothic";
     border-radius: 5px;
 `;
 
@@ -63,18 +62,20 @@ const PublicDiv = styled(OuterDiv)`
 `;
 
 const PrivateDiv = styled(OuterDiv)`
-    color: ${(props) => props.theme.entryLightBlue};
+    color: ${(props) => props.theme.entryMainBlue};
     background: white;
 `;
 
 const EntryTitle = styled.div`
     font-size: 32px;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
+    font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 
 const EntryMessage = styled.div`
-    font-size: 18px;
+    font-size: 17px;
     margin-bottom: 10px;
+    font-family: ${(props) => props.theme.plainTextFont};
 `;
 
 const EntryButton = styled.div`
@@ -88,7 +89,7 @@ const EntryButton = styled.div`
     width: 140px;
     height: 40px;
     font-size: 22px;
-    font-family: "SamlipHopang";
+    font-family: ${(props) => props.theme.inButtonFont};
 `;
 
 const PublicButton = styled(EntryButton)`
