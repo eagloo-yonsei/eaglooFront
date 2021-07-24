@@ -130,7 +130,7 @@ const LoginContainer = styled.div`
 
 const EaglooIcon = styled.img`
     width: 130px;
-    padding-bottom: 28px;
+    padding-bottom: 32px;
 `;
 
 const EaglooLabel = styled.h1`
