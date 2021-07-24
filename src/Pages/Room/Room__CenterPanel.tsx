@@ -1,45 +1,43 @@
-import React, { useEffect, RefObject } from "react";
+import React, { RefObject, useEffect } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "./RoomProvider";
-import { useAppContext } from "../../Routes/App/AppProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 interface RoomPanelProp {
-    userStream: RefObject<HTMLVideoElement>;
+    userStreamRef: RefObject<HTMLVideoElement>;
+    stopSelfStream: () => void;
 }
 
-export default function RoomCenterPanel({ userStream }: RoomPanelProp) {
+interface StreamProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+}
+
+interface PanelButtonProp {
+    stopSelfStream: () => void;
+}
+
+export default function RoomCenterPanel({
+    userStreamRef,
+    stopSelfStream,
+}: RoomPanelProp) {
     return (
         <Container>
-            <UserStream userStream={userStream} />
-            <ControlButtons />
+            <UserStream userStreamRef={userStreamRef} />
+            <ControlButtons stopSelfStream={stopSelfStream} />
         </Container>
     );
 }
 
-function UserStream({ userStream }: RoomPanelProp) {
-    // const { userStream, getUserStream } = useAppContext();
-    // useEffect(() => {
-    //     getUserStream();
-    //     return () => {};
-    // }, []);
-
+function UserStream({ userStreamRef }: StreamProp) {
     return (
-        // <CamContainer>
-        //     {userStream !== undefined ? (
-        //         <UserCam ref={userStream} autoPlay playsInline />
-        //     ) : (
-        //         <></>
-        //     )}
-        // </CamContainer>
         <CamContainer>
-            <UserCam ref={userStream} autoPlay playsInline />
+            <UserCam ref={userStreamRef} autoPlay playsInline />
         </CamContainer>
     );
 }
 
-function ControlButtons() {
+function ControlButtons({ stopSelfStream }: PanelButtonProp) {
     const { roomNo, seatNo, exitRoom } = useRoomContext();
     return (
         <ControlButtonContainer>
@@ -56,6 +54,7 @@ function ControlButtons() {
             <MySeat>{`내 자리 : ${seatNo}`}</MySeat>
             <ExitButton
                 onClick={() => {
+                    stopSelfStream();
                     exitRoom();
                 }}
             >
