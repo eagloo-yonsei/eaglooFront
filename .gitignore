@@ -13,10 +13,15 @@ setupProxy.js
 .DS_Store
 .env.*
 
+# logs
 yarn-debug.log*
 yarn-error.log*
 
+# build
 dist
 .cache
 build
+
+# experiment
+src/Foo.tsx
 
