@@ -1,24 +1,30 @@
 import React from "react";
-import { useHistory } from "react-router";
 import styled from "styled-components";
+import { useHistory } from "react-router";
+import { useListContext } from "./ListProvider";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-interface RowProp {
-    roomNoList: number[];
+interface Seat {
+    seatNo: number;
+    socketId: string;
+    userName?: string;
 }
 
-interface RoomProp {
+interface Room {
     roomNo: number;
+    seats: Seat[];
+}
+
+interface RoomButtonProp {
+    room: Room;
 }
 
 export default function ListPublic() {
-    const exampleRoom = [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-    ];
-
     return (
         <Container>
             <Title />
-            <RoomButtonRow roomNoList={exampleRoom} />
+            <RoomButtonRow />
         </Container>
     );
 }
@@ -32,19 +38,23 @@ function Title() {
     );
 }
 
-function RoomButtonRow({ roomNoList }: RowProp) {
+function RoomButtonRow() {
+    const { publicRooms } = useListContext();
     return (
-        <ButtonRowContainer>
-            {roomNoList.map((roomNo) => {
+        <RoomButtonRowContainer>
+            {publicRooms.map((publicRoom) => {
                 return (
-                    <RoomButton roomNo={roomNo} key={`room${roomNo}_button`} />
+                    <RoomButton
+                        room={publicRoom}
+                        key={`room${publicRoom.roomNo}_button`}
+                    />
                 );
             })}
-        </ButtonRowContainer>
+        </RoomButtonRowContainer>
     );
 }
 
-function RoomButton({ roomNo }: RoomProp) {
+function RoomButton({ room }: RoomButtonProp) {
     const history = useHistory();
 
     function pushToEntry(roomNo: number) {
@@ -55,14 +65,21 @@ function RoomButton({ roomNo }: RoomProp) {
     }
 
     return (
-        <ButtonContainer
+        <RoomButtonContainer
             onClick={() => {
-                pushToEntry(roomNo);
+                pushToEntry(room.roomNo);
             }}
         >
-            <ButtonIcon />
-            <ButtonTitle>{`스터디룸 ${roomNo}`}</ButtonTitle>
-        </ButtonContainer>
+            <RoomButtonIcon />
+            <RoomButtonTitle>{`스터디룸 ${room.roomNo}`}</RoomButtonTitle>
+            {/* <RoomButtonMessage>
+                {`이글루에서 제공하는 스터디룸`}
+            </RoomButtonMessage> */}
+            <RoomButtomInfo>
+                <FontAwesomeIcon icon={faUserAlt} size="1x" />
+                {`${room.seats.length}/16`}
+            </RoomButtomInfo>
+        </RoomButtonContainer>
     );
 }
 
@@ -74,7 +91,7 @@ const Container = styled.div`
 
 const TitleContainer = styled.div`
     font-size: 28px;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 `;
 
 const FormerTitle = styled.span`
@@ -85,15 +102,16 @@ const RearTitle = styled.span`
     color: ${(props) => props.theme.entryLightBlue};
 `;
 
-const ButtonRowContainer = styled.div`
+const RoomButtonRowContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
 `;
 
-const ButtonContainer = styled.div`
+const RoomButtonContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: ${(props) => props.theme.mainBlue};
     width: 20%;
     margin-bottom: 55px;
     :hover {
@@ -101,15 +119,27 @@ const ButtonContainer = styled.div`
     }
 `;
 
-const ButtonIcon = styled.div`
+const RoomButtonIcon = styled.div`
     width: 90%;
     aspect-ratio: 1;
     background-color: ${(props) => props.theme.loginMessageGray};
     border-radius: 18%;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 `;
 
-const ButtonTitle = styled.div`
-    font-size: 15px;
-    color: ${(props) => props.theme.mainBlue};
+const RoomButtonTitle = styled.div`
+    font-size: 18px;
+    margin-bottom: 12px;
+`;
+
+// const RoomButtonMessage = styled.div`
+//     font-size: 10px;
+//     margin-bottom: 15px;
+// `;
+
+const RoomButtomInfo = styled.div`
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    width: 50px;
 `;
