@@ -7,7 +7,7 @@ import {
 import EntryHeader from "./Entry__Header";
 import EntryOuterRow from "./Entry__OuterRow";
 import EntryOuterColumn from "./Entry__OuterColumn";
-import EntryController from "./Entry__Controller";
+import EntryCenterPanel from "./Entry__CenterPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
@@ -19,7 +19,7 @@ export default function EntryContainer() {
                 <EntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
                 <EntryInnerRow>
                     <EntryOuterColumn seatNums={[7, 9]} />
-                    <EntryController />
+                    <EntryCenterPanel />
                     <EntryOuterColumn seatNums={[8, 10]} />
                 </EntryInnerRow>
                 <EntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />

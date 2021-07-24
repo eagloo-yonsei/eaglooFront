@@ -1,13 +1,9 @@
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import io, { Socket } from "socket.io-client";
+import Peer from "simple-peer";
+import { useAppContext } from "../../Routes/App/AppProvider";
 
 interface AppProp {
     children: JSX.Element;
@@ -18,16 +14,29 @@ interface LocationStateProp {
     seatNo: number;
 }
 
+interface PeersStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
+}
+
+interface PeersRefProp {
+    peer: Peer.Instance;
+    socketId: string;
+    seatNo: number;
+}
+
 interface RoomProp {
     roomNo: number;
     seatNo: number;
     exitRoom: () => void;
+    peersState: PeersStateProp[];
 }
 
 const InitialRoomContext: RoomProp = {
     roomNo: 0,
     seatNo: 0,
     exitRoom: () => {},
+    peersState: [],
 };
 
 const RoomContext = createContext<RoomProp>(InitialRoomContext);
@@ -36,30 +45,17 @@ export const useRoomContext = () => useContext(RoomContext);
 export default function RoomProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
+    const state = location.state as LocationStateProp;
     const socketRef = useRef<Socket>();
-    const [roomNo, setRoomNo] = useState<number>(0);
-    const [seatNo, setSeatNo] = useState<number>(0);
+    const [roomNo, setRoomNo] = useState<number>(state?.roomNo);
+    const [seatNo, setSeatNo] = useState<number>(state?.seatNo);
+    const [peersState, setPeersState] = useState<PeersStateProp[]>([]);
 
     function exitRoom() {
         history.push("/list");
     }
 
-    useEffect(() => {
-        // 방 입장시 roomNo, seatNo prop을 받고 온 게 아니면 /list로 push
-        const state = location.state as LocationStateProp;
-        if (state !== undefined) {
-            setRoomNo(state.roomNo);
-            setSeatNo(state.seatNo);
-        } else {
-            history.push("/list");
-        }
-
-        // socketRef.current = io(API_ENDPOINT);
-
-        return () => {};
-    }, []);
-
-    const roomContext = { roomNo, seatNo, exitRoom };
+    const roomContext = { roomNo, seatNo, exitRoom, peersState };
 
     return (
         <RoomContext.Provider value={roomContext}>

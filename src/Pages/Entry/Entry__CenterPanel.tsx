@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { useEntryContext } from "./EntryProvider";
 
-export default function EntryController() {
+export default function EntryCenterPanel() {
     return (
         <Container>
             <CamPreview />
@@ -15,10 +15,10 @@ export default function EntryController() {
 function CamPreview() {
     const { userStream, getUserStream } = useAppContext();
 
-    useEffect(() => {
-        getUserStream();
-        return () => {};
-    }, []);
+    // useEffect(() => {
+    //     getUserStream();
+    //     return () => {};
+    // }, []);
 
     return (
         <CamContainer>
