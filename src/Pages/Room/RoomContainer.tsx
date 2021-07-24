@@ -38,10 +38,10 @@ export default function RoomContainer() {
     const state = location.state as LocationStateProp;
     const roomNo = state.roomNo;
     const seatNo = state.seatNo;
-    const [peersState, setPeersState] = useState<PeersStateProp[]>([]);
     const socketRef = useRef<Socket>();
-    const userStream = useRef<HTMLVideoElement>(null);
+    const userStreamRef = useRef<HTMLVideoElement>(null);
     const peersRef = useRef<PeersRefProp[]>([]);
+    const [peersState, setPeersState] = useState<PeersStateProp[]>([]);
 
     useEffect(() => {
         socketRef.current = io(API_ENDPOINT);
@@ -51,7 +51,7 @@ export default function RoomContainer() {
             })
             .then((stream) => {
                 console.log(stream);
-                userStream.current!.srcObject = stream;
+                userStreamRef.current!.srcObject = stream;
 
                 /* 1. 방참가 */
                 socketRef.current?.emit(Channel.JOIN, {
@@ -98,11 +98,11 @@ export default function RoomContainer() {
                         `${payload.callerId}(${payload.seatNo}번 참여자)로부터 연결 요청`
                     );
                     // 중복 요청인지 확인
-                    const item = peersRef.current.find(
-                        (p) => p.socketId === payload.callerId
+                    const peerRef = peersRef.current.find(
+                        (peer) => peer.socketId === payload.callerId
                     );
                     // 수신용 peer 객체 생성 후 연결 요청 수락
-                    if (!item) {
+                    if (!peerRef) {
                         const peer = addPeer(
                             payload.signal,
                             payload.callerId,
@@ -124,10 +124,10 @@ export default function RoomContainer() {
                 socketRef.current?.on(Channel.RECEIVING_SIGNAL, (payload) => {
                     console.log(`${payload.id}가 연결 요청을 수락`);
                     console.log("peersRef.current: ", peersRef.current);
-                    const item = peersRef.current.find(
-                        (p) => p.socketId === payload.id
+                    const peerRef = peersRef.current.find(
+                        (peer) => peer.socketId === payload.id
                     );
-                    item?.peer.signal(payload.signal);
+                    peerRef?.peer.signal(payload.signal);
                 });
 
                 /* 다른 유저 퇴장시 */
@@ -145,15 +145,20 @@ export default function RoomContainer() {
                     if (!!exitPeer) {
                         exitPeer.peer.destroy();
                     }
-                    console.log(peersRef.current);
                     peersRef.current = peersRef.current.filter((peer) => {
                         peer.seatNo !== seatNo;
                     });
-                    console.log(peersRef.current);
                 });
             });
 
-        return () => {};
+        return () => {
+            socketRef.current?.emit("leave", {
+                roomNo: roomNo,
+                seatNo: seatNo,
+            });
+            socketRef.current?.close();
+            socketRef.current?.disconnect();
+        };
     }, []);
 
     /* 자신이 방에 들어왔을 때 기존 참여자들과의 Connection 설정 */
@@ -204,6 +209,16 @@ export default function RoomContainer() {
         return peer;
     }
 
+    function stopSelfStream() {
+        const selfStream = userStreamRef.current?.srcObject as MediaStream;
+        const tracks = selfStream?.getTracks();
+        if (tracks) {
+            tracks.forEach((track) => {
+                track.stop();
+            });
+        }
+    }
+
     return (
         <Container>
             <RoomOuterRow
@@ -212,7 +227,10 @@ export default function RoomContainer() {
             />
             <RoomInnerRow>
                 <RoomOuterColumn peersState={peersState} seatNums={[7, 9]} />
-                <RoomCenterPanel userStream={userStream} />
+                <RoomCenterPanel
+                    userStreamRef={userStreamRef}
+                    stopSelfStream={stopSelfStream}
+                />
                 <RoomOuterColumn peersState={peersState} seatNums={[8, 10]} />
             </RoomInnerRow>
             <RoomOuterRow

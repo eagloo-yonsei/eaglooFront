@@ -1,29 +1,38 @@
-import React, { useEffect } from "react";
+import React, { RefObject } from "react";
 import styled from "styled-components";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { useEntryContext } from "./EntryProvider";
 
-export default function EntryCenterPanel() {
+interface EntryPanelProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+    stopSelfStream: () => void;
+}
+
+interface StreamProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+}
+
+interface PanelButtonProp {
+    stopSelfStream: () => void;
+}
+
+export default function EntryCenterPanel({
+    userStreamRef,
+    stopSelfStream,
+}: EntryPanelProp) {
     return (
         <Container>
-            <CamPreview />
-            <ControlButtons />
+            <CamPreview userStreamRef={userStreamRef} />
+            <ControlButtons stopSelfStream={stopSelfStream} />
         </Container>
     );
 }
 
-function CamPreview() {
-    const { userStream, getUserStream } = useAppContext();
-
-    // useEffect(() => {
-    //     getUserStream();
-    //     return () => {};
-    // }, []);
-
+function CamPreview({ userStreamRef }: StreamProp) {
     return (
         <CamContainer>
-            {userStream !== undefined ? (
-                <UserCam ref={userStream} autoPlay playsInline />
+            {userStreamRef !== undefined ? (
+                <UserCam ref={userStreamRef} autoPlay playsInline />
             ) : (
                 <></>
             )}
@@ -31,15 +40,15 @@ function CamPreview() {
     );
 }
 
-function ControlButtons() {
+function ControlButtons({ stopSelfStream }: PanelButtonProp) {
     return (
         <ControlButtonContainer>
-            <EnterButton />
+            <EnterButton stopSelfStream={stopSelfStream} />
         </ControlButtonContainer>
     );
 }
 
-function EnterButton() {
+function EnterButton({ stopSelfStream }: PanelButtonProp) {
     const { roomNo, selectedSeat, enterRoom } = useEntryContext();
 
     return (
@@ -49,6 +58,7 @@ function EnterButton() {
             ) : (
                 <EnterButton__Enable
                     onClick={() => {
+                        stopSelfStream();
                         enterRoom(roomNo, selectedSeat);
                     }}
                 >
