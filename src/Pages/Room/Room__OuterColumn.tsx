@@ -1,18 +1,28 @@
 import React from "react";
 import styled from "styled-components";
 import RoomSeat from "./Room__Seat";
+import Peer from "simple-peer";
+
+interface PeersStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
+}
 
 interface OuterColumnProp {
+    peersState: PeersStateProp[];
     seatNums: number[];
 }
 
-export default function RoomOuterColumn({ seatNums }: OuterColumnProp) {
+export default function RoomOuterColumn({
+    peersState,
+    seatNums,
+}: OuterColumnProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
                     <ColumnSeat key={`seat${seatNo}`}>
-                        <RoomSeat seatNo={seatNo} />
+                        <RoomSeat seatNo={seatNo} peersState={peersState} />
                     </ColumnSeat>
                 );
             })}

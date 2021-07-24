@@ -1,39 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useEffect, RefObject } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "./RoomProvider";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-export default function RoomController() {
+interface RoomPanelProp {
+    userStream: RefObject<HTMLVideoElement>;
+}
+
+export default function RoomCenterPanel({ userStream }: RoomPanelProp) {
     return (
         <Container>
-            <UserStream />
+            <UserStream userStream={userStream} />
             <ControlButtons />
         </Container>
     );
 }
 
-function UserStream() {
-    const { userStream, getUserStream } = useAppContext();
-
-    useEffect(() => {
-        getUserStream();
-    }, []);
+function UserStream({ userStream }: RoomPanelProp) {
+    // const { userStream, getUserStream } = useAppContext();
+    // useEffect(() => {
+    //     getUserStream();
+    //     return () => {};
+    // }, []);
 
     return (
+        // <CamContainer>
+        //     {userStream !== undefined ? (
+        //         <UserCam ref={userStream} autoPlay playsInline />
+        //     ) : (
+        //         <></>
+        //     )}
+        // </CamContainer>
         <CamContainer>
-            {userStream !== undefined ? (
-                <UserCam ref={userStream} autoPlay playsInline />
-            ) : (
-                <></>
-            )}
+            <UserCam ref={userStream} autoPlay playsInline />
         </CamContainer>
     );
 }
 
 function ControlButtons() {
-    const { roomNo, exitRoom } = useRoomContext();
+    const { roomNo, seatNo, exitRoom } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -46,6 +53,7 @@ function ControlButtons() {
                     {`  8/16`}
                 </RoomPeople>
             </RoomInfo>
+            <MySeat>{`내 자리 : ${seatNo}`}</MySeat>
             <ExitButton
                 onClick={() => {
                     exitRoom();
@@ -107,6 +115,11 @@ const RoomTitle = styled.div`
 const RoomPeople = styled.div`
     font-size: 20px;
     color: ${(props) => props.theme.loginMessageGray};
+`;
+
+const MySeat = styled.div`
+    font-size: 20px;
+    color: white;
 `;
 
 const ExitButton = styled.div`
