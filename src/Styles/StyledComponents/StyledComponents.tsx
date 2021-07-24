@@ -78,17 +78,7 @@ export function StylelessLink({ to, children }: LinkProps) {
 }
 
 export function toastLoginSuccessMessage(email: string) {
-    toast(
-        `<div>
-            <span role="img" aria-label="smile-face">
-                😀
-            </span>
-            &nbsp; 어서오세요 {email}님!
-            <br />
-            &emsp; 오늘도 이글루와 공부해 볼까요?
-        </div>`,
-        { pauseOnHover: false }
-    );
+    toast(`😀 어서오세요 ${email}님!`, { pauseOnHover: false });
 }
 
 export function toastErrorMessage(message: string) {

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import axios from "axios";
 import { API_ENDPOINT } from "../../Constants";
@@ -15,10 +16,17 @@ import loginIcon from "../../Resources/Img/login-icon.png";
 var hash = require("object-hash");
 
 export default function Login() {
-    const { setIsLoggedIn } = useAppContext();
+    const history = useHistory();
+    const emailInputRef = useRef<HTMLInputElement | undefined>();
+    const { setIsLoggedIn, setUserName } = useAppContext();
     const [signingIn, setSigningIn] = useState(false);
     const [emailInput, setEmailInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+
+    useEffect(() => {
+        emailInputRef.current?.focus();
+        return () => {};
+    }, []);
 
     async function handleLogin() {
         setSigningIn(true);
@@ -28,18 +36,17 @@ export default function Login() {
             )
             .then(function ({ data }) {
                 if (data.success) {
-                    window.localStorage.setItem("email", emailInput);
-                    window.localStorage.setItem("token", data.token);
-                    window.sessionStorage.setItem("token", data.token);
                     setIsLoggedIn(true);
+                    setUserName(emailInput);
                     toastLoginSuccessMessage(emailInput);
+                    history.push("/");
                 } else {
                     setSigningIn(false);
                     toastErrorMessage(data.message);
                 }
             })
-            .catch(function (response) {
-                console.log(response.status);
+            .catch((err) => {
+                console.log(err);
             });
     }
 
@@ -53,6 +60,7 @@ export default function Login() {
                 <EaglooSubLabel>연세대학교 온라인 스터디공간</EaglooSubLabel>
                 <EmailBoxContainer className="idboxcontainer">
                     <EmailBox
+                        ref={emailInputRef}
                         type="text"
                         value={emailInput}
                         placeholder="id"
@@ -122,22 +130,22 @@ const LoginContainer = styled.div`
 
 const EaglooIcon = styled.img`
     width: 130px;
-    padding-bottom: 20px;
+    padding-bottom: 32px;
 `;
 
 const EaglooLabel = styled.h1`
     color: #ffffff;
-    font-size: 50px;
+    font-size: 40px;
     font-family: ${(props) => props.theme.iconFont};
     letter-spacing: 3px;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
 `;
 
 const EaglooSubLabel = styled.h2`
     color: #ffffff;
-    font-size: 16px;
-    font-family: "JejuGothic";
-    padding-bottom: 40px;
+    font-size: 18px;
+    font-family: ${(props) => props.theme.subLabelFont};
+    padding-bottom: 55px;
 `;
 
 const EmailBoxContainer = styled.div`
@@ -151,13 +159,14 @@ const YonseiMailPlaceholder = styled.h4`
     right: 12px;
     color: ${(props) => props.theme.mailPlaceholder};
     font-size: 18px;
-    font-family: "JejuGothic";
+    font-family: ${(props) => props.theme.subLabelFont};
 `;
 
 const InputBox = styled.input`
     width: 100%;
     height: 46px;
     font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
     padding: 0 12px;
     margin-bottom: 15px;
     border: none;
@@ -170,11 +179,9 @@ const InputBox = styled.input`
     }
 `;
 
-const EmailBox = styled(InputBox)`
-    font-family: "JejuGothic";
-`;
+const EmailBox = styled(InputBox)``;
 
-const PasswordBox = styled(EmailBox)``;
+const PasswordBox = styled(InputBox)``;
 
 const ToSignInButton = styled(StylelessButton)`
     width: 100%;
