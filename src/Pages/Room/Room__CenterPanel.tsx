@@ -1,39 +1,44 @@
-import React, { useEffect } from "react";
+import React, { RefObject, useEffect } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "./RoomProvider";
-import { useAppContext } from "../../Routes/App/AppProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-export default function RoomController() {
+interface RoomPanelProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+    stopSelfStream: () => void;
+}
+
+interface StreamProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+}
+
+interface PanelButtonProp {
+    stopSelfStream: () => void;
+}
+
+export default function RoomCenterPanel({
+    userStreamRef,
+    stopSelfStream,
+}: RoomPanelProp) {
     return (
         <Container>
-            <UserStream />
-            <ControlButtons />
+            <UserStream userStreamRef={userStreamRef} />
+            <ControlButtons stopSelfStream={stopSelfStream} />
         </Container>
     );
 }
 
-function UserStream() {
-    const { userStream, getUserStream } = useAppContext();
-
-    useEffect(() => {
-        getUserStream();
-    }, []);
-
+function UserStream({ userStreamRef }: StreamProp) {
     return (
         <CamContainer>
-            {userStream !== undefined ? (
-                <UserCam ref={userStream} autoPlay playsInline />
-            ) : (
-                <></>
-            )}
+            <UserCam ref={userStreamRef} autoPlay playsInline />
         </CamContainer>
     );
 }
 
-function ControlButtons() {
-    const { roomNo, exitRoom } = useRoomContext();
+function ControlButtons({ stopSelfStream }: PanelButtonProp) {
+    const { roomNo, seatNo, exitRoom } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -46,8 +51,10 @@ function ControlButtons() {
                     {`  8/16`}
                 </RoomPeople>
             </RoomInfo>
+            <MySeat>{`내 자리 : ${seatNo}`}</MySeat>
             <ExitButton
                 onClick={() => {
+                    stopSelfStream();
                     exitRoom();
                 }}
             >
@@ -107,6 +114,11 @@ const RoomTitle = styled.div`
 const RoomPeople = styled.div`
     font-size: 20px;
     color: ${(props) => props.theme.loginMessageGray};
+`;
+
+const MySeat = styled.div`
+    font-size: 20px;
+    color: white;
 `;
 
 const ExitButton = styled.div`

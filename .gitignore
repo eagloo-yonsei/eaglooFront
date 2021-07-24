@@ -13,11 +13,11 @@ setupProxy.js
 .DS_Store
 .env.*
 
-# logs
+# log
 yarn-debug.log*
 yarn-error.log*
 
-# build
+# build file
 dist
 .cache
 build

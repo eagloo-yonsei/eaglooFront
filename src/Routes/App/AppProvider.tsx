@@ -13,19 +13,22 @@ interface AppProp {
 interface AppContext {
     isLoggedIn: boolean;
     setIsLoggedIn: (status: boolean) => void;
+    userName?: string | undefined;
+    setUserName: (userName: string) => void;
     isAdmin: boolean;
     setIsAdmin: (status: boolean) => void;
     userStream?: RefObject<HTMLVideoElement>;
-    getUserStream: () => void;
+    getUserStream: () => boolean;
     token?: string;
 }
 
 const InitialAppContext: AppContext = {
     isLoggedIn: false,
     setIsLoggedIn: () => {},
+    setUserName: () => {},
     isAdmin: false,
     setIsAdmin: () => {},
-    getUserStream: () => {},
+    getUserStream: () => false,
 };
 
 const AppContext = createContext<AppContext>(InitialAppContext);
@@ -34,12 +37,22 @@ export const useAppContext = () => useContext(AppContext);
 export default function AppProvider({ children }: AppProp) {
     const userStream = useRef<HTMLVideoElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [userName, setUserName] = useState<string>("");
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
     function getUserStream() {
-        navigator.mediaDevices
-            .getUserMedia({ video: true })
-            .then((stream) => (userStream.current!.srcObject = stream));
+        // let result: boolean = false;
+        // navigator.mediaDevices
+        //     .getUserMedia({ video: true })
+        //     .then((stream) => {
+        //         userStream.current!.srcObject = stream;
+        //         result = true;
+        //     })
+        //     .catch(() => {
+        //         result = false;
+        //     });
+        // return result;
+        return false;
     }
 
     function stopUserStream() {}
@@ -47,6 +60,8 @@ export default function AppProvider({ children }: AppProp) {
     const appContext = {
         isLoggedIn,
         setIsLoggedIn,
+        userName,
+        setUserName,
         isAdmin,
         setIsAdmin,
         userStream,

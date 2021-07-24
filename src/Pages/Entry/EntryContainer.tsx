@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 import {
     SlideUpPageContainer,
@@ -7,11 +7,37 @@ import {
 import EntryHeader from "./Entry__Header";
 import EntryOuterRow from "./Entry__OuterRow";
 import EntryOuterColumn from "./Entry__OuterColumn";
-import EntryController from "./Entry__Controller";
+import EntryCenterPanel from "./Entry__CenterPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
+interface PanelButtonProp {
+    stopSelfStream: () => void;
+}
+
 export default function EntryContainer() {
+    const userStreamRef = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
+        navigator.mediaDevices
+            .getUserMedia({
+                video: true,
+            })
+            .then((stream) => {
+                userStreamRef.current!.srcObject = stream;
+            });
+        return () => {};
+    }, []);
+
+    function stopSelfStream() {
+        const selfStream = userStreamRef.current?.srcObject as MediaStream;
+        const tracks = selfStream?.getTracks();
+        if (tracks) {
+            tracks.forEach((track) => {
+                track.stop();
+            });
+        }
+    }
+
     return (
         <Container>
             <EntryHeader />
@@ -19,19 +45,26 @@ export default function EntryContainer() {
                 <EntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
                 <EntryInnerRow>
                     <EntryOuterColumn seatNums={[7, 9]} />
-                    <EntryController />
+                    <EntryCenterPanel
+                        userStreamRef={userStreamRef}
+                        stopSelfStream={stopSelfStream}
+                    />
                     <EntryOuterColumn seatNums={[8, 10]} />
                 </EntryInnerRow>
                 <EntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />
             </SubContiner>
-            <CloseIcon />
+            <CloseIcon stopSelfStream={stopSelfStream} />
         </Container>
     );
 }
 
-function CloseIcon() {
+function CloseIcon({ stopSelfStream }: PanelButtonProp) {
     return (
-        <EntryClose>
+        <EntryClose
+            onClick={() => {
+                stopSelfStream();
+            }}
+        >
             <StylelessLink to={"/list"}>
                 <FontAwesomeIcon icon={faTimes} size="2x" />
             </StylelessLink>

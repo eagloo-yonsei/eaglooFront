@@ -16,6 +16,7 @@ export default {
     animationCubic: "cubic-bezier(0.075, 0.82, 0.165, 1)",
     headerHeight: "160px",
     iconFont: "RecipeKorea",
+    subLabelFont: "JejuGothic",
     plainTextFont: "NexonGothicLv1",
     plainLightTextFont: "NexonGothicLv1Light",
     plainBoldTextFont: "NexonGothicLv1Bold",
