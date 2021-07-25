@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import styled from "styled-components";
 import { FullScreenContainer } from "../../Styles/StyledComponents";
@@ -8,7 +8,6 @@ import RoomOuterColumn from "./Room__OuterColumn";
 import RoomCenterPanel from "./Room__CenterPanel";
 import io, { Socket } from "socket.io-client";
 import Peer from "simple-peer";
-import { useRoomContext } from "./RoomProvider";
 import { Channel, API_ENDPOINT } from "../../Constants";
 
 interface LocationStateProp {
@@ -35,15 +34,21 @@ interface OtherUserProp {
 
 export default function RoomContainer() {
     const location = useLocation<Location | unknown>();
+    const history = useHistory();
     const state = location.state as LocationStateProp;
-    const roomNo = state.roomNo;
-    const seatNo = state.seatNo;
+    const roomNo = state?.roomNo;
+    const seatNo = state?.seatNo;
     const socketRef = useRef<Socket>();
     const userStreamRef = useRef<HTMLVideoElement>(null);
     const peersRef = useRef<PeersRefProp[]>([]);
     const [peersState, setPeersState] = useState<PeersStateProp[]>([]);
 
     useEffect(() => {
+        const state = location.state as LocationStateProp;
+        if (state === undefined) {
+            history.push("/list");
+        }
+
         socketRef.current = io(API_ENDPOINT);
         navigator.mediaDevices
             .getUserMedia({
@@ -209,7 +214,7 @@ export default function RoomContainer() {
         return peer;
     }
 
-    function stopSelfStream() {
+    function stopSelfStreamAndExit() {
         const selfStream = userStreamRef.current?.srcObject as MediaStream;
         const tracks = selfStream?.getTracks();
         if (tracks) {
@@ -217,6 +222,7 @@ export default function RoomContainer() {
                 track.stop();
             });
         }
+        history.push("/list");
     }
 
     return (
@@ -229,7 +235,8 @@ export default function RoomContainer() {
                 <RoomOuterColumn peersState={peersState} seatNums={[7, 9]} />
                 <RoomCenterPanel
                     userStreamRef={userStreamRef}
-                    stopSelfStream={stopSelfStream}
+                    peersState={peersState}
+                    stopSelfStreamAndExit={stopSelfStreamAndExit}
                 />
                 <RoomOuterColumn peersState={peersState} seatNums={[8, 10]} />
             </RoomInnerRow>

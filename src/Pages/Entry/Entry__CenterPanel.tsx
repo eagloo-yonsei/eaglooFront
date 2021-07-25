@@ -49,7 +49,7 @@ function ControlButtons({ stopSelfStream }: PanelButtonProp) {
 }
 
 function EnterButton({ stopSelfStream }: PanelButtonProp) {
-    const { roomNo, selectedSeat, enterRoom } = useEntryContext();
+    const { roomNo, selectedSeat, checkVacancy, enterRoom } = useEntryContext();
 
     return (
         <>
@@ -57,9 +57,11 @@ function EnterButton({ stopSelfStream }: PanelButtonProp) {
                 <EnterButton__Disable>참여하기</EnterButton__Disable>
             ) : (
                 <EnterButton__Enable
-                    onClick={() => {
-                        stopSelfStream();
-                        enterRoom(roomNo, selectedSeat);
+                    onClick={async function () {
+                        if (await checkVacancy(roomNo, selectedSeat)) {
+                            stopSelfStream();
+                            enterRoom(roomNo, selectedSeat);
+                        }
                     }}
                 >
                     참여하기
