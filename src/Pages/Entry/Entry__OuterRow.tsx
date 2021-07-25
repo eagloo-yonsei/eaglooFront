@@ -1,18 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 import EntrySeat from "./Entry__Seat";
+import { Room } from "../../Constants";
 
 interface OuterRowProp {
+    room: Room | undefined;
     seatNums: number[];
 }
 
-export default function EntryOuterRow({ seatNums }: OuterRowProp) {
+export default function EntryOuterRow({ room, seatNums }: OuterRowProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
                     <RowSeat key={`seat${seatNo}`}>
-                        <EntrySeat seatNo={seatNo} />
+                        <EntrySeat room={room} seatNo={seatNo} />
                     </RowSeat>
                 );
             })}

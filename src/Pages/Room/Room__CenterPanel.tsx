@@ -1,12 +1,14 @@
 import React, { RefObject, useEffect } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "./RoomProvider";
+import Peer from "simple-peer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 interface RoomPanelProp {
     userStreamRef: RefObject<HTMLVideoElement>;
-    stopSelfStream: () => void;
+    peersState: PeerStateProp[];
+    stopSelfStreamAndExit: () => void;
 }
 
 interface StreamProp {
@@ -14,17 +16,27 @@ interface StreamProp {
 }
 
 interface PanelButtonProp {
-    stopSelfStream: () => void;
+    peersState: PeerStateProp[];
+    stopSelfStreamAndExit: () => void;
+}
+
+interface PeerStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
 }
 
 export default function RoomCenterPanel({
     userStreamRef,
-    stopSelfStream,
+    peersState,
+    stopSelfStreamAndExit,
 }: RoomPanelProp) {
     return (
         <Container>
             <UserStream userStreamRef={userStreamRef} />
-            <ControlButtons stopSelfStream={stopSelfStream} />
+            <ControlButtons
+                peersState={peersState}
+                stopSelfStreamAndExit={stopSelfStreamAndExit}
+            />
         </Container>
     );
 }
@@ -37,8 +49,11 @@ function UserStream({ userStreamRef }: StreamProp) {
     );
 }
 
-function ControlButtons({ stopSelfStream }: PanelButtonProp) {
-    const { roomNo, seatNo, exitRoom } = useRoomContext();
+function ControlButtons({
+    peersState,
+    stopSelfStreamAndExit,
+}: PanelButtonProp) {
+    const { roomNo, userSeatNo } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -48,14 +63,13 @@ function ControlButtons({ stopSelfStream }: PanelButtonProp) {
                 </RoomTitle>
                 <RoomPeople>
                     <FontAwesomeIcon icon={faUserAlt} />
-                    {`  8/16`}
+                    {`  ${peersState.length + 1}/16`}
                 </RoomPeople>
             </RoomInfo>
-            <MySeat>{`내 자리 : ${seatNo}`}</MySeat>
+            <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat>
             <ExitButton
                 onClick={() => {
-                    stopSelfStream();
-                    exitRoom();
+                    stopSelfStreamAndExit();
                 }}
             >
                 나가기

@@ -12,3 +12,14 @@ export enum Channel {
     SENDING_SIGNAL = "SENDING_SIGNAL",
     RETURNING_SIGNAL = "RETURNING_SIGNAL",
 }
+
+export interface Seat {
+    seatNo: number;
+    socketId: string;
+    userName?: string;
+}
+
+export interface Room {
+    roomNo: number;
+    seats: Seat[];
+}

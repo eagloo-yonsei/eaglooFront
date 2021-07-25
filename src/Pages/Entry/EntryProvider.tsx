@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { API_ENDPOINT } from "../../Constants";
+import { Room, API_ENDPOINT } from "../../Constants";
+import { toastErrorMessage } from "../../Styles/StyledComponents";
 
 interface AppProp {
     children: JSX.Element;
@@ -12,21 +13,23 @@ interface LocationStateProp {
     roomNo: number;
 }
 
-interface EnterRoomResponse {
-    success: boolean;
-}
-
 interface EntryProp {
+    roomInfo: Room | undefined;
     roomNo: number;
     selectedSeat: number;
     selectSeat: (seatNo: number) => void;
+    checkVacancy: (roomNo: number, seatNo: number) => Promise<boolean>;
     enterRoom: (roomNo: number, seatNo: number) => void;
 }
 
 const InitialEntryContext: EntryProp = {
+    roomInfo: { roomNo: 0, seats: [] },
     roomNo: 0,
     selectedSeat: 0,
     selectSeat: () => {},
+    checkVacancy: () => {
+        return new Promise(() => false);
+    },
     enterRoom: () => {},
 };
 
@@ -36,8 +39,30 @@ export const useEntryContext = () => useContext(EntryContext);
 export default function EntryProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
+    const [roomInfo, setRoomInfo] = useState<Room | undefined>();
     const [roomNo, setRoomNo] = useState<number>(0);
     const [selectedSeat, setSelectedSeat] = useState<number>(0);
+
+    useEffect(() => {
+        // 엔트리 입장시 roomNo prop을 받고 온 게 아니면 /list로 push
+        const state = location.state as LocationStateProp;
+        if (state !== undefined) {
+            setRoomNo(state.roomNo);
+        } else {
+            history.push("/list");
+        }
+        getRoom(state.roomNo);
+
+        return () => {};
+    }, []);
+
+    async function getRoom(roomNo: number) {
+        axios
+            .get<Room>(`${API_ENDPOINT}/api/room/${roomNo}`)
+            .then((response) => {
+                setRoomInfo(response.data);
+            });
+    }
 
     function selectSeat(seatNo: number) {
         if (seatNo === selectedSeat) {
@@ -48,6 +73,23 @@ export default function EntryProvider({ children }: AppProp) {
         return;
     }
 
+    async function checkVacancy(roomNo: number, seatNo: number) {
+        const response = await axios.post<{ success: boolean; type?: number }>(
+            `${API_ENDPOINT}/api/room/${roomNo}/seat/${seatNo}`
+        );
+        const data: { success: boolean; type?: number } = response.data;
+        if (data.success) {
+            return true;
+        } else {
+            if (data.type === 2) {
+                toastErrorMessage("사용 중인 자리입니다");
+                return false;
+            }
+            toastErrorMessage("잘못된 요청입니다");
+            return false;
+        }
+    }
+
     function enterRoom(roomNo: number, seatNo: number) {
         history.push({
             pathname: "/room",
@@ -56,28 +98,14 @@ export default function EntryProvider({ children }: AppProp) {
                 seatNo: seatNo,
             },
         });
-        // axios.post(`${API_ENDPOINT}/room/${roomNo}/position/${seatNo}`)
-        // .then(function ({data}:EnterRoomResponse){
-        //     if(data.success)
-        // })
     }
 
-    useEffect(() => {
-        // 엔트리 입장시 roomNo prop을 받고 온 게 아니면 /list로 push
-        const state = location.state as LocationStateProp;
-        if (state !== undefined) {
-            setRoomNo(state.roomNo);
-        } else {
-            history.push("/list");
-        }
-
-        return () => {};
-    }, []);
-
     const entryContext = {
+        roomInfo,
         roomNo,
         selectedSeat,
         selectSeat,
+        checkVacancy,
         enterRoom,
     };
 

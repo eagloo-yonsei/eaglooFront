@@ -18,6 +18,8 @@ interface EmptySeatProp {
 }
 
 export default function RoomSeat({ peersState, seatNo }: SeatProp) {
+    const { userSeatNo } = useRoomContext();
+
     if (peersState === undefined) {
         return (
             <Container>
@@ -58,6 +60,10 @@ function FilledSeat({ peerState }: PeerStateProp) {
     return <PeerCam ref={peerStream} playsInline autoPlay />;
 }
 
+function SelfSeat() {
+    return <SelfContainer>사용중</SelfContainer>;
+}
+
 function EmptySeat({ seatNo }: EmptySeatProp) {
     return (
         <EmptyContainer>{`${seatNo}번 참여자를 기다리는 중`}</EmptyContainer>
@@ -74,14 +80,20 @@ const Container = styled.div`
     border-radius: 15px;
 `;
 
-const PeerCamContainer = styled.div`
-    width: 100%;
-    height: 100%;
-`;
-
 const PeerCam = styled.video`
     max-width: 100%;
     max-height: 100%;
+`;
+
+const SelfContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 15px;
+    font-family: ${(props) => props.theme.plainTextFont};
 `;
 
 const EmptyContainer = styled.div`
