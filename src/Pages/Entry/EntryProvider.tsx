@@ -14,7 +14,7 @@ interface LocationStateProp {
 }
 
 interface EntryProp {
-    roomInfo: Room | undefined;
+    occupiedSeatNums: number[];
     roomNo: number;
     selectedSeat: number;
     selectSeat: (seatNo: number) => void;
@@ -23,7 +23,7 @@ interface EntryProp {
 }
 
 const InitialEntryContext: EntryProp = {
-    roomInfo: { roomNo: 0, seats: [] },
+    occupiedSeatNums: [],
     roomNo: 0,
     selectedSeat: 0,
     selectSeat: () => {},
@@ -39,8 +39,8 @@ export const useEntryContext = () => useContext(EntryContext);
 export default function EntryProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
-    const [roomInfo, setRoomInfo] = useState<Room | undefined>();
     const [roomNo, setRoomNo] = useState<number>(0);
+    const [occupiedSeatNums, setOccupiedSeatNums] = useState<number[]>([]);
     const [selectedSeat, setSelectedSeat] = useState<number>(0);
 
     useEffect(() => {
@@ -60,7 +60,12 @@ export default function EntryProvider({ children }: AppProp) {
         axios
             .get<Room>(`${API_ENDPOINT}/api/room/${roomNo}`)
             .then((response) => {
-                setRoomInfo(response.data);
+                const occupiedSeats: number[] = [];
+                response.data.seats.forEach((seat) => {
+                    occupiedSeats.push(seat.seatNo);
+                });
+                // console.log(occupiedSeats);
+                setOccupiedSeatNums(occupiedSeats);
             });
     }
 
@@ -101,7 +106,7 @@ export default function EntryProvider({ children }: AppProp) {
     }
 
     const entryContext = {
-        roomInfo,
+        occupiedSeatNums,
         roomNo,
         selectedSeat,
         selectSeat,

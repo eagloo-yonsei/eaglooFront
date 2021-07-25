@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
-import axios from "axios";
 import {
     SlideUpPageContainer,
     StylelessLink,
@@ -13,7 +12,6 @@ import EntryOuterColumn from "./Entry__OuterColumn";
 import EntryCenterPanel from "./Entry__CenterPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { API_ENDPOINT, Room } from "../../Constants";
 
 interface LocationStateProp {
     roomNo: number;
@@ -26,21 +24,16 @@ interface PanelButtonProp {
 export default function EntryContainer() {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
-    const state = location.state as LocationStateProp;
-    const roomNo = state?.roomNo;
     const userStreamRef = useRef<HTMLVideoElement>(null);
-    const [room, setRoom] = useState<Room | undefined>();
 
+    // TODO (enhancement)
+    // stream 객체를 AppProvider에서 관리할 수 있도록 수정
     useEffect(() => {
         const state = location.state as LocationStateProp;
         if (state === undefined) {
             history.push("/list");
         }
-        // const roomInfo = getRoom();
-        // if (roomInfo) {
-        //     console.log(roomInfo);
-        //     setRoom(roomInfo);
-        // }
+
         navigator.mediaDevices
             .getUserMedia({
                 video: true,
@@ -50,15 +43,6 @@ export default function EntryContainer() {
             });
         return () => {};
     }, []);
-
-    // async function getRoom(): Room {
-    //     await axios
-    //         .get<Room>(`${API_ENDPOINT}/api/room/${roomNo}`)
-    //         .then((response) => {
-    //             console.log(response.data);
-    //             return response.data as Room;
-    //         });
-    // }
 
     function stopSelfStream() {
         const selfStream = userStreamRef.current?.srcObject as MediaStream;
@@ -81,19 +65,16 @@ export default function EntryContainer() {
             <Container>
                 <EntryHeader />
                 <SubContiner>
-                    <EntryOuterRow room={room} seatNums={[1, 2, 3, 4, 5, 6]} />
+                    <EntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
                     <EntryInnerRow>
-                        <EntryOuterColumn room={room} seatNums={[7, 9]} />
+                        <EntryOuterColumn seatNums={[7, 9]} />
                         <EntryCenterPanel
                             userStreamRef={userStreamRef}
                             stopSelfStream={stopSelfStream}
                         />
-                        <EntryOuterColumn room={room} seatNums={[8, 10]} />
+                        <EntryOuterColumn seatNums={[8, 10]} />
                     </EntryInnerRow>
-                    <EntryOuterRow
-                        room={room}
-                        seatNums={[11, 12, 13, 14, 15, 16]}
-                    />
+                    <EntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />
                 </SubContiner>
                 <CloseIcon stopSelfStream={stopSelfStream} />
             </Container>

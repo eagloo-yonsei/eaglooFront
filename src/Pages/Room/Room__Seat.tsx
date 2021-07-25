@@ -13,6 +13,12 @@ interface SeatProp {
     seatNo: number;
 }
 
+interface MiddleWareProp {
+    peersState: PeerStateProp[];
+    seatNo: number;
+    userSeatNo: number;
+}
+
 interface EmptySeatProp {
     seatNo: number;
 }
@@ -20,12 +26,22 @@ interface EmptySeatProp {
 export default function RoomSeat({ peersState, seatNo }: SeatProp) {
     const { userSeatNo } = useRoomContext();
 
+    return (
+        <MiddleWare
+            peersState={peersState}
+            seatNo={seatNo}
+            userSeatNo={userSeatNo}
+        />
+    );
+}
+
+function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
+    if (seatNo === userSeatNo) {
+        return <SelfSeat />;
+    }
+
     if (peersState === undefined) {
-        return (
-            <Container>
-                <EmptySeat seatNo={seatNo} />
-            </Container>
-        );
+        return <EmptySeat seatNo={seatNo} />;
     }
 
     const matchedPeer = peersState.find((peerState) => {
@@ -33,13 +49,15 @@ export default function RoomSeat({ peersState, seatNo }: SeatProp) {
     });
 
     return (
-        <Container>
+        <>
             {!!matchedPeer ? (
-                <FilledSeat peerState={matchedPeer} />
+                <Container>
+                    <FilledSeat peerState={matchedPeer} />
+                </Container>
             ) : (
                 <EmptySeat seatNo={seatNo} />
             )}
-        </Container>
+        </>
     );
 }
 
@@ -70,39 +88,31 @@ function EmptySeat({ seatNo }: EmptySeatProp) {
     );
 }
 
+const PeerCam = styled.video`
+    max-width: 100%;
+    max-height: 100%;
+`;
+
 const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     width: 96%;
     height: 94%;
-    background-color: black;
     border-radius: 15px;
-`;
-
-const PeerCam = styled.video`
-    max-width: 100%;
-    max-height: 100%;
-`;
-
-const SelfContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    color: white;
-    font-size: 15px;
     font-family: ${(props) => props.theme.plainTextFont};
 `;
 
-const EmptyContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+const SelfContainer = styled(Container)`
+    font-size: 24px;
+    font-family: ${(props) => props.theme.plainBoldTextFont};
+    letter-spacing: 5px;
     color: white;
+    background-color: ${(props) => props.theme.loginMessageGray};
+`;
+
+const EmptyContainer = styled(Container)`
     font-size: 15px;
-    font-family: ${(props) => props.theme.plainTextFont};
+    color: white;
+    background-color: black;
 `;
