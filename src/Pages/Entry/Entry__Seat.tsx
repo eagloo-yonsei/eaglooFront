@@ -3,39 +3,31 @@ import styled from "styled-components";
 import { useEntryContext } from "./EntryProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { Room } from "../../Constants";
 
 interface EntrySeatProp {
-    room: Room | undefined;
     seatNo: number;
 }
 
-interface SeatContainerProp {
+interface MiddleWareProp {
+    occupiedSeatNums: number[];
     seatNo: number;
 }
 
-export default function EntrySeat({ room, seatNo }: EntrySeatProp) {
-    const { roomInfo } = useEntryContext();
-    const [occupied, setOccupied] = useState<boolean>(false);
-    roomInfo?.seats.forEach((seat) => {
-        if (seat.seatNo === seatNo) {
-            console.log(`${seatNo} has its matched seat`);
-            // setOccupied(true);  -> IT MAKES INFINITE LOOP ERROR
-        }
-    });
+export default function EntrySeat({ seatNo }: EntrySeatProp) {
+    const { occupiedSeatNums } = useEntryContext();
 
-    return (
-        <>
-            {occupied ? (
-                <OccupiedSeat seatNo={seatNo} />
-            ) : (
-                <SelectableSeat seatNo={seatNo} />
-            )}
-        </>
-    );
+    return <MiddleWare occupiedSeatNums={occupiedSeatNums} seatNo={seatNo} />;
 }
 
-function SelectableSeat({ seatNo }: SeatContainerProp) {
+// TODO (enhancement)
+// Entry Seat 및 Room Seat 거쳐가는 함수 이름
+function MiddleWare({ occupiedSeatNums, seatNo }: MiddleWareProp) {
+    if (occupiedSeatNums.includes(seatNo)) {
+        return <OccupiedSeat seatNo={seatNo} />;
+    } else return <SelectableSeat seatNo={seatNo} />;
+}
+
+function SelectableSeat({ seatNo }: EntrySeatProp) {
     const { selectedSeat, selectSeat } = useEntryContext();
     return (
         <Container
@@ -52,7 +44,7 @@ function SelectableSeat({ seatNo }: SeatContainerProp) {
     );
 }
 
-function EmptySeat({ seatNo }: SeatContainerProp) {
+function EmptySeat({ seatNo }: EntrySeatProp) {
     return (
         <EmptyContainer>
             <SeatNo seatNo={seatNo} />
@@ -60,7 +52,7 @@ function EmptySeat({ seatNo }: SeatContainerProp) {
     );
 }
 
-function SelectedSeat({ seatNo }: SeatContainerProp) {
+function SelectedSeat({ seatNo }: EntrySeatProp) {
     return (
         <SelectedContainer>
             <FontAwesomeIcon icon={faCheck} size="3x" />
@@ -69,16 +61,18 @@ function SelectedSeat({ seatNo }: SeatContainerProp) {
     );
 }
 
-function OccupiedSeat({ seatNo }: SeatContainerProp) {
+function OccupiedSeat({ seatNo }: EntrySeatProp) {
     return (
-        <OccupiedContainer>
-            {`사용중`}
-            <SeatNo seatNo={seatNo} />
-        </OccupiedContainer>
+        <Container>
+            <OccupiedContainer>
+                {`사용중`}
+                <SeatNo seatNo={seatNo} />
+            </OccupiedContainer>
+        </Container>
     );
 }
 
-function SeatNo({ seatNo }: SeatContainerProp) {
+function SeatNo({ seatNo }: EntrySeatProp) {
     return (
         <>
             {seatNo < 10 ? (
@@ -93,9 +87,6 @@ function SeatNo({ seatNo }: SeatContainerProp) {
 const Container = styled.div`
     width: 96%;
     height: 94%;
-    :hover {
-        cursor: pointer;
-    }
 `;
 
 const SeatContainer = styled.div`
@@ -115,17 +106,25 @@ const SeatContainer = styled.div`
 const EmptyContainer = styled(SeatContainer)`
     background-color: none;
     color: ${(props) => props.theme.entryLightBlue};
+    :hover {
+        cursor: pointer;
+    }
 `;
 
 const SelectedContainer = styled(SeatContainer)`
     background-color: ${(props) => props.theme.entryLightBlue};
+    :hover {
+        cursor: pointer;
+    }
     color: white;
 `;
 
 const OccupiedContainer = styled(SeatContainer)`
-    border: ${(props) => props.theme.loginMessageGray};
+    border: 4.5px solid ${(props) => props.theme.loginMessageGray};
     background-color: ${(props) => props.theme.loginMessageGray};
     color: white;
+    font-size: 24px;
+    letter-spacing: 5px;
 `;
 
 const SeatNoContainer = styled.span`
@@ -133,5 +132,5 @@ const SeatNoContainer = styled.span`
     left: 8px;
     bottom: 8px;
     font-size: 16px;
-    font-family: ${(props) => props.theme.plainBoldTextFont};
+    letter-spacing: 0px;
 `;

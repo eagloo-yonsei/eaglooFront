@@ -4,17 +4,16 @@ import EntrySeat from "./Entry__Seat";
 import { Room } from "../../Constants";
 
 interface OuterColumnProp {
-    room: Room | undefined;
     seatNums: number[];
 }
 
-export default function EntryOuterColumn({ room, seatNums }: OuterColumnProp) {
+export default function EntryOuterColumn({ seatNums }: OuterColumnProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
                     <ColumnSeat key={`seat${seatNo}`}>
-                        <EntrySeat room={room} seatNo={seatNo} />
+                        <EntrySeat seatNo={seatNo} />
                     </ColumnSeat>
                 );
             })}

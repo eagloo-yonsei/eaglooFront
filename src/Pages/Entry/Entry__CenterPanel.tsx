@@ -1,6 +1,5 @@
 import React, { RefObject } from "react";
 import styled from "styled-components";
-import { useAppContext } from "../../Routes/App/AppProvider";
 import { useEntryContext } from "./EntryProvider";
 
 interface EntryPanelProp {

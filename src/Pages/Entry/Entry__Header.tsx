@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function EntryHeader() {
-    const { roomNo } = useEntryContext();
+    const { roomNo, occupiedSeatNums } = useEntryContext();
 
     return (
         <Container>
@@ -17,7 +17,7 @@ export default function EntryHeader() {
             <StateIcon>
                 <FontAwesomeIcon icon={faUserAlt} />
             </StateIcon>
-            <StateNumber>8/16</StateNumber>
+            <StateNumber>{`${occupiedSeatNums.length}/16`}</StateNumber>
         </Container>
     );
 }
