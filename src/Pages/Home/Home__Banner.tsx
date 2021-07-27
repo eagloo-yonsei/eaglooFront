@@ -11,7 +11,6 @@ export default function HomeBanner() {
 }
 
 const HomeImgContainer = styled.div`
-    z-index: 1;
     position: absolute;
     right: 0;
     top: 0;

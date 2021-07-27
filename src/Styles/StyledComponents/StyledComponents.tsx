@@ -3,7 +3,16 @@ import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export const FadeIn = keyframes`
+export const FadeIn20 = keyframes`
+    from{
+        opacity: 0
+    }
+    to {
+        opacity: 0.2
+    }
+`;
+
+export const FadeInFull = keyframes`
     from{
         opacity: 0
     }
@@ -17,8 +26,20 @@ export const SlideUp = keyframes`
         transform:translateY(1200px);
     }
     to {
-transform:translateY(0px);
+        transform:translateY(0px);
     }
+`;
+
+export const ModalBackGround = styled.div`
+    animation: ${FadeIn20} 0.5s ease-out;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.2;
 `;
 
 export const FullScreenContainer = styled.div`
@@ -33,12 +54,12 @@ export const PageContainer = styled.div`
 `;
 
 export const FullPageContainer = styled(PageContainer)`
-    animation: ${FadeIn} 0.5s ease-out;
+    animation: ${FadeInFull} 0.5s ease-out;
 `;
 
 export const SlideUpPageContainer = styled(PageContainer)`
     /* animation: ${SlideUp} 0.5s ease-out; */
-    animation: ${FadeIn} 0.5s ease-out;
+    animation: ${FadeInFull} 0.5s ease-out;
     ${(props) => `height: calc(100% - ${props.theme.headerHeight});`};
     background: white;
     padding: 35px;
@@ -48,7 +69,7 @@ export const SlideUpPageContainer = styled(PageContainer)`
 `;
 
 export const HeaderPageContainer = styled(PageContainer)`
-    animation: ${FadeIn} 0.5s ease-out;
+    animation: ${FadeInFull} 0.5s ease-out;
     margin-top: ${(props) => props.theme.headerHeight};
 `;
 

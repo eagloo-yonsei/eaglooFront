@@ -62,6 +62,7 @@ export default function Login() {
                     <EmailBox
                         ref={emailInputRef}
                         type="text"
+                        spellCheck="false"
                         value={emailInput}
                         placeholder="id"
                         onChange={(e) => setEmailInput(e.target.value)}

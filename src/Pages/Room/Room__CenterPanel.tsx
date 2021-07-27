@@ -57,10 +57,10 @@ function ControlButtons({
     return (
         <ControlButtonContainer>
             <RoomInfo>
-                <RoomTitle>
+                <RoomName>
                     <FontAwesomeIcon icon={faUnlock} />
                     {`  공용 스터디룸 ${roomNo}`}
-                </RoomTitle>
+                </RoomName>
                 <RoomPeople>
                     <FontAwesomeIcon icon={faUserAlt} />
                     {`  ${peersState.length + 1}/16`}
@@ -120,7 +120,7 @@ const RoomInfo = styled.div`
     font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 
-const RoomTitle = styled.div`
+const RoomName = styled.div`
     font-size: 30px;
     color: white;
 `;

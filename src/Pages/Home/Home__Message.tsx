@@ -52,7 +52,6 @@ const MainMessageLine12 = styled.div`
     font-family: ${(props) => props.theme.plainBoldTextFont};
     line-height: 50px;
     letter-spacing: 1px;
-    z-index: 10;
 `;
 
 const MainMessageLine3 = styled.div`
@@ -61,7 +60,6 @@ const MainMessageLine3 = styled.div`
     letter-spacing: 0px;
     margin-top: 15px;
     margin-bottom: 35px;
-    z-index: 10;
 `;
 
 const SubMessage = styled.div`
@@ -69,5 +67,4 @@ const SubMessage = styled.div`
     font-family: ${(props) => props.theme.plainLightTextFont};
     line-height: 34px;
     margin-bottom: 40px;
-    z-index: 10;
 `;

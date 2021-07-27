@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import {
+    ModalBackGround,
     SlideUpPageContainer,
     StylelessLink,
 } from "../../Styles/StyledComponents";
@@ -56,7 +57,7 @@ export default function EntryContainer() {
 
     return (
         <>
-            <OuterContainer
+            <ModalBackGround
                 onClick={() => {
                     stopSelfStream();
                     history.push("/list");
@@ -95,24 +96,6 @@ function CloseIcon({ stopSelfStream }: PanelButtonProp) {
         </EntryClose>
     );
 }
-
-export const FadeIn = keyframes`
-    from{
-        opacity: 0
-    }
-    to {
-        opacity: 0.5
-    }
-`;
-
-const OuterContainer = styled.div`
-    animation: ${FadeIn} 0.5s ease-out;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: ${(props) => props.theme.loginMessageGray};
-    opacity: 0.5;
-`;
 
 const Container = styled(SlideUpPageContainer)`
     display: flex;

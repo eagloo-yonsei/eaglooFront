@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import { StylelessLink } from "../../Styles/StyledComponents";
 
 export default function HomeEntry() {
@@ -26,6 +27,7 @@ function PublicEntry() {
 }
 
 function PrivateEntry() {
+    const { setShowCustomRoomModal } = useAppContext();
     return (
         <PrivateDiv>
             <EntryTitle>개인 스터디룸</EntryTitle>
@@ -33,15 +35,18 @@ function PrivateEntry() {
             <EntryMessage>
                 같은 목적을 가진 사람들과 함께 공부해 보세요!
             </EntryMessage>
-            <StylelessLink to={"/"}>
-                <PrivateButton>만들기/찾기</PrivateButton>
-            </StylelessLink>
+            <PrivateButton
+                onClick={() => {
+                    setShowCustomRoomModal(true);
+                }}
+            >
+                만들기/찾기
+            </PrivateButton>
         </PrivateDiv>
     );
 }
 
 const Container = styled.div`
-    z-index: 10;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -100,4 +105,7 @@ const PublicButton = styled(EntryButton)`
 const PrivateButton = styled(EntryButton)`
     color: white;
     background: ${(props) => props.theme.mainBlue};
+    :hover {
+        cursor: pointer;
+    }
 `;

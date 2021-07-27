@@ -10,6 +10,8 @@ export default {
     loginButtonYellow: "#AD882E",
     entryMainBlue: "#3653FF",
     entryLightBlue: "#9AA9FF",
+    customRoomModalLightBlue: "#547FDD",
+    customRoomModalInputBoxBlue: "#B7C8ED",
     mainPageGradient: "linear-gradient(50deg, #0058d8, #1d74ff, #0058d8)",
     blueGradient: "linear-gradient(50deg, #1A4CD2, #282D99)",
     orangeGradient: "linear-gradient(50deg, #F7931E, #F15A24)",
