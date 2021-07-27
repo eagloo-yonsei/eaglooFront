@@ -17,6 +17,8 @@ interface AppContext {
     setUserName: (userName: string) => void;
     isAdmin: boolean;
     setIsAdmin: (status: boolean) => void;
+    showCustomRoomModal: boolean;
+    setShowCustomRoomModal: (status: boolean) => void;
     userStream?: RefObject<HTMLVideoElement>;
     getUserStream: () => boolean;
     token?: string;
@@ -28,6 +30,8 @@ const InitialAppContext: AppContext = {
     setUserName: () => {},
     isAdmin: false,
     setIsAdmin: () => {},
+    showCustomRoomModal: false,
+    setShowCustomRoomModal: () => {},
     getUserStream: () => false,
 };
 
@@ -39,6 +43,8 @@ export default function AppProvider({ children }: AppProp) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>("");
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const [showCustomRoomModal, setShowCustomRoomModal] =
+        useState<boolean>(false);
 
     function getUserStream() {
         // let result: boolean = false;
@@ -64,6 +70,8 @@ export default function AppProvider({ children }: AppProp) {
         setUserName,
         isAdmin,
         setIsAdmin,
+        showCustomRoomModal,
+        setShowCustomRoomModal,
         userStream,
         getUserStream,
     };
