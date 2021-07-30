@@ -2,32 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import CustomRoomModalRoomButton from "./CustomRoomModal__RoomButton";
 import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-
-const sampleRooms = [
-    {
-        roomName: "샘플 방",
-        roomDescription: "샘플로 만들어 본 방",
-        roomId: "1",
-    },
-    {
-        roomName: "샘플 방",
-        roomDescription: "예시로 만들어 본 방",
-        roomId: "2",
-    },
-    {
-        roomName: "샘플 방",
-        roomDescription: "임시로 만들어 본 방",
-        roomId: "3",
-    },
-    { roomName: "샘플 방", roomDescription: "그냥 만들어 본 방", roomId: "4" },
-    {
-        roomName: "샘플 방",
-        roomDescription: "하나쯤 더 만들어 본 방",
-        roomId: "5",
-    },
-];
 
 export default function CustomRoomModalList() {
     return (
@@ -63,20 +40,32 @@ function RoomListHeader() {
 }
 
 function RoomList() {
-    return (
-        <RoomListContainer>
-            {sampleRooms.map((sampleRoom) => {
-                return (
-                    <CustomRoomModalRoomButton
-                        roomName={sampleRoom.roomName}
-                        roomDescription={sampleRoom.roomDescription}
-                        roomId={sampleRoom.roomId}
-                        key={sampleRoom.roomDescription}
-                    />
-                );
-            })}
-        </RoomListContainer>
-    );
+    const { customRooms, loadingCustomRooms } = useCustomRoomModalContext();
+    if (loadingCustomRooms) {
+        return (
+            <LoadingMessage>
+                <LoadingIcon>
+                    <CircularProgress color="inherit" size={35} thickness={5} />
+                </LoadingIcon>
+                {`방 정보를 불러오는 중입니다`}
+            </LoadingMessage>
+        );
+    } else {
+        return (
+            <RoomListContainer>
+                {customRooms.map((customRoom) => {
+                    return (
+                        <CustomRoomModalRoomButton
+                            roomName={customRoom.roomName}
+                            roomDescription={customRoom.roomDescription}
+                            roomId={customRoom.id}
+                            key={customRoom.roomDescription}
+                        />
+                    );
+                })}
+            </RoomListContainer>
+        );
+    }
 }
 
 const Container = styled.div`
@@ -120,6 +109,21 @@ const SearchBox = styled.input`
         color: white;
         font-family: ${(props) => props.theme.plainTextFont};
     }
+`;
+
+const LoadingMessage = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: ${(props) => props.theme.entryLightBlue};
+    font-size: 18px;
+`;
+
+const LoadingIcon = styled.div`
+    margin-bottom: 20px;
 `;
 
 const RoomListContainer = styled.div`

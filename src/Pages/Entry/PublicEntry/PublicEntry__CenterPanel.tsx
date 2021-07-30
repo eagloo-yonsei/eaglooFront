@@ -1,6 +1,6 @@
 import React, { RefObject } from "react";
 import styled from "styled-components";
-import { useEntryContext } from "./EntryProvider";
+import { usePublicEntryContext } from "./PublicEntryProvider";
 
 interface EntryPanelProp {
     userStreamRef: RefObject<HTMLVideoElement>;
@@ -15,7 +15,7 @@ interface PanelButtonProp {
     stopSelfStream: () => void;
 }
 
-export default function EntryCenterPanel({
+export default function PublicEntryCenterPanel({
     userStreamRef,
     stopSelfStream,
 }: EntryPanelProp) {
@@ -48,7 +48,8 @@ function ControlButtons({ stopSelfStream }: PanelButtonProp) {
 }
 
 function EnterButton({ stopSelfStream }: PanelButtonProp) {
-    const { roomNo, selectedSeat, checkVacancy, enterRoom } = useEntryContext();
+    const { roomNo, selectedSeat, checkVacancy, enterRoom } =
+        usePublicEntryContext();
 
     return (
         <>

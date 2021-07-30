@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import ListUpperRow from "./List__UpperRow";
-import ListPublic from "./List__Public";
-import ListPrivate from "./List__Private";
+import ListRow from "./List__Row";
+import { RoomType } from "../../Constants";
 import { SlideUpPageContainer } from "../../Styles/StyledComponents";
 
 export default function ListContainer() {
@@ -10,8 +10,8 @@ export default function ListContainer() {
         <Container>
             <ListUpperRow />
             <InnerContainer>
-                <ListPublic />
-                <ListPrivate />
+                <ListRow roomType={RoomType.PUBLIC} />
+                <ListRow roomType={RoomType.CUSTOM} />
             </InnerContainer>
         </Container>
     );

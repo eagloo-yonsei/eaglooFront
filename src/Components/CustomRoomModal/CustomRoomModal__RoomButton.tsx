@@ -6,7 +6,7 @@ import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
 
 interface RoomButtonProp {
     roomName: string;
-    roomDescription: string;
+    roomDescription?: string;
     roomId: string;
 }
 
@@ -28,7 +28,9 @@ export default function CustomRoomModalRoomButton({
             <RoomIcon />
             <RoomContentContainer>
                 <RoomName>{`${roomName}`}</RoomName>
-                <RoomDescription>{`${roomDescription}`}</RoomDescription>
+                <RoomDescription>
+                    {roomDescription ? roomDescription : ""}
+                </RoomDescription>
                 <RoomState>
                     <FontAwesomeIcon icon={faUserAlt} />
                     {`  0/16`}

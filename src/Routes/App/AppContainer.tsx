@@ -10,7 +10,7 @@ import Header from "../../Components/Header";
 import Home from "../../Pages/Home";
 import Login from "../../Pages/Login";
 import List from "../../Pages/List";
-import Entry from "../../Pages/Entry";
+import Entry from "../../Pages/Entry/PublicEntry";
 import Room from "../../Pages/Room";
 import Forum from "../../Pages/Forum";
 import Feedback from "../../Pages/Feedback";
@@ -34,7 +34,8 @@ function UserRouter() {
                 <Router exact path={"/"} component={Home} />
                 <Router path={"/login"} component={Login} />
                 <Router path={"/list"} component={List} />
-                <Router path={"/entry"} component={Entry} />
+                <Router path={"/entry__public"} component={Entry} />
+                <Router path={"/entry__custom"} component={Entry} />
                 <Router path={"/room"} component={Room} />
                 <Router path={"/forum"} component={Forum} />
                 <Router path={"/feedback"} component={Feedback} />

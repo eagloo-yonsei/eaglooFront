@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // TODO (bug)
 // Buttons 대신 주석 처리한 부분으로 하면 showList state 변경이 안 됨
@@ -20,36 +21,45 @@ export default function CustomRoomModalControlButtons() {
 }
 
 function UpperButtons() {
-    const { showList, setShowList, setSelectedRoomId } =
+    const { showList, setShowList, setSelectedRoomId, creatingRoom } =
         useCustomRoomModalContext();
-    return (
-        <>
-            {showList ? (
-                <>
-                    <SelectedButton>검색하기</SelectedButton>
-                    <UnSelectedButton
-                        onClick={() => {
-                            setShowList(false);
-                            setSelectedRoomId("");
-                        }}
-                    >
-                        방만들기
-                    </UnSelectedButton>
-                </>
-            ) : (
-                <>
-                    <UnSelectedButton
-                        onClick={() => {
-                            setShowList(true);
-                        }}
-                    >
-                        검색하기
-                    </UnSelectedButton>
-                    <SelectedButton>방만들기</SelectedButton>
-                </>
-            )}
-        </>
-    );
+    if (creatingRoom) {
+        return (
+            <>
+                <UnSelectedButton>검색하기</UnSelectedButton>
+                <SelectedButton>방만들기</SelectedButton>
+            </>
+        );
+    } else {
+        return (
+            <>
+                {showList ? (
+                    <>
+                        <SelectedButton>검색하기</SelectedButton>
+                        <UnSelectedButton
+                            onClick={() => {
+                                setShowList(false);
+                                setSelectedRoomId("");
+                            }}
+                        >
+                            방만들기
+                        </UnSelectedButton>
+                    </>
+                ) : (
+                    <>
+                        <UnSelectedButton
+                            onClick={() => {
+                                setShowList(true);
+                            }}
+                        >
+                            검색하기
+                        </UnSelectedButton>
+                        <SelectedButton>방만들기</SelectedButton>
+                    </>
+                )}
+            </>
+        );
+    }
 }
 
 // function ShowListButton() {
@@ -85,8 +95,12 @@ function UpperButtons() {
 // }
 
 function EnterButton() {
-    const { showList } = useCustomRoomModalContext();
-    return <>{showList ? <JoinButton /> : <CreateButton />}</>;
+    const { showList, creatingRoom } = useCustomRoomModalContext();
+    if (creatingRoom) {
+        return <CreatingProgressButton />;
+    } else {
+        return <>{showList ? <JoinButton /> : <CreateButton />}</>;
+    }
 }
 
 function JoinButton() {
@@ -99,8 +113,13 @@ function JoinButton() {
 }
 
 function CreateButton() {
-    const { roomNameInput, usePassword, passwordInput, passwordConfirmInput } =
-        useCustomRoomModalContext();
+    const {
+        roomNameInput,
+        usePassword,
+        passwordInput,
+        passwordConfirmInput,
+        createRoomAndPushToEntry,
+    } = useCustomRoomModalContext();
     if (
         roomNameInput !== "" &&
         (!usePassword ||
@@ -108,10 +127,26 @@ function CreateButton() {
                 passwordInput.length === 4 &&
                 passwordInput === passwordConfirmInput))
     ) {
-        return <ReadyButton>시작하기</ReadyButton>;
+        return (
+            <ReadyButton
+                onClick={() => {
+                    createRoomAndPushToEntry();
+                }}
+            >
+                시작하기
+            </ReadyButton>
+        );
     } else {
         return <UnReadyButton>시작하기</UnReadyButton>;
     }
+}
+
+function CreatingProgressButton() {
+    return (
+        <CreatingButton>
+            <CircularProgress color="inherit" size={30} thickness={5} />
+        </CreatingButton>
+    );
 }
 
 const Container = styled.div`
@@ -168,5 +203,10 @@ const ReadyButton = styled(ControlButton)`
 
 const UnReadyButton = styled(ControlButton)`
     background-color: ${(props) => props.theme.loginMessageGray};
+    color: white;
+`;
+
+const CreatingButton = styled(ControlButton)`
+    background: ${(props) => props.theme.orangeGradient};
     color: white;
 `;

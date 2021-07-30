@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { useEntryContext } from "./EntryProvider";
+import { usePublicEntryContext } from "./PublicEntryProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-export default function EntryHeader() {
-    const { roomNo, occupiedSeatNums } = useEntryContext();
+export default function PublicEntryHeader() {
+    const { roomNo, occupiedSeatNums } = usePublicEntryContext();
 
     return (
         <Container>
