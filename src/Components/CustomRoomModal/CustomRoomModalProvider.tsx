@@ -19,6 +19,7 @@ interface CustomRoomModalContext {
     selectedRoomId: string;
     setSelectedRoomId: (input: string) => void;
     selectRoom: (input: string) => void;
+    joinRoom: (roomId: string) => void;
     roomNameInput: string;
     setRoomNameInput: (input: string) => void;
     roomDescriptionInput: string;
@@ -47,6 +48,7 @@ const InitialCustomRoomModalContext: CustomRoomModalContext = {
     selectedRoomId: "",
     setSelectedRoomId: () => {},
     selectRoom: () => {},
+    joinRoom: () => {},
     roomNameInput: "",
     setRoomNameInput: () => {},
     roomDescriptionInput: "",
@@ -73,7 +75,7 @@ export const useCustomRoomModalContext = () =>
 
 export default function CustomRoomModalProvider({ children }: AppProp) {
     const history = useHistory();
-    const { userId } = useAppContext();
+    const { userId, setShowCustomRoomModal } = useAppContext();
     const [showList, setShowList] = useState<boolean>(true);
     const [searchingRoomNameInput, setsearchingRoomNameInput] =
         useState<string>("");
@@ -117,6 +119,16 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
         }
     }
 
+    function joinRoom(roomId: string) {
+        setShowCustomRoomModal(false);
+        history.push({
+            pathname: "/entry__custom",
+            state: {
+                roomId: roomId,
+            },
+        });
+    }
+
     function toggleUsePassword() {
         if (usePassword) {
             setUsePassword(false);
@@ -135,6 +147,7 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
 
     interface ResponseProp {
         success: boolean;
+        roomId: string;
         errorMessage?: string;
     }
 
@@ -154,7 +167,9 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
                 if (response.data.success) {
                     history.push({
                         pathname: "/entry__custom",
-                        state: {},
+                        state: {
+                            roomId: response.data.roomId,
+                        },
                     });
                 } else {
                     setCreatingRoom(false);
@@ -182,6 +197,7 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
         selectedRoomId,
         setSelectedRoomId,
         selectRoom,
+        joinRoom,
         roomNameInput,
         setRoomNameInput,
         roomDescriptionInput,

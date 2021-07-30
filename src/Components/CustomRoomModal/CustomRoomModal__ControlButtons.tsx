@@ -104,9 +104,17 @@ function EnterButton() {
 }
 
 function JoinButton() {
-    const { selectedRoomId } = useCustomRoomModalContext();
-    if (selectedRoomId) {
-        return <ReadyButton onClick={() => {}}>참여하기</ReadyButton>;
+    const { joinRoom, selectedRoomId } = useCustomRoomModalContext();
+    if (!!selectedRoomId) {
+        return (
+            <ReadyButton
+                onClick={() => {
+                    joinRoom(selectedRoomId);
+                }}
+            >
+                참여하기
+            </ReadyButton>
+        );
     } else {
         return <UnReadyButton>참여하기</UnReadyButton>;
     }

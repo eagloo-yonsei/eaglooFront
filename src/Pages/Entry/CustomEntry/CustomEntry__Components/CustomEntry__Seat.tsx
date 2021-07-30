@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { usePublicEntryContext } from "./PublicEntryProvider";
+import { useCustomEntryContext } from "../CustomEntryProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -13,8 +13,8 @@ interface MiddleWareProp {
     seatNo: number;
 }
 
-export default function PublicEntrySeat({ seatNo }: EntrySeatProp) {
-    const { occupiedSeatNums } = usePublicEntryContext();
+export default function CustomEntrySeat({ seatNo }: EntrySeatProp) {
+    const { occupiedSeatNums } = useCustomEntryContext();
 
     return <MiddleWare occupiedSeatNums={occupiedSeatNums} seatNo={seatNo} />;
 }
@@ -28,7 +28,7 @@ function MiddleWare({ occupiedSeatNums, seatNo }: MiddleWareProp) {
 }
 
 function SelectableSeat({ seatNo }: EntrySeatProp) {
-    const { selectedSeatNo, selectSeat } = usePublicEntryContext();
+    const { selectedSeatNo, selectSeat } = useCustomEntryContext();
     return (
         <Container
             onClick={() => {
@@ -97,7 +97,7 @@ const SeatContainer = styled.div`
     align-items: center;
     width: 100%;
     height: 100%;
-    border: 4.5px solid ${(props) => props.theme.entryLightBlue};
+    border: 4.5px solid ${(props) => props.theme.listLightOrange};
     border-radius: 8px;
     font-family: ${(props) => props.theme.plainBoldTextFont};
     overflow: hidden;
@@ -105,14 +105,14 @@ const SeatContainer = styled.div`
 
 const EmptyContainer = styled(SeatContainer)`
     background-color: none;
-    color: ${(props) => props.theme.entryLightBlue};
+    color: ${(props) => props.theme.listLightOrange};
     :hover {
         cursor: pointer;
     }
 `;
 
 const SelectedContainer = styled(SeatContainer)`
-    background-color: ${(props) => props.theme.entryLightBlue};
+    background-color: ${(props) => props.theme.listLightOrange};
     :hover {
         cursor: pointer;
     }

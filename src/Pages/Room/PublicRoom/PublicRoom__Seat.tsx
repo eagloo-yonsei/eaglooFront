@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useRoomContext } from "./RoomProvider";
+import { usePublicRoomContext } from "./PublicRoomProvider";
 import Peer from "simple-peer";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface PeerStateProp {
     peer: Peer.Instance;
@@ -23,8 +24,8 @@ interface EmptySeatProp {
     seatNo: number;
 }
 
-export default function RoomSeat({ peersState, seatNo }: SeatProp) {
-    const { userSeatNo } = useRoomContext();
+export default function PublicRoomSeat({ peersState, seatNo }: SeatProp) {
+    const { userSeatNo } = usePublicRoomContext();
 
     return (
         <MiddleWare
@@ -63,11 +64,14 @@ function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
 
 function FilledSeat({ peerState }: PeerStateProp) {
     const peerStream = useRef<HTMLVideoElement>();
+    const [gotStream, setGotStream] = useState<boolean>(false);
     useEffect(() => {
         peerState.peer.on("stream", (stream: MediaStream) => {
+            setGotStream(true);
             peerStream.current!.srcObject = stream;
         });
         peerState.peer.on("close", () => {
+            setGotStream(false);
             document.getElementById(`container-${peerState.seatNo}`)?.remove();
         });
         return () => {
@@ -75,7 +79,22 @@ function FilledSeat({ peerState }: PeerStateProp) {
             // ref.current?.remove();
         };
     }, []);
-    return <PeerCam ref={peerStream} playsInline autoPlay />;
+    if (gotStream) {
+        return <PeerCam ref={peerStream} playsInline autoPlay />;
+    } else {
+        return <GettingStream />;
+    }
+}
+
+function GettingStream() {
+    return (
+        <GettingStreamContainer>
+            <GettingStreamIcon>
+                <CircularProgress color="inherit" size={30} thickness={5} />
+            </GettingStreamIcon>
+            {`영상을 가져오는 중입니다`}
+        </GettingStreamContainer>
+    );
 }
 
 function SelfSeat() {
@@ -93,14 +112,33 @@ const PeerCam = styled.video`
     max-height: 100%;
 `;
 
+const GettingStreamContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 12px;
+    font-family: ${(props) => props.theme.plainTextFont};
+    padding-top: 15px;
+`;
+
+const GettingStreamIcon = styled.div`
+    margin-bottom: 25px;
+`;
+
 const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     width: 96%;
     height: 94%;
-    border-radius: 15px;
     font-family: ${(props) => props.theme.plainTextFont};
+    background-color: black;
+    border-radius: 15px;
+    overflow: hidden;
 `;
 
 const SelfContainer = styled(Container)`
@@ -114,5 +152,4 @@ const SelfContainer = styled(Container)`
 const EmptyContainer = styled(Container)`
     font-size: 15px;
     color: white;
-    background-color: black;
 `;

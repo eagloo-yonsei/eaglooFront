@@ -11,20 +11,22 @@ interface LocationStateProp {
     seatNo: number;
 }
 
-interface RoomProp {
+interface PublicRoomProp {
     roomNo: number;
     userSeatNo: number;
 }
 
-const InitialRoomContext: RoomProp = {
+const InitialPublicRoomContext: PublicRoomProp = {
     roomNo: 0,
     userSeatNo: 0,
 };
 
-const RoomContext = createContext<RoomProp>(InitialRoomContext);
-export const useRoomContext = () => useContext(RoomContext);
+const PublicRoomContext = createContext<PublicRoomProp>(
+    InitialPublicRoomContext
+);
+export const usePublicRoomContext = () => useContext(PublicRoomContext);
 
-export default function RoomProvider({ children }: AppProp) {
+export default function PublicRoomProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomNo, setRoomNo] = useState<number>(0);
@@ -43,11 +45,11 @@ export default function RoomProvider({ children }: AppProp) {
         return () => {};
     }, []);
 
-    const roomContext = { roomNo, userSeatNo };
+    const publicRoomContext = { roomNo, userSeatNo };
 
     return (
-        <RoomContext.Provider value={roomContext}>
+        <PublicRoomContext.Provider value={publicRoomContext}>
             {children}
-        </RoomContext.Provider>
+        </PublicRoomContext.Provider>
     );
 }
