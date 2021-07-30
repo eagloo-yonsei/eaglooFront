@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useEntryContext } from "./EntryProvider";
+import { usePublicEntryContext } from "./PublicEntryProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -13,8 +13,8 @@ interface MiddleWareProp {
     seatNo: number;
 }
 
-export default function EntrySeat({ seatNo }: EntrySeatProp) {
-    const { occupiedSeatNums } = useEntryContext();
+export default function PublicEntrySeat({ seatNo }: EntrySeatProp) {
+    const { occupiedSeatNums } = usePublicEntryContext();
 
     return <MiddleWare occupiedSeatNums={occupiedSeatNums} seatNo={seatNo} />;
 }
@@ -28,7 +28,7 @@ function MiddleWare({ occupiedSeatNums, seatNo }: MiddleWareProp) {
 }
 
 function SelectableSeat({ seatNo }: EntrySeatProp) {
-    const { selectedSeat, selectSeat } = useEntryContext();
+    const { selectedSeat, selectSeat } = usePublicEntryContext();
     return (
         <Container
             onClick={() => {

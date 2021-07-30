@@ -2,8 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { Room, API_ENDPOINT } from "../../Constants";
-import { toastErrorMessage } from "../../Styles/StyledComponents";
+import { Room, API_ENDPOINT } from "../../../Constants";
+import { toastErrorMessage } from "../../../Styles/StyledComponents";
 
 interface AppProp {
     children: JSX.Element;
@@ -13,7 +13,7 @@ interface LocationStateProp {
     roomNo: number;
 }
 
-interface EntryProp {
+interface PublicEntryProp {
     occupiedSeatNums: number[];
     roomNo: number;
     selectedSeat: number;
@@ -22,7 +22,7 @@ interface EntryProp {
     enterRoom: (roomNo: number, seatNo: number) => void;
 }
 
-const InitialEntryContext: EntryProp = {
+const InitialPublicEntryContext: PublicEntryProp = {
     occupiedSeatNums: [],
     roomNo: 0,
     selectedSeat: 0,
@@ -33,10 +33,12 @@ const InitialEntryContext: EntryProp = {
     enterRoom: () => {},
 };
 
-const EntryContext = createContext<EntryProp>(InitialEntryContext);
-export const useEntryContext = () => useContext(EntryContext);
+const PublicEntryContext = createContext<PublicEntryProp>(
+    InitialPublicEntryContext
+);
+export const usePublicEntryContext = () => useContext(PublicEntryContext);
 
-export default function EntryProvider({ children }: AppProp) {
+export default function PublicEntryProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomNo, setRoomNo] = useState<number>(0);
@@ -105,7 +107,7 @@ export default function EntryProvider({ children }: AppProp) {
         });
     }
 
-    const entryContext = {
+    const publicEntryContext = {
         occupiedSeatNums,
         roomNo,
         selectedSeat,
@@ -115,8 +117,8 @@ export default function EntryProvider({ children }: AppProp) {
     };
 
     return (
-        <EntryContext.Provider value={entryContext}>
+        <PublicEntryContext.Provider value={publicEntryContext}>
             {children}
-        </EntryContext.Provider>
+        </PublicEntryContext.Provider>
     );
 }

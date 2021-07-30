@@ -6,11 +6,11 @@ import {
     ModalBackGround,
     SlideUpPageContainer,
     StylelessLink,
-} from "../../Styles/StyledComponents";
-import EntryHeader from "./Entry__Header";
-import EntryOuterRow from "./Entry__OuterRow";
-import EntryOuterColumn from "./Entry__OuterColumn";
-import EntryCenterPanel from "./Entry__CenterPanel";
+} from "../../../Styles/StyledComponents";
+import PublicEntryHeader from "./PublicEntry__Header";
+import PublicEntryOuterRow from "./PublicEntry__OuterRow";
+import PublicEntryOuterColumn from "./PublicEntry__OuterColumn";
+import PublicEntryCenterPanel from "./PublicEntry__CenterPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
@@ -22,7 +22,7 @@ interface PanelButtonProp {
     stopSelfStream: () => void;
 }
 
-export default function EntryContainer() {
+export default function PublicEntryContainer() {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const userStreamRef = useRef<HTMLVideoElement>(null);
@@ -64,18 +64,18 @@ export default function EntryContainer() {
                 }}
             />
             <Container>
-                <EntryHeader />
+                <PublicEntryHeader />
                 <SubContiner>
-                    <EntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
+                    <PublicEntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
                     <EntryInnerRow>
-                        <EntryOuterColumn seatNums={[7, 9]} />
-                        <EntryCenterPanel
+                        <PublicEntryOuterColumn seatNums={[7, 9]} />
+                        <PublicEntryCenterPanel
                             userStreamRef={userStreamRef}
                             stopSelfStream={stopSelfStream}
                         />
-                        <EntryOuterColumn seatNums={[8, 10]} />
+                        <PublicEntryOuterColumn seatNums={[8, 10]} />
                     </EntryInnerRow>
-                    <EntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />
+                    <PublicEntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />
                 </SubContiner>
                 <CloseIcon stopSelfStream={stopSelfStream} />
             </Container>

@@ -5,41 +5,25 @@ import { StylelessLink } from "../../Styles/StyledComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-interface LoggedInProp {
-    userName: string | undefined;
-    setIsLoggedIn: (status: boolean) => void;
-    setUserName: (userName: string | undefined) => void;
-}
-
 export default function HeaderAuth() {
-    const { isLoggedIn, setIsLoggedIn, userName, setUserName } =
-        useAppContext();
-    return (
-        <>
-            {isLoggedIn ? (
-                <LoggedIn
-                    userName={userName}
-                    setIsLoggedIn={setIsLoggedIn}
-                    setUserName={setUserName}
-                />
-            ) : (
-                <LoggedOut />
-            )}
-        </>
-    );
+    const { isLoggedIn } = useAppContext();
+    return <>{isLoggedIn ? <LoggedIn /> : <LoggedOut />}</>;
 }
 
-function LoggedIn({ userName, setIsLoggedIn, setUserName }: LoggedInProp) {
+function LoggedIn() {
+    const { setIsLoggedIn, userEmail, setUserEmail, setUserId } =
+        useAppContext();
     return (
         <Container>
             <AuthMessage>
-                {`${userName} 님 `}
+                {`${userEmail} 님 `}
                 <FontAwesomeIcon icon={faUserAlt} />
             </AuthMessage>
             <LogInOutButton
                 onClick={() => {
                     setIsLoggedIn(false);
-                    setUserName(undefined);
+                    setUserEmail(undefined);
+                    setUserId(undefined);
                 }}
             >
                 로그아웃

@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { useAppContext } from "../../Routes/App/AppProvider";
 import axios from "axios";
+import { SHA3 } from "sha3";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import { API_ENDPOINT } from "../../Constants";
 import { FullPageContainer } from "../../Styles/StyledComponents";
 import { StylelessButton, StylelessLink } from "../../Styles/StyledComponents";
@@ -13,12 +14,12 @@ import {
 import CircularProgress from "@material-ui/core/CircularProgress";
 import loginIcon from "../../Resources/Img/login-icon.png";
 
-var hash = require("object-hash");
+const hashedPassword = new SHA3(512);
 
 export default function Login() {
     const history = useHistory();
     const emailInputRef = useRef<HTMLInputElement | undefined>();
-    const { setIsLoggedIn, setUserName } = useAppContext();
+    const { setIsLoggedIn, setUserEmail, setUserId } = useAppContext();
     const [signingIn, setSigningIn] = useState(false);
     const [emailInput, setEmailInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
@@ -30,19 +31,19 @@ export default function Login() {
 
     async function handleLogin() {
         setSigningIn(true);
-        axios
-            .get(
-                `${API_ENDPOINT}/api/user/${emailInput}/${hash(passwordInput)}`
-            )
+        await axios
+            .get(`${API_ENDPOINT}/api/user/${emailInput}/${passwordInput}`)
             .then(function ({ data }) {
+                console.log(data);
                 if (data.success) {
                     setIsLoggedIn(true);
-                    setUserName(emailInput);
+                    setUserEmail(emailInput);
+                    setUserId(data.user?.id);
                     toastLoginSuccessMessage(emailInput);
                     history.push("/");
                 } else {
                     setSigningIn(false);
-                    toastErrorMessage(data.message);
+                    toastErrorMessage(data.errorMessage);
                 }
             })
             .catch((err) => {
@@ -72,13 +73,17 @@ export default function Login() {
                             }
                         }}
                     />
-                    <YonseiMailPlaceholder>@yonsei.ac.kr</YonseiMailPlaceholder>
+                    <YonseiMailPlaceholder>{`@yonsei.ac.kr`}</YonseiMailPlaceholder>
                 </EmailBoxContainer>
                 <PasswordBox
                     type="password"
                     value={passwordInput}
                     placeholder="password"
-                    onChange={(e) => setPasswordInput(e.target.value)}
+                    onChange={(e) => {
+                        setPasswordInput(e.target.value);
+                        hashedPassword.reset();
+                        hashedPassword.update(passwordInput);
+                    }}
                     onKeyPress={(e) => {
                         if (e.key === "Enter") {
                             handleLogin();

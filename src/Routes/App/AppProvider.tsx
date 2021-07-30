@@ -13,8 +13,10 @@ interface AppProp {
 interface AppContext {
     isLoggedIn: boolean;
     setIsLoggedIn: (status: boolean) => void;
-    userName?: string | undefined;
-    setUserName: (userName: string) => void;
+    userEmail: string | undefined;
+    setUserEmail: (userName: string | undefined) => void;
+    userId: string | undefined;
+    setUserId: (userName: string | undefined) => void;
     isAdmin: boolean;
     setIsAdmin: (status: boolean) => void;
     showCustomRoomModal: boolean;
@@ -27,7 +29,10 @@ interface AppContext {
 const InitialAppContext: AppContext = {
     isLoggedIn: false,
     setIsLoggedIn: () => {},
-    setUserName: () => {},
+    userEmail: undefined,
+    setUserEmail: () => {},
+    userId: undefined,
+    setUserId: () => {},
     isAdmin: false,
     setIsAdmin: () => {},
     showCustomRoomModal: false,
@@ -41,7 +46,8 @@ export const useAppContext = () => useContext(AppContext);
 export default function AppProvider({ children }: AppProp) {
     const userStream = useRef<HTMLVideoElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userName, setUserName] = useState<string>("");
+    const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
+    const [userId, setUserId] = useState<string | undefined>(undefined);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
@@ -66,8 +72,10 @@ export default function AppProvider({ children }: AppProp) {
     const appContext = {
         isLoggedIn,
         setIsLoggedIn,
-        userName,
-        setUserName,
+        userEmail,
+        setUserEmail,
+        userId,
+        setUserId,
         isAdmin,
         setIsAdmin,
         showCustomRoomModal,

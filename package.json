@@ -36,12 +36,13 @@
         "@types/simple-peer": "^9.11.1",
         "axios": "^0.21.1",
         "cross-env": "^7.0.3",
-        "object-hash": "^2.2.0",
         "parcel-bundler": "^1.12.5",
         "react-hot-loader": "^4.13.0",
         "react-query": "^3.19.0",
         "rimraf": "^3.0.2",
         "serve": "^12.0.0",
+        "sha3": "^2.1.4",
+        "ts-node": "^10.1.0",
         "typescript": "^4.3.5"
     }
 }
