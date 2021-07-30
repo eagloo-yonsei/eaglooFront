@@ -2,13 +2,13 @@ import React, { useRef, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import styled from "styled-components";
-import { FullScreenContainer } from "../../Styles/StyledComponents";
-import RoomOuterRow from "./Room__OuterRow";
-import RoomOuterColumn from "./Room__OuterColumn";
-import RoomCenterPanel from "./Room__CenterPanel";
+import PublicRoomOuterRow from "./PublicRoom__OuterRow";
+import PublicRoomOuterColumn from "./PublicRoom__OuterColumn";
+import PublicRoomControlPanel from "./PublicRoom__ControlPanel";
 import io, { Socket } from "socket.io-client";
 import Peer from "simple-peer";
-import { Channel, API_ENDPOINT } from "../../Constants";
+import { FullScreenContainer } from "../../../Styles/StyledComponents";
+import { Channel, API_ENDPOINT } from "../../../Constants";
 
 interface LocationStateProp {
     roomNo: number;
@@ -32,7 +32,7 @@ interface OtherUserProp {
     userName?: string;
 }
 
-export default function RoomContainer() {
+export default function PublicRoomContainer() {
     const location = useLocation<Location | unknown>();
     const history = useHistory();
     const state = location.state as LocationStateProp;
@@ -49,7 +49,7 @@ export default function RoomContainer() {
             history.push("/list");
         }
 
-        socketRef.current = io(API_ENDPOINT);
+        socketRef.current = io(`${API_ENDPOINT}/publicroom`);
         navigator.mediaDevices
             .getUserMedia({
                 video: true,
@@ -227,28 +227,32 @@ export default function RoomContainer() {
 
     return (
         <Container>
-            <RoomOuterRow
+            <PublicRoomOuterRow
                 peersState={peersState}
                 seatNums={[1, 2, 3, 4, 5, 6]}
             />
             <RoomInnerRow>
-                <RoomOuterColumn peersState={peersState} seatNums={[7, 9]} />
-                <RoomCenterPanel
+                <PublicRoomOuterColumn
+                    peersState={peersState}
+                    seatNums={[7, 9]}
+                />
+                <PublicRoomControlPanel
                     userStreamRef={userStreamRef}
                     peersState={peersState}
                     stopSelfStreamAndExit={stopSelfStreamAndExit}
                 />
-                <RoomOuterColumn peersState={peersState} seatNums={[8, 10]} />
+                <PublicRoomOuterColumn
+                    peersState={peersState}
+                    seatNums={[8, 10]}
+                />
             </RoomInnerRow>
-            <RoomOuterRow
+            <PublicRoomOuterRow
                 peersState={peersState}
                 seatNums={[11, 12, 13, 14, 15, 16]}
             />
         </Container>
     );
 }
-
-const Video = styled.video``;
 
 const Container = styled(FullScreenContainer)`
     display: flex;

@@ -12,11 +12,11 @@ export interface Room {
 export interface CustomRoom {
     id: string;
     roomName: string;
-    roomDescription?: string;
+    roomDescription: string;
     ownerId: string;
     openToPublic: boolean;
     usePassword: boolean;
-    password?: string;
+    password: string;
     enableMic: boolean;
     seats: Seat[];
 }

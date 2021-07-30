@@ -15,7 +15,7 @@ interface PanelButtonProp {
     stopSelfStream: () => void;
 }
 
-export default function PublicEntryCenterPanel({
+export default function PublicEntryControlPanel({
     userStreamRef,
     stopSelfStream,
 }: EntryPanelProp) {
@@ -48,19 +48,19 @@ function ControlButtons({ stopSelfStream }: PanelButtonProp) {
 }
 
 function EnterButton({ stopSelfStream }: PanelButtonProp) {
-    const { roomNo, selectedSeat, checkVacancy, enterRoom } =
+    const { roomNo, selectedSeatNo, checkVacancy, enterRoom } =
         usePublicEntryContext();
 
     return (
         <>
-            {selectedSeat === 0 ? (
+            {selectedSeatNo === 0 ? (
                 <EnterButton__Disable>참여하기</EnterButton__Disable>
             ) : (
                 <EnterButton__Enable
                     onClick={async function () {
-                        if (await checkVacancy(roomNo, selectedSeat)) {
+                        if (await checkVacancy(roomNo, selectedSeatNo)) {
                             stopSelfStream();
-                            enterRoom(roomNo, selectedSeat);
+                            enterRoom(roomNo, selectedSeatNo);
                         }
                     }}
                 >

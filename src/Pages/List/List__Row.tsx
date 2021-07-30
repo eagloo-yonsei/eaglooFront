@@ -63,7 +63,7 @@ function RoomButtonRow({ roomType }: RoomTypeProp) {
                         return (
                             <PublicRoomButton
                                 room={publicRoom}
-                                key={`room${publicRoom.roomNo}_button`}
+                                key={`publicRoom_${publicRoom.roomNo}_button`}
                             />
                         );
                     })}
@@ -82,7 +82,7 @@ function RoomButtonRow({ roomType }: RoomTypeProp) {
                         return (
                             <CustomRoomButton
                                 room={customRoom}
-                                key={`room${customRoom.roomName}_button`}
+                                key={`customRoom_${customRoom.id}_button`}
                             />
                         );
                     })}
@@ -133,8 +133,7 @@ function CustomRoomButton({ room }: CustomRoomButtonProp) {
     return (
         <RoomButtonContainer
             onClick={() => {
-                // TODO
-                pushToCustomRoomEntry();
+                pushToCustomRoomEntry(room.id);
             }}
         >
             <RoomButtonIcon />

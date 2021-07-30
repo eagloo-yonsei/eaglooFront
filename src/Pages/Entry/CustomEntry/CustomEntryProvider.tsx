@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { Room, API_ENDPOINT } from "../../../Constants";
+import { CustomRoom, API_ENDPOINT } from "../../../Constants";
 import { toastErrorMessage } from "../../../Styles/StyledComponents";
 
 interface AppProp {
@@ -10,21 +10,31 @@ interface AppProp {
 }
 
 interface LocationStateProp {
-    roomNo: number;
+    roomId: string;
 }
 
-interface PublicEntryProp {
+interface CustomEntryProp {
     occupiedSeatNums: number[];
-    roomNo: number;
+    roomInfo: CustomRoom;
     selectedSeatNo: number;
     selectSeat: (seatNo: number) => void;
-    checkVacancy: (roomNo: number, seatNo: number) => Promise<boolean>;
-    enterRoom: (roomNo: number, seatNo: number) => void;
+    checkVacancy: (roomId: string, seatNo: number) => Promise<boolean>;
+    enterRoom: (roomId: string, seatNo: number) => void;
 }
 
-const InitialPublicEntryContext: PublicEntryProp = {
+const InitialCustomEntryContext: CustomEntryProp = {
     occupiedSeatNums: [],
-    roomNo: 0,
+    roomInfo: {
+        id: "",
+        roomName: "",
+        roomDescription: "",
+        ownerId: "",
+        openToPublic: true,
+        usePassword: false,
+        password: "",
+        enableMic: false,
+        seats: [],
+    },
     selectedSeatNo: 0,
     selectSeat: () => {},
     checkVacancy: () => {
@@ -33,40 +43,49 @@ const InitialPublicEntryContext: PublicEntryProp = {
     enterRoom: () => {},
 };
 
-const PublicEntryContext = createContext<PublicEntryProp>(
-    InitialPublicEntryContext
+const CustomEntryContext = createContext<CustomEntryProp>(
+    InitialCustomEntryContext
 );
-export const usePublicEntryContext = () => useContext(PublicEntryContext);
+export const useCustomEntryContext = () => useContext(CustomEntryContext);
 
-export default function PublicEntryProvider({ children }: AppProp) {
+export default function CustomEntryProvider({ children }: AppProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
-    const [roomNo, setRoomNo] = useState<number>(0);
+    const [roomInfo, setRoomInfo] = useState<CustomRoom>({
+        id: "",
+        roomName: "",
+        roomDescription: "",
+        ownerId: "",
+        openToPublic: true,
+        usePassword: false,
+        password: "",
+        enableMic: false,
+        seats: [],
+    });
     const [occupiedSeatNums, setOccupiedSeatNums] = useState<number[]>([]);
     const [selectedSeatNo, setSelectedSeatNo] = useState<number>(0);
 
     useEffect(() => {
-        // 엔트리 입장시 roomNo prop을 받고 온 게 아니면 /list로 push
+        // 엔트리 입장시 roomId prop을 받고 온 게 아니면 /list로 push
         const state = location.state as LocationStateProp;
         if (state !== undefined) {
-            setRoomNo(state.roomNo);
+            getRoom(state.roomId);
         } else {
             history.push("/list");
         }
-        getRoom(state.roomNo);
 
         return () => {};
     }, []);
 
-    async function getRoom(roomNo: number) {
+    async function getRoom(roomId: string) {
         await axios
-            .get<Room>(`${API_ENDPOINT}/api/room/${roomNo}`)
+            .get<CustomRoom>(`${API_ENDPOINT}/api/customroom/${roomId}`)
             .then((response) => {
+                setRoomInfo(response.data);
                 const occupiedSeats: number[] = [];
                 response.data.seats.forEach((seat) => {
                     occupiedSeats.push(seat.seatNo);
                 });
-                // console.log(occupiedSeats);
                 setOccupiedSeatNums(occupiedSeats);
             });
     }
@@ -80,9 +99,9 @@ export default function PublicEntryProvider({ children }: AppProp) {
         return;
     }
 
-    async function checkVacancy(roomNo: number, seatNo: number) {
+    async function checkVacancy(roomId: string, seatNo: number) {
         const response = await axios.post<{ success: boolean; type?: number }>(
-            `${API_ENDPOINT}/api/room/${roomNo}/seat/${seatNo}`
+            `${API_ENDPOINT}/api/room/${roomId}/seat/${seatNo}`
         );
         const data: { success: boolean; type?: number } = response.data;
         if (data.success) {
@@ -97,19 +116,19 @@ export default function PublicEntryProvider({ children }: AppProp) {
         }
     }
 
-    function enterRoom(roomNo: number, seatNo: number) {
+    function enterRoom(roomId: string, seatNo: number) {
         history.push({
-            pathname: "/room__public",
+            pathname: "/room__custom",
             state: {
-                roomNo: roomNo,
+                roomId: roomId,
                 seatNo: seatNo,
             },
         });
     }
 
-    const publicEntryContext = {
+    const customEntryContext = {
         occupiedSeatNums,
-        roomNo,
+        roomInfo,
         selectedSeatNo,
         selectSeat,
         checkVacancy,
@@ -117,8 +136,8 @@ export default function PublicEntryProvider({ children }: AppProp) {
     };
 
     return (
-        <PublicEntryContext.Provider value={publicEntryContext}>
+        <CustomEntryContext.Provider value={customEntryContext}>
             {children}
-        </PublicEntryContext.Provider>
+        </CustomEntryContext.Provider>
     );
 }

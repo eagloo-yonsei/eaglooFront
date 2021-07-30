@@ -13,7 +13,7 @@ interface ListProp {
     publicRooms: Room[];
     customRooms: CustomRoom[];
     pushToPublicRoomEntry: (roomNo: number) => void;
-    pushToCustomRoomEntry: () => void;
+    pushToCustomRoomEntry: (roomId: string) => void;
 }
 
 const InitialListContext: ListProp = {
@@ -76,10 +76,10 @@ export default function ListProvider({ children }: AppProp) {
         });
     }
 
-    function pushToCustomRoomEntry() {
+    function pushToCustomRoomEntry(roomId: string) {
         history.push({
             pathname: "/entry__custom",
-            state: {},
+            state: { roomId: roomId },
         });
     }
 

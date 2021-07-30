@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, RefObject } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import {
@@ -6,23 +6,24 @@ import {
     SlideUpPageContainer,
     StylelessLink,
 } from "../../../Styles/StyledComponents";
-import PublicEntryHeader from "./PublicEntry__Header";
-import PublicEntryOuterRow from "./PublicEntry__OuterRow";
-import PublicEntryOuterColumn from "./PublicEntry__OuterColumn";
-import PublicEntryControlPanel from "./PublicEntry__ControlPanel";
+import CustomEntryHeader from "./CustomEntry__Header";
+import CustomEntry16Seats from "./CustomEntry__16Seats";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-interface PanelButtonProp {
+interface CloseButtonProp {
     stopSelfStream: () => void;
 }
 
-export default function PublicEntryContainer() {
+interface EntryPanelProp {
+    userStreamRef: RefObject<HTMLVideoElement>;
+    stopSelfStream: () => void;
+}
+
+export default function CustomEntryContainer() {
     const history = useHistory();
     const userStreamRef = useRef<HTMLVideoElement>(null);
 
-    // TODO (enhancement)
-    // stream 객체를 AppProvider에서 관리할 수 있도록 수정
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
@@ -53,18 +54,12 @@ export default function PublicEntryContainer() {
                 }}
             />
             <Container>
-                <PublicEntryHeader />
+                <CustomEntryHeader />
                 <SubContiner>
-                    <PublicEntryOuterRow seatNums={[1, 2, 3, 4, 5, 6]} />
-                    <EntryInnerRow>
-                        <PublicEntryOuterColumn seatNums={[7, 9]} />
-                        <PublicEntryControlPanel
-                            userStreamRef={userStreamRef}
-                            stopSelfStream={stopSelfStream}
-                        />
-                        <PublicEntryOuterColumn seatNums={[8, 10]} />
-                    </EntryInnerRow>
-                    <PublicEntryOuterRow seatNums={[11, 12, 13, 14, 15, 16]} />
+                    <EntryBody
+                        userStreamRef={userStreamRef}
+                        stopSelfStream={stopSelfStream}
+                    />
                 </SubContiner>
                 <CloseIcon stopSelfStream={stopSelfStream} />
             </Container>
@@ -72,7 +67,26 @@ export default function PublicEntryContainer() {
     );
 }
 
-function CloseIcon({ stopSelfStream }: PanelButtonProp) {
+function EntryBody({ userStreamRef, stopSelfStream }: EntryPanelProp) {
+    // TODO (development)
+    // 방 자리 수에 따라 렌더링 대상 변경
+
+    // if(roomInfo.maxSeats === 8){
+    //     return (<></>)
+    // }
+    // if(roomInfo.maxSeats === 16){
+    //     return (<></>)
+    // }
+
+    return (
+        <CustomEntry16Seats
+            userStreamRef={userStreamRef}
+            stopSelfStream={stopSelfStream}
+        />
+    );
+}
+
+function CloseIcon({ stopSelfStream }: CloseButtonProp) {
     return (
         <EntryClose
             onClick={() => {
@@ -101,13 +115,6 @@ const SubContiner = styled.div`
     flex-direction: column;
     width: 100%;
     height: 85%;
-`;
-
-const EntryInnerRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 50%;
 `;
 
 const EntryClose = styled.div`

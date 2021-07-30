@@ -1,6 +1,6 @@
-import React, { RefObject, useEffect } from "react";
+import React, { RefObject } from "react";
 import styled from "styled-components";
-import { useRoomContext } from "./RoomProvider";
+import { usePublicRoomContext } from "./PublicRoomProvider";
 import Peer from "simple-peer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
@@ -25,7 +25,7 @@ interface PeerStateProp {
     seatNo: number;
 }
 
-export default function RoomCenterPanel({
+export default function PublicRoomControlPanel({
     userStreamRef,
     peersState,
     stopSelfStreamAndExit,
@@ -53,7 +53,7 @@ function ControlButtons({
     peersState,
     stopSelfStreamAndExit,
 }: PanelButtonProp) {
-    const { roomNo, userSeatNo } = useRoomContext();
+    const { roomNo, userSeatNo } = usePublicRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>

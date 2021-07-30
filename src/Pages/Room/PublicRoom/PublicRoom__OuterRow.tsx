@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import RoomSeat from "./Room__Seat";
+import PublicRoomSeat from "./PublicRoom__Seat";
 import Peer from "simple-peer";
 
 interface PeersStateProp {
@@ -13,13 +13,19 @@ interface OuterRowProp {
     seatNums: number[];
 }
 
-export default function RoomOuterRow({ peersState, seatNums }: OuterRowProp) {
+export default function PublicRoomOuterRow({
+    peersState,
+    seatNums,
+}: OuterRowProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
                     <RowSeat key={`seat${seatNo}`}>
-                        <RoomSeat seatNo={seatNo} peersState={peersState} />
+                        <PublicRoomSeat
+                            seatNo={seatNo}
+                            peersState={peersState}
+                        />
                     </RowSeat>
                 );
             })}
