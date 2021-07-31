@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
 import { Room, API_ENDPOINT } from "../../../Constants";
-import { toastErrorMessage } from "../../../Styles/StyledComponents";
+import { toastErrorMessage } from "../../../Utils";
 
 interface AppProp {
     children: JSX.Element;
@@ -102,7 +102,7 @@ export default function PublicEntryProvider({ children }: AppProp) {
             pathname: "/room__public",
             state: {
                 roomNo: roomNo,
-                seatNo: seatNo,
+                userSeatNo: seatNo,
             },
         });
     }

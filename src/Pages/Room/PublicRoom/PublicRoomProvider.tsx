@@ -8,7 +8,7 @@ interface AppProp {
 
 interface LocationStateProp {
     roomNo: number;
-    seatNo: number;
+    userSeatNo: number;
 }
 
 interface PublicRoomProp {
@@ -37,7 +37,7 @@ export default function PublicRoomProvider({ children }: AppProp) {
         const state = location.state as LocationStateProp;
         if (state !== undefined) {
             setRoomNo(state.roomNo);
-            setUserSeatNo(state.seatNo);
+            setUserSeatNo(state.userSeatNo);
         } else {
             history.push("/list");
         }

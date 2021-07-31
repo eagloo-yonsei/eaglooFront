@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { usePublicRoomContext } from "./PublicRoomProvider";
+import { useCustomRoomContext } from "../CustomRoomProvider";
 import Peer from "simple-peer";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -24,8 +24,8 @@ interface EmptySeatProp {
     seatNo: number;
 }
 
-export default function PublicRoomSeat({ peersState, seatNo }: SeatProp) {
-    const { userSeatNo } = usePublicRoomContext();
+export default function CustomRoomSeat({ peersState, seatNo }: SeatProp) {
+    const { userSeatNo } = useCustomRoomContext();
 
     return (
         <MiddleWare

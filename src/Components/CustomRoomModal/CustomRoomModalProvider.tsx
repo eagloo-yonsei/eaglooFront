@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { CustomRoom, API_ENDPOINT } from "../../Constants";
-import { toastErrorMessage } from "../../Styles/StyledComponents";
+import { toastRequestLoginMessage, toastErrorMessage } from "../../Utils";
 import { useAppContext } from "../../Routes/App/AppProvider";
 
 interface AppProp {
@@ -75,7 +75,7 @@ export const useCustomRoomModalContext = () =>
 
 export default function CustomRoomModalProvider({ children }: AppProp) {
     const history = useHistory();
-    const { userId, setShowCustomRoomModal } = useAppContext();
+    const { isLoggedIn, userId, setShowCustomRoomModal } = useAppContext();
     const [showList, setShowList] = useState<boolean>(true);
     const [searchingRoomNameInput, setsearchingRoomNameInput] =
         useState<string>("");
@@ -121,6 +121,11 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
 
     function joinRoom(roomId: string) {
         setShowCustomRoomModal(false);
+        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
+        if (!isLoggedIn) {
+            history.push("/login");
+            // toastRequestLoginMessage();
+        }
         history.push({
             pathname: "/entry__custom",
             state: {

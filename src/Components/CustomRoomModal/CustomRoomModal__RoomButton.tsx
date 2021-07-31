@@ -3,37 +3,34 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
+import { CustomRoom } from "../../Constants";
 
-interface RoomButtonProp {
-    roomName: string;
-    roomDescription?: string;
-    roomId: string;
+interface CustomRoomButtonProp {
+    room: CustomRoom;
 }
 
 export default function CustomRoomModalRoomButton({
-    roomName,
-    roomDescription,
-    roomId,
-}: RoomButtonProp) {
+    room,
+}: CustomRoomButtonProp) {
     const { selectedRoomId, selectRoom } = useCustomRoomModalContext();
 
     return (
         <Container
-            roomId={roomId}
+            roomId={room.id}
             selectedRoomId={selectedRoomId}
             onClick={() => {
-                selectRoom(roomId);
+                selectRoom(room.id);
             }}
         >
             <RoomIcon />
             <RoomContentContainer>
-                <RoomName>{`${roomName}`}</RoomName>
+                <RoomName>{`${room.roomName}`}</RoomName>
                 <RoomDescription>
-                    {roomDescription ? roomDescription : ""}
+                    {room.roomDescription ? room.roomDescription : ""}
                 </RoomDescription>
                 <RoomState>
                     <FontAwesomeIcon icon={faUserAlt} />
-                    {`  0/16`}
+                    {`  ${room.seats.length}/16`}
                 </RoomState>
             </RoomContentContainer>
         </Container>

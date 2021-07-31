@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Room, CustomRoom, API_ENDPOINT } from "../../Constants";
 import { useHistory } from "react-router-dom";
+import { useAppContext } from "../../Routes/App/AppProvider";
+import { toastRequestLoginMessage } from "../../Utils";
+import { Room, CustomRoom, API_ENDPOINT } from "../../Constants";
 
 interface AppProp {
     children: JSX.Element;
@@ -30,6 +32,7 @@ export const useListContext = () => useContext(ListContext);
 
 export default function ListProvider({ children }: AppProp) {
     const history = useHistory();
+    const { isLoggedIn } = useAppContext();
     const [loadingPublicRooms, setLoadingPublicRooms] = useState<boolean>(true);
     const [loadingCustomRooms, setLoadingCustomRooms] = useState<boolean>(true);
     const [publicRooms, setPublicRooms] = useState<Room[]>([]);
@@ -70,6 +73,11 @@ export default function ListProvider({ children }: AppProp) {
     }
 
     function pushToPublicRoomEntry(roomNo: number) {
+        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
+        if (!isLoggedIn) {
+            history.push("/login");
+            // toastRequestLoginMessage();
+        }
         history.push({
             pathname: "/entry__public",
             state: { roomNo: roomNo },
@@ -77,6 +85,11 @@ export default function ListProvider({ children }: AppProp) {
     }
 
     function pushToCustomRoomEntry(roomId: string) {
+        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
+        if (!isLoggedIn) {
+            history.push("/login");
+            // toastRequestLoginMessage();
+        }
         history.push({
             pathname: "/entry__custom",
             state: { roomId: roomId },
