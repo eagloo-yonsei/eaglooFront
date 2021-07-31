@@ -56,10 +56,8 @@ function RoomList() {
                 {customRooms.map((customRoom) => {
                     return (
                         <CustomRoomModalRoomButton
-                            roomName={customRoom.roomName}
-                            roomDescription={customRoom.roomDescription}
-                            roomId={customRoom.id}
-                            key={customRoom.roomDescription}
+                            room={customRoom}
+                            key={customRoom.id}
                         />
                     );
                 })}

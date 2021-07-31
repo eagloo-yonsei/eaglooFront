@@ -1,27 +1,32 @@
 import React from "react";
 import styled from "styled-components";
-import PublicRoomSeat from "./PublicRoom__Seat";
-import { PeersStateProp } from "../../../Constants";
+import CustomRoomSeat from "./CustomRoom__Seat";
+import Peer from "simple-peer";
 
-interface OuterRowProp {
+interface PeersStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
+}
+
+interface OuterColumnProp {
     peersState: PeersStateProp[];
     seatNums: number[];
 }
 
-export default function PublicRoomOuterRow({
+export function CustomRoom16SeatsOuterColumn({
     peersState,
     seatNums,
-}: OuterRowProp) {
+}: OuterColumnProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
-                    <RowSeat key={`seat${seatNo}`}>
-                        <PublicRoomSeat
+                    <ColumnSeat key={`seat${seatNo}`}>
+                        <CustomRoomSeat
                             seatNo={seatNo}
                             peersState={peersState}
                         />
-                    </RowSeat>
+                    </ColumnSeat>
                 );
             })}
         </Container>
@@ -30,16 +35,17 @@ export default function PublicRoomOuterRow({
 
 const Container = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    width: 100%;
-    height: 25%;
+    width: 15.8%;
+    height: 100%;
 `;
 
-const RowSeat = styled.div`
+const ColumnSeat = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15.8%;
-    height: 100%;
+    width: 100%;
+    height: 50%;
     border-radius: 10px;
 `;

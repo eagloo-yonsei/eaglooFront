@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
 import { CustomRoom, API_ENDPOINT } from "../../../Constants";
-import { toastErrorMessage } from "../../../Styles/StyledComponents";
+import { toastErrorMessage } from "../../../Utils";
 
 interface AppProp {
     children: JSX.Element;
@@ -69,7 +69,7 @@ export default function CustomEntryProvider({ children }: AppProp) {
         // 엔트리 입장시 roomId prop을 받고 온 게 아니면 /list로 push
         const state = location.state as LocationStateProp;
         if (state !== undefined) {
-            getRoom(state.roomId);
+            getRoomInfo(state.roomId);
         } else {
             history.push("/list");
         }
@@ -77,7 +77,7 @@ export default function CustomEntryProvider({ children }: AppProp) {
         return () => {};
     }, []);
 
-    async function getRoom(roomId: string) {
+    async function getRoomInfo(roomId: string) {
         await axios
             .get<CustomRoom>(`${API_ENDPOINT}/api/customroom/${roomId}`)
             .then((response) => {
@@ -101,7 +101,7 @@ export default function CustomEntryProvider({ children }: AppProp) {
 
     async function checkVacancy(roomId: string, seatNo: number) {
         const response = await axios.post<{ success: boolean; type?: number }>(
-            `${API_ENDPOINT}/api/room/${roomId}/seat/${seatNo}`
+            `${API_ENDPOINT}/api/customroom/${roomId}/seat/${seatNo}`
         );
         const data: { success: boolean; type?: number } = response.data;
         if (data.success) {
@@ -121,7 +121,7 @@ export default function CustomEntryProvider({ children }: AppProp) {
             pathname: "/room__custom",
             state: {
                 roomId: roomId,
-                seatNo: seatNo,
+                userSeatNo: seatNo,
             },
         });
     }

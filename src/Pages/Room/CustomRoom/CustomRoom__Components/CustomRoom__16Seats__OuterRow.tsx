@@ -1,14 +1,19 @@
 import React from "react";
 import styled from "styled-components";
-import PublicRoomSeat from "./PublicRoom__Seat";
-import { PeersStateProp } from "../../../Constants";
+import CustomRoomSeat from "./CustomRoom__Seat";
+import Peer from "simple-peer";
+
+interface PeersStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
+}
 
 interface OuterRowProp {
     peersState: PeersStateProp[];
     seatNums: number[];
 }
 
-export default function PublicRoomOuterRow({
+export function CustomRoom16SeatsOuterRow({
     peersState,
     seatNums,
 }: OuterRowProp) {
@@ -17,7 +22,7 @@ export default function PublicRoomOuterRow({
             {seatNums.map((seatNo) => {
                 return (
                     <RowSeat key={`seat${seatNo}`}>
-                        <PublicRoomSeat
+                        <CustomRoomSeat
                             seatNo={seatNo}
                             peersState={peersState}
                         />

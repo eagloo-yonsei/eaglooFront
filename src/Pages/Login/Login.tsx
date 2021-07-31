@@ -7,10 +7,7 @@ import { useAppContext } from "../../Routes/App/AppProvider";
 import { API_ENDPOINT } from "../../Constants";
 import { FullPageContainer } from "../../Styles/StyledComponents";
 import { StylelessButton, StylelessLink } from "../../Styles/StyledComponents";
-import {
-    toastLoginSuccessMessage,
-    toastErrorMessage,
-} from "../../Styles/StyledComponents";
+import { toastLoginSuccessMessage, toastErrorMessage } from "../../Utils";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import loginIcon from "../../Resources/Img/login-icon.png";
 

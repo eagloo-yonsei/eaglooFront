@@ -1,7 +1,6 @@
 import React, { ReactElement } from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 
 export const FadeIn20 = keyframes`
     from{
@@ -96,16 +95,4 @@ export function StylelessLink({ to, children }: LinkProps) {
             {children}
         </Link>
     );
-}
-
-export function toastLoginSuccessMessage(email: string) {
-    toast(`😀 어서오세요 ${email}님!`, { pauseOnHover: false });
-}
-
-export function toastErrorMessage(message: string) {
-    toast.error(`😥 ${message}`);
-}
-
-export function servicePreparingMessage() {
-    toast.warn("😥 서비스 준비 중입니다");
 }

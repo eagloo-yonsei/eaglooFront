@@ -12,7 +12,7 @@ import { Channel, API_ENDPOINT } from "../../../Constants";
 
 interface LocationStateProp {
     roomNo: number;
-    seatNo: number;
+    userSeatNo: number;
 }
 
 interface PeersStateProp {
@@ -37,7 +37,7 @@ export default function PublicRoomContainer() {
     const history = useHistory();
     const state = location.state as LocationStateProp;
     const roomNo = state?.roomNo;
-    const seatNo = state?.seatNo;
+    const userSeatNo = state?.userSeatNo;
     const socketRef = useRef<Socket>();
     const userStreamRef = useRef<HTMLVideoElement>(null);
     const peersRef = useRef<PeersRefProp[]>([]);
@@ -61,7 +61,7 @@ export default function PublicRoomContainer() {
                 /* 1. 방참가 */
                 socketRef.current?.emit(Channel.JOIN, {
                     roomNo: roomNo,
-                    seatNo: seatNo,
+                    seatNo: userSeatNo,
                 });
 
                 /* 2. 참가한 방의 기존 사용자들 정보 수신 */
@@ -77,7 +77,7 @@ export default function PublicRoomContainer() {
                                 const peer = createPeer(
                                     otherUser.socketId,
                                     socketRef.current!.id,
-                                    state.seatNo,
+                                    state.userSeatNo,
                                     stream
                                 );
                                 peersRef.current.push({
@@ -116,11 +116,11 @@ export default function PublicRoomContainer() {
                         peersRef.current.push({
                             peer,
                             socketId: payload.callerId,
-                            seatNo: payload.seatNo,
+                            seatNo: payload.callerSeatNo,
                         });
                         setPeersState((peersState) => [
                             ...peersState,
-                            { peer: peer, seatNo: payload.seatNo },
+                            { peer: peer, seatNo: payload.callerSeatNo },
                         ]);
                     }
                 });
@@ -134,6 +134,9 @@ export default function PublicRoomContainer() {
                     );
                     peerRef?.peer.signal(payload.signal);
                 });
+
+                // TODO (code clearance)
+                // document.getElementById()...remove 활용
 
                 /* 다른 유저 퇴장시 */
                 socketRef.current?.on(Channel.DISCONNECT, (seatNo) => {
@@ -159,7 +162,7 @@ export default function PublicRoomContainer() {
         return () => {
             socketRef.current?.emit("leave", {
                 roomNo: roomNo,
-                seatNo: seatNo,
+                seatNo: userSeatNo,
             });
             socketRef.current?.close();
             socketRef.current?.disconnect();
@@ -170,7 +173,7 @@ export default function PublicRoomContainer() {
     function createPeer(
         userToSignal: string, // 기존 참여자 socket ID
         callerId: string, // 본인 socket ID
-        seatNo: number, // 본인 seatNo
+        callerSeatNo: number, // 본인 seatNo
         stream: any // 본인 stream
     ) {
         const peer = new Peer({
@@ -184,7 +187,7 @@ export default function PublicRoomContainer() {
             socketRef.current?.emit(Channel.SENDING_SIGNAL, {
                 userToSignal,
                 callerId,
-                seatNo,
+                callerSeatNo,
                 signal,
             });
         });

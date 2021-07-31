@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
+import { StylelessLink } from "../../Styles/StyledComponents";
 import Switch from "@material-ui/core/Switch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function CustomRoomModalCreate() {
+    const { isLoggedIn } = useAppContext();
     const {
         roomNameInput,
         setRoomNameInput,
@@ -20,6 +23,19 @@ export default function CustomRoomModalCreate() {
         allowMic,
         toggleAllowMic,
     } = useCustomRoomModalContext();
+
+    if (!isLoggedIn) {
+        return (
+            <RequestLoginContainer>
+                <RequestLogin>{`로그인 이후 사용할 수 있어요`}</RequestLogin>
+                <RequestLoginLink>
+                    <StylelessLink to={"/login"}>
+                        {`로그인 페이지로 이동하기`}
+                    </StylelessLink>
+                </RequestLoginLink>
+            </RequestLoginContainer>
+        );
+    }
 
     return (
         <Container>
@@ -120,14 +136,32 @@ export default function CustomRoomModalCreate() {
     );
 }
 
-const Container = styled.div`
+const RequestLoginContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     width: calc(100% - 200px);
     height: 100%;
     font-family: ${(props) => props.theme.plainBoldTextFont};
+`;
+
+const RequestLogin = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: ${(props) => props.theme.entryMainBlue};
+    font-size: 21px;
+    margin-bottom: 30px;
+`;
+
+const RequestLoginLink = styled.div`
+    color: ${(props) => props.theme.entryLightBlue};
+    font-size: 12px;
+`;
+
+const Container = styled(RequestLoginContainer)`
+    align-items: flex-start;
     padding-left: 45px;
 `;
 

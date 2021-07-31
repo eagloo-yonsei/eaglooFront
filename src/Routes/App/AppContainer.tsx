@@ -13,6 +13,7 @@ import List from "../../Pages/List";
 import PublicEntry from "../../Pages/Entry/PublicEntry";
 import CustomEntry from "../../Pages/Entry/CustomEntry";
 import PublicRoom from "../../Pages/Room/PublicRoom";
+import CustomRoom from "../../Pages/Room/CustomRoom";
 import Forum from "../../Pages/Forum";
 import Feedback from "../../Pages/Feedback";
 import About from "../../Pages/About";
@@ -38,7 +39,7 @@ function UserRouter() {
                 <Router path={"/entry__public"} component={PublicEntry} />
                 <Router path={"/entry__custom"} component={CustomEntry} />
                 <Router path={"/room__public"} component={PublicRoom} />
-                <Router path={"/room__custom"} component={PublicRoom} />
+                <Router path={"/room__custom"} component={CustomRoom} />
                 <Router path={"/forum"} component={Forum} />
                 <Router path={"/feedback"} component={Feedback} />
                 <Router path={"/about"} component={About} />

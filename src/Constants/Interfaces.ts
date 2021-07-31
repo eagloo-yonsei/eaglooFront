@@ -1,3 +1,16 @@
+import Peer from "simple-peer";
+
+export interface PeersStateProp {
+    peer: Peer.Instance;
+    seatNo: number;
+}
+
+export interface PeersRefProp {
+    peer: Peer.Instance;
+    socketId: string;
+    seatNo: number;
+}
+
 export interface Seat {
     seatNo: number;
     socketId: string;

@@ -56,7 +56,7 @@ export default function CustomEntryContainer() {
             <Container>
                 <CustomEntryHeader />
                 <SubContiner>
-                    <EntryBody
+                    <CustomEntrySwitcher
                         userStreamRef={userStreamRef}
                         stopSelfStream={stopSelfStream}
                     />
@@ -67,7 +67,10 @@ export default function CustomEntryContainer() {
     );
 }
 
-function EntryBody({ userStreamRef, stopSelfStream }: EntryPanelProp) {
+function CustomEntrySwitcher({
+    userStreamRef,
+    stopSelfStream,
+}: EntryPanelProp) {
     // TODO (development)
     // 방 자리 수에 따라 렌더링 대상 변경
 
