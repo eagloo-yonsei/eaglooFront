@@ -48,7 +48,11 @@ export default function LoginProvider({ children }: ChildrenProp) {
         hashedPassword.reset();
         hashedPassword.update(passwordInput);
         await axios
-            .get(`${API_ENDPOINT}/api/user/${emailInput}/${passwordInput}`)
+            .get(
+                `${API_ENDPOINT}/api/user/${emailInput}/${hashedPassword.digest(
+                    "hex"
+                )}`
+            )
             .then(function ({ data }) {
                 if (data.success) {
                     setIsLoggedIn(true);
