@@ -2,12 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { CustomRoom, API_ENDPOINT } from "../../../Constants";
+import { ChildrenProp, CustomRoom, API_ENDPOINT } from "../../../Constants";
 import { toastErrorMessage } from "../../../Utils";
-
-interface AppProp {
-    children: JSX.Element;
-}
 
 interface LocationStateProp {
     roomId: string;
@@ -48,7 +44,7 @@ const CustomEntryContext = createContext<CustomEntryProp>(
 );
 export const useCustomEntryContext = () => useContext(CustomEntryContext);
 
-export default function CustomEntryProvider({ children }: AppProp) {
+export default function CustomEntryProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomInfo, setRoomInfo] = useState<CustomRoom>({

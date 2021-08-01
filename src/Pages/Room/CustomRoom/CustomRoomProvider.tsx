@@ -2,11 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { CustomRoom, API_ENDPOINT } from "../../../Constants";
-
-interface AppProp {
-    children: JSX.Element;
-}
+import { ChildrenProp, CustomRoom, API_ENDPOINT } from "../../../Constants";
 
 interface LocationStateProp {
     roomId: string;
@@ -41,7 +37,7 @@ const CustomRoomContext = createContext<CustomRoomProp>(
 
 export const useCustomRoomContext = () => useContext(CustomRoomContext);
 
-export default function CustomRoomProvider({ children }: AppProp) {
+export default function CustomRoomProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomId, setRoomId] = useState<string>("");

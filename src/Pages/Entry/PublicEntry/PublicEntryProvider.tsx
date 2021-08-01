@@ -2,12 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
-import { Room, API_ENDPOINT } from "../../../Constants";
+import { ChildrenProp, Room, API_ENDPOINT } from "../../../Constants";
 import { toastErrorMessage } from "../../../Utils";
-
-interface AppProp {
-    children: JSX.Element;
-}
 
 interface LocationStateProp {
     roomNo: number;
@@ -38,7 +34,7 @@ const PublicEntryContext = createContext<PublicEntryProp>(
 );
 export const usePublicEntryContext = () => useContext(PublicEntryContext);
 
-export default function PublicEntryProvider({ children }: AppProp) {
+export default function PublicEntryProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomNo, setRoomNo] = useState<number>(0);

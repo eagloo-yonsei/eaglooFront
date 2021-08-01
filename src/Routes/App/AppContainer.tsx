@@ -9,6 +9,7 @@ import {
 import Header from "../../Components/Header";
 import Home from "../../Pages/Home";
 import Login from "../../Pages/Login";
+import Signup from "../../Pages/Signup";
 import List from "../../Pages/List";
 import PublicEntry from "../../Pages/Entry/PublicEntry";
 import CustomEntry from "../../Pages/Entry/CustomEntry";
@@ -35,6 +36,7 @@ function UserRouter() {
             <Switch>
                 <Router exact path={"/"} component={Home} />
                 <Router path={"/login"} component={Login} />
+                <Router path={"/signup"} component={Signup} />
                 <Router path={"/list"} component={List} />
                 <Router path={"/entry__public"} component={PublicEntry} />
                 <Router path={"/entry__custom"} component={CustomEntry} />

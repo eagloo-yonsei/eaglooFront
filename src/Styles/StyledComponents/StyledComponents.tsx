@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
+import { CircularProgress } from "@material-ui/core";
 
 export const FadeIn20 = keyframes`
     from{
@@ -95,4 +96,66 @@ export function StylelessLink({ to, children }: LinkProps) {
             {children}
         </Link>
     );
+}
+
+interface SubmitButtonProp {
+    buttonContent: string;
+    loadingStatus: boolean;
+    submitFunction: () => void;
+    disabledCondition?: boolean;
+    fontSize?: string;
+}
+
+export function SubmitButton({
+    buttonContent,
+    loadingStatus,
+    submitFunction,
+    disabledCondition,
+    fontSize,
+}: SubmitButtonProp) {
+    const SubmittingButtonContainer = styled.div`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 46px;
+        color: white;
+        font-size: ${fontSize ? fontSize : "22px"};
+        font-family: "JejuGothic";
+        border-radius: 8px;
+        background: ${(props) => props.theme.orangeGradient};
+    `;
+
+    const ReadyButtonContainer = styled(SubmittingButtonContainer)`
+        :hover {
+            cursor: pointer;
+        }
+    `;
+
+    const UnReadyButtonContainer = styled(SubmittingButtonContainer)`
+        background: none;
+        background-color: ${(props) => props.theme.loginMessageGray};
+    `;
+
+    if (disabledCondition) {
+        return <UnReadyButtonContainer>{buttonContent}</UnReadyButtonContainer>;
+    }
+
+    if (loadingStatus) {
+        return (
+            <SubmittingButtonContainer>
+                <CircularProgress color="inherit" size={30} thickness={5} />
+            </SubmittingButtonContainer>
+        );
+    } else {
+        return (
+            <ReadyButtonContainer
+                onClick={() => {
+                    submitFunction();
+                }}
+            >
+                {buttonContent}
+            </ReadyButtonContainer>
+        );
+    }
 }

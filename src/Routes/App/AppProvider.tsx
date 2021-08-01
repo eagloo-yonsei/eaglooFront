@@ -5,37 +5,34 @@ import React, {
     useRef,
     useState,
 } from "react";
-
-interface AppProp {
-    children: JSX.Element;
-}
+import { ChildrenProp } from "../../Constants";
 
 interface AppContext {
     isLoggedIn: boolean;
-    setIsLoggedIn: (status: boolean) => void;
     userEmail: string | undefined;
-    setUserEmail: (userName: string | undefined) => void;
     userId: string | undefined;
-    setUserId: (userName: string | undefined) => void;
     isAdmin: boolean;
-    setIsAdmin: (status: boolean) => void;
     showCustomRoomModal: boolean;
-    setShowCustomRoomModal: (status: boolean) => void;
     userStream?: RefObject<HTMLVideoElement>;
-    getUserStream: () => boolean;
     token?: string;
+    setIsLoggedIn: (status: boolean) => void;
+    setUserEmail: (userName: string | undefined) => void;
+    setUserId: (userName: string | undefined) => void;
+    setIsAdmin: (status: boolean) => void;
+    setShowCustomRoomModal: (status: boolean) => void;
+    getUserStream: () => boolean;
 }
 
 const InitialAppContext: AppContext = {
     isLoggedIn: false,
-    setIsLoggedIn: () => {},
     userEmail: undefined,
-    setUserEmail: () => {},
     userId: undefined,
-    setUserId: () => {},
     isAdmin: false,
-    setIsAdmin: () => {},
     showCustomRoomModal: false,
+    setIsLoggedIn: () => {},
+    setUserEmail: () => {},
+    setUserId: () => {},
+    setIsAdmin: () => {},
     setShowCustomRoomModal: () => {},
     getUserStream: () => false,
 };
@@ -43,7 +40,7 @@ const InitialAppContext: AppContext = {
 const AppContext = createContext<AppContext>(InitialAppContext);
 export const useAppContext = () => useContext(AppContext);
 
-export default function AppProvider({ children }: AppProp) {
+export default function AppProvider({ children }: ChildrenProp) {
     const userStream = useRef<HTMLVideoElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
@@ -71,16 +68,16 @@ export default function AppProvider({ children }: AppProp) {
 
     const appContext = {
         isLoggedIn,
-        setIsLoggedIn,
         userEmail,
-        setUserEmail,
         userId,
-        setUserId,
         isAdmin,
-        setIsAdmin,
         showCustomRoomModal,
-        setShowCustomRoomModal,
         userStream,
+        setIsLoggedIn,
+        setUserEmail,
+        setUserId,
+        setIsAdmin,
+        setShowCustomRoomModal,
         getUserStream,
     };
 

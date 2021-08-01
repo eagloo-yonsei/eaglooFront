@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
-
-interface AppProp {
-    children: JSX.Element;
-}
+import { ChildrenProp } from "../../../Constants";
 
 interface LocationStateProp {
     roomNo: number;
@@ -26,7 +23,7 @@ const PublicRoomContext = createContext<PublicRoomProp>(
 );
 export const usePublicRoomContext = () => useContext(PublicRoomContext);
 
-export default function PublicRoomProvider({ children }: AppProp) {
+export default function PublicRoomProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const [roomNo, setRoomNo] = useState<number>(0);

@@ -1,69 +1,65 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { CustomRoom, API_ENDPOINT } from "../../Constants";
+import { ChildrenProp, CustomRoom, API_ENDPOINT } from "../../Constants";
 import { toastRequestLoginMessage, toastErrorMessage } from "../../Utils";
 import { useAppContext } from "../../Routes/App/AppProvider";
 
-interface AppProp {
-    children: JSX.Element;
-}
-
 interface CustomRoomModalContext {
     showList: boolean;
-    setShowList: (status: boolean) => void;
     searchingRoomNameInput: string;
-    setsearchingRoomNameInput: (input: string) => void;
     loadingCustomRooms: boolean;
     customRooms: CustomRoom[];
     selectedRoomId: string;
+    roomNameInput: string;
+    roomDescriptionInput: string;
+    usePassword: boolean;
+    passwordInput: string;
+    passwordConfirmInput: string;
+    allowMic: boolean;
+    creatingRoom: boolean;
+    setShowList: (status: boolean) => void;
+    setsearchingRoomNameInput: (input: string) => void;
     setSelectedRoomId: (input: string) => void;
     selectRoom: (input: string) => void;
     joinRoom: (roomId: string) => void;
-    roomNameInput: string;
     setRoomNameInput: (input: string) => void;
-    roomDescriptionInput: string;
     setRoomDescriptionInput: (input: string) => void;
-    usePassword: boolean;
     setUsePassword: (status: boolean) => void;
     toggleUsePassword: () => void;
-    passwordInput: string;
     setPasswordInput: (input: string) => void;
-    passwordConfirmInput: string;
     setPasswordConfirmInput: (input: string) => void;
-    allowMic: boolean;
     setAllowMic: (status: boolean) => void;
     toggleAllowMic: () => void;
-    creatingRoom: boolean;
     createRoomAndPushToEntry: () => void;
 }
 
 const InitialCustomRoomModalContext: CustomRoomModalContext = {
     showList: true,
-    setShowList: () => {},
     searchingRoomNameInput: "",
-    setsearchingRoomNameInput: () => {},
     loadingCustomRooms: true,
     customRooms: [],
     selectedRoomId: "",
+    roomNameInput: "",
+    roomDescriptionInput: "",
+    usePassword: false,
+    passwordInput: "",
+    passwordConfirmInput: "",
+    allowMic: false,
+    creatingRoom: false,
+    setShowList: () => {},
+    setsearchingRoomNameInput: () => {},
     setSelectedRoomId: () => {},
     selectRoom: () => {},
     joinRoom: () => {},
-    roomNameInput: "",
     setRoomNameInput: () => {},
-    roomDescriptionInput: "",
     setRoomDescriptionInput: () => {},
-    usePassword: false,
     setUsePassword: () => {},
     toggleUsePassword: () => {},
-    passwordInput: "",
     setPasswordInput: () => {},
-    passwordConfirmInput: "",
     setPasswordConfirmInput: () => {},
-    allowMic: false,
     setAllowMic: () => {},
     toggleAllowMic: () => {},
-    creatingRoom: false,
     createRoomAndPushToEntry: () => {},
 };
 
@@ -73,7 +69,7 @@ const CustomRoomModalContext = createContext<CustomRoomModalContext>(
 export const useCustomRoomModalContext = () =>
     useContext(CustomRoomModalContext);
 
-export default function CustomRoomModalProvider({ children }: AppProp) {
+export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const { isLoggedIn, userId, setShowCustomRoomModal } = useAppContext();
     const [showList, setShowList] = useState<boolean>(true);
@@ -194,30 +190,30 @@ export default function CustomRoomModalProvider({ children }: AppProp) {
 
     const customRoomModalContext = {
         showList,
-        setShowList,
         searchingRoomNameInput,
-        setsearchingRoomNameInput,
         loadingCustomRooms,
         customRooms,
         selectedRoomId,
+        roomNameInput,
+        roomDescriptionInput,
+        usePassword,
+        passwordInput,
+        passwordConfirmInput,
+        allowMic,
+        creatingRoom,
+        setShowList,
+        setsearchingRoomNameInput,
         setSelectedRoomId,
         selectRoom,
         joinRoom,
-        roomNameInput,
         setRoomNameInput,
-        roomDescriptionInput,
         setRoomDescriptionInput,
-        usePassword,
         setUsePassword,
         toggleUsePassword,
-        passwordInput,
         setPasswordInput,
-        passwordConfirmInput,
         setPasswordConfirmInput,
-        allowMic,
         setAllowMic,
         toggleAllowMic,
-        creatingRoom,
         createRoomAndPushToEntry,
     };
 

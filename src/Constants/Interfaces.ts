@@ -1,5 +1,9 @@
 import Peer from "simple-peer";
 
+export interface ChildrenProp {
+    children: JSX.Element;
+}
+
 export interface PeersStateProp {
     peer: Peer.Instance;
     seatNo: number;

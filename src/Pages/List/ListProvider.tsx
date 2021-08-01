@@ -3,11 +3,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { toastRequestLoginMessage } from "../../Utils";
-import { Room, CustomRoom, API_ENDPOINT } from "../../Constants";
-
-interface AppProp {
-    children: JSX.Element;
-}
+import { ChildrenProp, Room, CustomRoom, API_ENDPOINT } from "../../Constants";
 
 interface ListProp {
     loadingPublicRooms: boolean;
@@ -30,7 +26,7 @@ const InitialListContext: ListProp = {
 const ListContext = createContext<ListProp>(InitialListContext);
 export const useListContext = () => useContext(ListContext);
 
-export default function ListProvider({ children }: AppProp) {
+export default function ListProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const { isLoggedIn } = useAppContext();
     const [loadingPublicRooms, setLoadingPublicRooms] = useState<boolean>(true);
