@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { ChildrenProp, CustomRoom, API_ENDPOINT } from "../../Constants";
+import {
+    ChildrenProp,
+    RoomType,
+    CustomRoom,
+    API_ENDPOINT,
+} from "../../Constants";
 import { toastRequestLoginMessage, toastErrorMessage } from "../../Utils";
 import { useAppContext } from "../../Routes/App/AppProvider";
 
@@ -117,17 +122,18 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
 
     function joinRoom(roomId: string) {
         setShowCustomRoomModal(false);
-        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
-        if (!isLoggedIn) {
+        if (isLoggedIn) {
+            history.push({
+                pathname: "/entry",
+                state: {
+                    roomType: RoomType.CUSTOM,
+                    roomId: roomId,
+                },
+            });
+        } else {
+            toastRequestLoginMessage();
             history.push("/login");
-            // toastRequestLoginMessage();
         }
-        history.push({
-            pathname: "/entry__custom",
-            state: {
-                roomId: roomId,
-            },
-        });
     }
 
     function toggleUsePassword() {
@@ -167,8 +173,9 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
             .then((response) => {
                 if (response.data.success) {
                     history.push({
-                        pathname: "/entry__custom",
+                        pathname: "/entry",
                         state: {
+                            roomType: RoomType.CUSTOM,
                             roomId: response.data.roomId,
                         },
                     });

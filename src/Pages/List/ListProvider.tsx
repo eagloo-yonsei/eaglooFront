@@ -3,15 +3,20 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { toastRequestLoginMessage } from "../../Utils";
-import { ChildrenProp, Room, CustomRoom, API_ENDPOINT } from "../../Constants";
+import {
+    ChildrenProp,
+    Room,
+    CustomRoom,
+    API_ENDPOINT,
+    RoomType,
+} from "../../Constants";
 
 interface ListProp {
     loadingPublicRooms: boolean;
     loadingCustomRooms: boolean;
     publicRooms: Room[];
     customRooms: CustomRoom[];
-    pushToPublicRoomEntry: (roomNo: number) => void;
-    pushToCustomRoomEntry: (roomId: string) => void;
+    pushToEntry: (roomType: RoomType, roomId: string) => void;
 }
 
 const InitialListContext: ListProp = {
@@ -19,8 +24,7 @@ const InitialListContext: ListProp = {
     loadingCustomRooms: true,
     publicRooms: [],
     customRooms: [],
-    pushToPublicRoomEntry: () => {},
-    pushToCustomRoomEntry: () => {},
+    pushToEntry: () => {},
 };
 
 const ListContext = createContext<ListProp>(InitialListContext);
@@ -68,28 +72,16 @@ export default function ListProvider({ children }: ChildrenProp) {
             });
     }
 
-    function pushToPublicRoomEntry(roomNo: number) {
-        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
-        if (!isLoggedIn) {
+    function pushToEntry(roomType: RoomType, roomId: string) {
+        if (isLoggedIn) {
+            history.push({
+                pathname: "/entry",
+                state: { roomType: roomType, roomId: roomId },
+            });
+        } else {
+            toastRequestLoginMessage();
             history.push("/login");
-            // toastRequestLoginMessage();
         }
-        history.push({
-            pathname: "/entry__public",
-            state: { roomNo: roomNo },
-        });
-    }
-
-    function pushToCustomRoomEntry(roomId: string) {
-        // TODO (bug) 비로그인 상태에서 엔트리 입장시 로그인 페이지로
-        if (!isLoggedIn) {
-            history.push("/login");
-            // toastRequestLoginMessage();
-        }
-        history.push({
-            pathname: "/entry__custom",
-            state: { roomId: roomId },
-        });
     }
 
     const listContext = {
@@ -97,8 +89,7 @@ export default function ListProvider({ children }: ChildrenProp) {
         loadingCustomRooms,
         publicRooms,
         customRooms,
-        pushToPublicRoomEntry,
-        pushToCustomRoomEntry,
+        pushToEntry,
     };
 
     return (

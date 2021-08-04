@@ -63,7 +63,7 @@ function RoomButtonRow({ roomType }: RoomTypeProp) {
                         return (
                             <PublicRoomButton
                                 room={publicRoom}
-                                key={`publicRoom_${publicRoom.roomNo}_button`}
+                                key={`publicRoom_${publicRoom.id}_button`}
                             />
                         );
                     })}
@@ -106,16 +106,16 @@ function LoadingMessage() {
 }
 
 function PublicRoomButton({ room }: PublicRoomButtonProp) {
-    const { pushToPublicRoomEntry } = useListContext();
+    const { pushToEntry } = useListContext();
 
     return (
         <RoomButtonContainer
             onClick={() => {
-                pushToPublicRoomEntry(room.roomNo);
+                pushToEntry(RoomType.PUBLIC, room.id);
             }}
         >
             <RoomButtonIcon />
-            <RoomButtonTitle>{`스터디룸 ${room.roomNo}`}</RoomButtonTitle>
+            <RoomButtonTitle>{`${room.roomName}`}</RoomButtonTitle>
             {/* <RoomButtonMessage>
                 {`이글루에서 제공하는 스터디룸`}
             </RoomButtonMessage> */}
@@ -128,12 +128,12 @@ function PublicRoomButton({ room }: PublicRoomButtonProp) {
 }
 
 function CustomRoomButton({ room }: CustomRoomButtonProp) {
-    const { pushToCustomRoomEntry } = useListContext();
+    const { pushToEntry } = useListContext();
 
     return (
         <RoomButtonContainer
             onClick={() => {
-                pushToCustomRoomEntry(room.id);
+                pushToEntry(RoomType.CUSTOM, room.id);
             }}
         >
             <RoomButtonIcon />
