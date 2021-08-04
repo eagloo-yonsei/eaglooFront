@@ -42,7 +42,7 @@ export const useAppContext = () => useContext(AppContext);
 
 export default function AppProvider({ children }: ChildrenProp) {
     const userStream = useRef<HTMLVideoElement>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
     const [userId, setUserId] = useState<string | undefined>(undefined);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
