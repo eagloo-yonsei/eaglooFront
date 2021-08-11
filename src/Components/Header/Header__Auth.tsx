@@ -11,19 +11,17 @@ export default function HeaderAuth() {
 }
 
 function LoggedIn() {
-    const { setIsLoggedIn, userEmail, setUserEmail, setUserId } =
-        useAppContext();
+    const { setIsLoggedIn, userInfo, setUserInfo } = useAppContext();
     return (
         <Container>
             <AuthMessage>
-                {`${userEmail} 님 `}
+                {`${userInfo?.email} 님 `}
                 <FontAwesomeIcon icon={faUserAlt} />
             </AuthMessage>
             <LogInOutButton
                 onClick={() => {
                     setIsLoggedIn(false);
-                    setUserEmail(undefined);
-                    setUserId(undefined);
+                    setUserInfo(undefined);
                 }}
             >
                 로그아웃

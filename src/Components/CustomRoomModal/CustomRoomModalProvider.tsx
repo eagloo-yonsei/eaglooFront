@@ -76,7 +76,7 @@ export const useCustomRoomModalContext = () =>
 
 export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     const history = useHistory();
-    const { isLoggedIn, userId, setShowCustomRoomModal } = useAppContext();
+    const { isLoggedIn, userInfo, setShowCustomRoomModal } = useAppContext();
     const [showList, setShowList] = useState<boolean>(true);
     const [searchingRoomNameInput, setsearchingRoomNameInput] =
         useState<string>("");
@@ -164,7 +164,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
             .post<ResponseProp>(`${API_ENDPOINT}/api/customroom`, {
                 roomName: roomNameInput,
                 roomDescription: roomDescriptionInput,
-                ownerId: userId,
+                ownerId: userInfo?.id,
                 openToPublic: true,
                 usePassword: usePassword,
                 password: passwordInput,

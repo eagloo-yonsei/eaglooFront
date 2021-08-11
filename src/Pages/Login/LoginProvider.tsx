@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import axios from "axios";
 import { SHA3 } from "sha3";
-import { ChildrenProp, API_ENDPOINT } from "../../Constants";
+import { ChildrenProp, User, API_ENDPOINT } from "../../Constants";
 import { toastErrorMessage, toastLoginSuccessMessage } from "../../Utils";
 
 interface LoginContext {
@@ -36,7 +36,7 @@ export const useLoginContext = () => useContext(LoginContext);
 
 export default function LoginProvider({ children }: ChildrenProp) {
     const history = useHistory();
-    const { setIsLoggedIn, setUserEmail, setUserId } = useAppContext();
+    const { setIsLoggedIn, setUserInfo } = useAppContext();
     const hashedPassword = new SHA3(512);
     const [emailInput, setEmailInput] = useState<string>("");
     const [passwordInput, setPasswordInput] = useState<string>("");
@@ -48,7 +48,7 @@ export default function LoginProvider({ children }: ChildrenProp) {
         hashedPassword.reset();
         hashedPassword.update(passwordInput);
         await axios
-            .get(
+            .get<{ user: User; success: boolean; errorMessage: string }>(
                 `${API_ENDPOINT}/api/user/${emailInput}/${hashedPassword.digest(
                     "hex"
                 )}`
@@ -56,8 +56,7 @@ export default function LoginProvider({ children }: ChildrenProp) {
             .then(function ({ data }) {
                 if (data.success) {
                     setIsLoggedIn(true);
-                    setUserEmail(emailInput);
-                    setUserId(data.user?.id);
+                    setUserInfo(data.user);
                     toastLoginSuccessMessage(emailInput);
                     history.push("/");
                 } else {
@@ -65,8 +64,8 @@ export default function LoginProvider({ children }: ChildrenProp) {
                     toastErrorMessage(data.errorMessage);
                 }
             })
-            .catch((err) => {
-                console.log(err);
+            .catch((error) => {
+                console.error(error);
             });
     }
 

@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+    createContext,
+    useContext,
+    RefObject,
+    useRef,
+    useState,
+    useEffect,
+} from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
+import io, { Socket } from "socket.io-client";
 import {
     RoomType,
     Room,
@@ -17,10 +25,13 @@ interface RoomLocationStateProp {
 }
 
 interface RoomContextProp {
+    socketRef?: RefObject<Socket | undefined>;
     roomType: RoomType;
     roomId: string;
     roomInfo: Room | CustomRoom;
     userSeatNo: number;
+    chattingOpen: boolean;
+    setChattingOpen: (status: boolean) => void;
 }
 
 const InitialRoomContext: RoomContextProp = {
@@ -32,6 +43,8 @@ const InitialRoomContext: RoomContextProp = {
         seats: [],
     },
     userSeatNo: 0,
+    chattingOpen: false,
+    setChattingOpen: () => {},
 };
 
 const RoomContext = createContext<RoomContextProp>(InitialRoomContext);
@@ -40,6 +53,7 @@ export const useRoomContext = () => useContext(RoomContext);
 export default function RoomProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
+    const socketRef = useRef<Socket | undefined>();
     const [roomType, setRoomType] = useState<RoomType>(RoomType.PUBLIC);
     const [roomId, setRoomId] = useState<string>("");
     const [roomInfo, setRoomInfo] = useState<Room | CustomRoom>({
@@ -48,6 +62,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         seats: [],
     });
     const [userSeatNo, setUserSeatNo] = useState<number>(0);
+    const [chattingOpen, setChattingOpen] = useState<boolean>(false);
 
     useEffect(() => {
         // 엔트리 입장시 roomId prop을 받고 온 게 아니면 /list로 push
@@ -60,6 +75,12 @@ export default function RoomProvider({ children }: ChildrenProp) {
         } else {
             history.push("/list");
         }
+
+        socketRef.current = io(
+            state.roomType === RoomType.PUBLIC
+                ? `${API_ENDPOINT}/publicroom`
+                : `${API_ENDPOINT}/customroom`
+        );
 
         return () => {};
     }, []);
@@ -76,7 +97,15 @@ export default function RoomProvider({ children }: ChildrenProp) {
             });
     }
 
-    const roomContext = { roomType, roomId, roomInfo, userSeatNo };
+    const roomContext = {
+        socketRef,
+        roomType,
+        roomId,
+        roomInfo,
+        userSeatNo,
+        chattingOpen,
+        setChattingOpen,
+    };
 
     return (
         <RoomContext.Provider value={roomContext}>

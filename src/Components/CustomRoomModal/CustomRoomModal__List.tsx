@@ -31,7 +31,7 @@ function RoomListHeader() {
                 onChange={(e) => setsearchingRoomNameInput(e.target.value)}
                 onKeyPress={(e) => {
                     if (e.key === "Enter") {
-                        // TODO (utility)
+                        // TODO (utility) 사용자 설정 방 검색
                     }
                 }}
             />
@@ -94,6 +94,7 @@ const SearchIcon = styled.div`
 const SearchBox = styled.input`
     width: 360px;
     height: 28px;
+    margin: 0;
     padding: 0 15px;
     color: white;
     background-color: ${(props) => props.theme.customRoomModalInputBoxBlue};

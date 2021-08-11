@@ -31,6 +31,7 @@ export default function LoginContainer() {
                 <EmailBoxContainer className="idboxcontainer">
                     <EmailBox
                         ref={emailInputRef}
+                        disabled={signingIn}
                         type="text"
                         spellCheck="false"
                         value={emailInput}
@@ -45,6 +46,7 @@ export default function LoginContainer() {
                     <YonseiMailPlaceholder>{`@yonsei.ac.kr`}</YonseiMailPlaceholder>
                 </EmailBoxContainer>
                 <PasswordBox
+                    disabled={signingIn}
                     type="password"
                     value={passwordInput}
                     placeholder="password"

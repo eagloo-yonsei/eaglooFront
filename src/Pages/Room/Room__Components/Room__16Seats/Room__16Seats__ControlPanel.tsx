@@ -1,7 +1,8 @@
 import React, { RefObject } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "../../RoomProvider";
-import { RoomParentProp, PeerStateProp } from "../../../../Constants";
+import RoomChatting from "../Room__Chatting";
+import { RoomParentProp, PeerStateProp, RoomType } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
@@ -42,7 +43,7 @@ function ControlButtons({
     peersState,
     stopSelfStreamAndExit,
 }: PanelButtonProp) {
-    const { roomInfo, userSeatNo } = useRoomContext();
+    const { roomType, roomInfo, userSeatNo } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -98,7 +99,7 @@ const ControlButtonContainer = styled.div`
     align-items: center;
     width: 42%;
     height: 92.5%;
-    padding: 40px 0px;
+    padding: 24px 0px;
 `;
 
 const RoomInfo = styled.div`
@@ -106,6 +107,7 @@ const RoomInfo = styled.div`
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    height: 35px;
     font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 

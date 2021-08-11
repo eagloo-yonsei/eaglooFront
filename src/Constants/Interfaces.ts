@@ -6,6 +6,12 @@ export interface ChildrenProp {
     children: JSX.Element;
 }
 
+export interface User {
+    id: string;
+    email: string;
+    nickName?: string;
+}
+
 // 방 종류 : List, Entry, Room 에서 모두 사용
 export enum RoomType {
     PUBLIC = "PUBLIC",
@@ -53,4 +59,11 @@ export interface CustomRoom {
     password: string;
     enableMic: boolean;
     seats: Seat[];
+}
+
+export interface ChattingContent {
+    user: User | undefined;
+    content: string;
+    writtenTime: string;
+    key: number;
 }
