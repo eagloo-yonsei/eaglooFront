@@ -11,16 +11,16 @@ export default function CustomRoomModalCreate() {
     const { isLoggedIn } = useAppContext();
     const {
         roomNameInput,
-        setRoomNameInput,
         roomDescriptionInput,
-        setRoomDescriptionInput,
         usePassword,
-        toggleUsePassword,
         passwordInput,
-        setPasswordInput,
         passwordConfirmInput,
-        setPasswordConfirmInput,
         allowMic,
+        setRoomNameInput,
+        setRoomDescriptionInput,
+        toggleUsePassword,
+        setPasswordInput,
+        setPasswordConfirmInput,
         toggleAllowMic,
     } = useCustomRoomModalContext();
 

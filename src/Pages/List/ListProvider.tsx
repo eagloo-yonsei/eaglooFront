@@ -11,7 +11,7 @@ import {
     RoomType,
 } from "../../Constants";
 
-interface ListProp {
+interface ListContextProp {
     loadingPublicRooms: boolean;
     loadingCustomRooms: boolean;
     publicRooms: Room[];
@@ -19,7 +19,7 @@ interface ListProp {
     pushToEntry: (roomType: RoomType, roomId: string) => void;
 }
 
-const InitialListContext: ListProp = {
+const InitialListContext: ListContextProp = {
     loadingPublicRooms: true,
     loadingCustomRooms: true,
     publicRooms: [],
@@ -27,7 +27,7 @@ const InitialListContext: ListProp = {
     pushToEntry: () => {},
 };
 
-const ListContext = createContext<ListProp>(InitialListContext);
+const ListContext = createContext<ListContextProp>(InitialListContext);
 export const useListContext = () => useContext(ListContext);
 
 export default function ListProvider({ children }: ChildrenProp) {

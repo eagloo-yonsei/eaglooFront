@@ -5,80 +5,59 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { ChildrenProp } from "../../Constants";
+import { ChildrenProp, User } from "../../Constants";
 
 interface AppContext {
     isLoggedIn: boolean;
-    userEmail: string | undefined;
-    userId: string | undefined;
+    userInfo: User | undefined;
     isAdmin: boolean;
     showCustomRoomModal: boolean;
     userStream?: RefObject<HTMLVideoElement>;
     token?: string;
     setIsLoggedIn: (status: boolean) => void;
-    setUserEmail: (userName: string | undefined) => void;
-    setUserId: (userName: string | undefined) => void;
+    setUserInfo: (userInfo: User | undefined) => void;
     setIsAdmin: (status: boolean) => void;
     setShowCustomRoomModal: (status: boolean) => void;
-    getUserStream: () => boolean;
 }
 
 const InitialAppContext: AppContext = {
     isLoggedIn: false,
-    userEmail: undefined,
-    userId: undefined,
+    userInfo: undefined,
     isAdmin: false,
     showCustomRoomModal: false,
     setIsLoggedIn: () => {},
-    setUserEmail: () => {},
-    setUserId: () => {},
+    setUserInfo: () => {},
     setIsAdmin: () => {},
     setShowCustomRoomModal: () => {},
-    getUserStream: () => false,
 };
 
 const AppContext = createContext<AppContext>(InitialAppContext);
 export const useAppContext = () => useContext(AppContext);
 
 export default function AppProvider({ children }: ChildrenProp) {
+    const initialUser: User = {
+        id: "40a20233-d5a9-45c8-bd1d-8bea13befa0f",
+        email: "sample",
+    };
     const userStream = useRef<HTMLVideoElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
-    const [userId, setUserId] = useState<string | undefined>(undefined);
+    const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
+    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+    // const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
 
-    function getUserStream() {
-        // let result: boolean = false;
-        // navigator.mediaDevices
-        //     .getUserMedia({ video: true })
-        //     .then((stream) => {
-        //         userStream.current!.srcObject = stream;
-        //         result = true;
-        //     })
-        //     .catch(() => {
-        //         result = false;
-        //     });
-        // return result;
-        return false;
-    }
-
-    function stopUserStream() {}
-
     const appContext = {
         isLoggedIn,
-        userEmail,
-        userId,
+        userInfo,
         isAdmin,
         showCustomRoomModal,
         userStream,
         setIsLoggedIn,
-        setUserEmail,
-        setUserId,
+        setUserInfo,
         setIsAdmin,
         setShowCustomRoomModal,
-        getUserStream,
     };
 
     return (
