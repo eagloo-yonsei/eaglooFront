@@ -31,7 +31,7 @@ interface RoomContextProp {
     roomInfo: Room | CustomRoom;
     userSeatNo: number;
     chattingOpen: boolean;
-    setChattingOpen: (status: boolean) => void;
+    toggleChattingOpen: () => void;
 }
 
 const InitialRoomContext: RoomContextProp = {
@@ -44,7 +44,7 @@ const InitialRoomContext: RoomContextProp = {
     },
     userSeatNo: 0,
     chattingOpen: false,
-    setChattingOpen: () => {},
+    toggleChattingOpen: () => {},
 };
 
 const RoomContext = createContext<RoomContextProp>(InitialRoomContext);
@@ -97,6 +97,10 @@ export default function RoomProvider({ children }: ChildrenProp) {
             });
     }
 
+    function toggleChattingOpen() {
+        setChattingOpen(!chattingOpen);
+    }
+
     const roomContext = {
         socketRef,
         roomType,
@@ -104,7 +108,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         roomInfo,
         userSeatNo,
         chattingOpen,
-        setChattingOpen,
+        toggleChattingOpen,
     };
 
     return (

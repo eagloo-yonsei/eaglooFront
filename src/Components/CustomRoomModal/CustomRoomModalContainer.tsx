@@ -9,6 +9,7 @@ import { ModalBackGround } from "../../Styles/StyledComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
+// TODO (code clearance) Modal 팝업 여부 Home Provider에서 관리
 export default function CustomRoomModalContainer() {
     const { showCustomRoomModal, setShowCustomRoomModal } = useAppContext();
     const {

@@ -36,21 +36,21 @@ export default function RoomChattingContainer() {
 
 const Container = styled.div<{ chattingOpen: boolean }>`
     position: absolute;
-    top: 50px;
+    top: 45px;
     right: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 540px;
-    height: calc(100% - 100px);
+    width: ${(props) => props.theme.slideMenuWidth};
+    height: calc(100% - 90px);
     background-color: ${(props) => props.theme.chattingBackgroundBlue};
     padding: 24px 32px;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     transform: translate(
         ${(props) => {
-            return props.chattingOpen ? "0" : "540px";
+            return props.chattingOpen ? "0" : props.theme.slideMenuWidth;
         }}
     );
     transition: all 0.5s ${(props) => props.theme.animationCubic};

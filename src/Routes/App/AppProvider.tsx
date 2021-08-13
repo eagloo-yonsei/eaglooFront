@@ -12,12 +12,14 @@ interface AppContext {
     userInfo: User | undefined;
     isAdmin: boolean;
     showCustomRoomModal: boolean;
+    schedulerOpen: boolean;
     userStream?: RefObject<HTMLVideoElement>;
     token?: string;
     setIsLoggedIn: (status: boolean) => void;
     setUserInfo: (userInfo: User | undefined) => void;
     setIsAdmin: (status: boolean) => void;
     setShowCustomRoomModal: (status: boolean) => void;
+    toggleSchedulerOpen: () => void;
 }
 
 const InitialAppContext: AppContext = {
@@ -25,10 +27,12 @@ const InitialAppContext: AppContext = {
     userInfo: undefined,
     isAdmin: false,
     showCustomRoomModal: false,
+    schedulerOpen: false,
     setIsLoggedIn: () => {},
     setUserInfo: () => {},
     setIsAdmin: () => {},
     setShowCustomRoomModal: () => {},
+    toggleSchedulerOpen: () => {},
 };
 
 const AppContext = createContext<AppContext>(InitialAppContext);
@@ -47,17 +51,24 @@ export default function AppProvider({ children }: ChildrenProp) {
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
+    const [schedulerOpen, setSchedulerOpen] = useState<boolean>(false);
+
+    function toggleSchedulerOpen() {
+        setSchedulerOpen(!schedulerOpen);
+    }
 
     const appContext = {
         isLoggedIn,
         userInfo,
         isAdmin,
         showCustomRoomModal,
+        schedulerOpen,
         userStream,
         setIsLoggedIn,
         setUserInfo,
         setIsAdmin,
         setShowCustomRoomModal,
+        toggleSchedulerOpen,
     };
 
     return (

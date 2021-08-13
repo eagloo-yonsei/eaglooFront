@@ -16,6 +16,8 @@ import Room from "../../Pages/Room";
 import Forum from "../../Pages/Forum";
 import Feedback from "../../Pages/Feedback";
 import About from "../../Pages/About";
+import SchedulerOpenButton from "../../Components/Scheduler/Scheduler__OpenButton";
+import Scheduler from "../../Components/Scheduler";
 
 function AppContainer() {
     const { isAdmin } = useAppContext();
@@ -43,6 +45,8 @@ function UserRouter() {
                 <Router path={"/about"} component={About} />
                 <Redirect to={"/"} from={"*"} />
             </Switch>
+            <Scheduler />
+            <SchedulerOpenButton />
         </>
     );
 }

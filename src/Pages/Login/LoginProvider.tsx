@@ -48,7 +48,7 @@ export default function LoginProvider({ children }: ChildrenProp) {
         hashedPassword.reset();
         hashedPassword.update(passwordInput);
         await axios
-            .get<{ user: User; success: boolean; errorMessage: string }>(
+            .get<{ user: User; success: boolean; message: string }>(
                 `${API_ENDPOINT}/api/user/${emailInput}/${hashedPassword.digest(
                     "hex"
                 )}`
@@ -61,7 +61,7 @@ export default function LoginProvider({ children }: ChildrenProp) {
                     history.push("/");
                 } else {
                     setSigningIn(false);
-                    toastErrorMessage(data.errorMessage);
+                    toastErrorMessage(data.message);
                 }
             })
             .catch((error) => {
