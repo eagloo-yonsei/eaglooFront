@@ -12,6 +12,13 @@ export interface User {
     nickName?: string;
 }
 
+export interface Task {
+    id: string;
+    content: string;
+    importance: number;
+    done: boolean;
+}
+
 // 방 종류 : List, Entry, Room 에서 모두 사용
 export enum RoomType {
     PUBLIC = "PUBLIC",

@@ -100,7 +100,7 @@ export function StylelessLink({ to, children }: LinkProps) {
 
 interface SubmitButtonProp {
     buttonContent: string;
-    loadingStatus: boolean;
+    loadingStatus?: boolean;
     submitFunction: () => void;
     disabledCondition?: boolean;
     fontSize?: string;
@@ -113,37 +113,13 @@ export function SubmitButton({
     disabledCondition,
     fontSize,
 }: SubmitButtonProp) {
-    const SubmittingButtonContainer = styled.div`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 46px;
-        color: white;
-        font-size: ${fontSize ? fontSize : "22px"};
-        font-family: "JejuGothic";
-        border-radius: 8px;
-        background: ${(props) => props.theme.orangeGradient};
-    `;
-
-    const ReadyButtonContainer = styled(SubmittingButtonContainer)`
-        :hover {
-            cursor: pointer;
-        }
-    `;
-
-    const UnReadyButtonContainer = styled(SubmittingButtonContainer)`
-        background: none;
-        background-color: ${(props) => props.theme.loginMessageGray};
-    `;
-
     if (disabledCondition) {
         return <UnReadyButtonContainer>{buttonContent}</UnReadyButtonContainer>;
     }
 
     if (loadingStatus) {
         return (
-            <SubmittingButtonContainer>
+            <SubmittingButtonContainer fontSize={fontSize}>
                 <CircularProgress color="inherit" size={30} thickness={5} />
             </SubmittingButtonContainer>
         );
@@ -159,3 +135,27 @@ export function SubmitButton({
         );
     }
 }
+
+const SubmittingButtonContainer = styled.div<{ fontSize?: string }>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 46px;
+    color: white;
+    font-size: ${(props) => (props.fontSize ? props.fontSize : "22px")};
+    font-family: ${(props) => props.theme.subLabelFont};
+    border-radius: 8px;
+    background: ${(props) => props.theme.orangeGradient};
+`;
+
+const ReadyButtonContainer = styled(SubmittingButtonContainer)`
+    :hover {
+        cursor: pointer;
+    }
+`;
+
+const UnReadyButtonContainer = styled(SubmittingButtonContainer)`
+    background: none;
+    background-color: ${(props) => props.theme.loginMessageGray};
+`;

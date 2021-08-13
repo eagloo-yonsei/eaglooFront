@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
 export default function RoomChattingOpenButton() {
-    const { setChattingOpen } = useRoomContext();
+    const { toggleChattingOpen } = useRoomContext();
     return (
         <Container
             onClick={() => {
-                setChattingOpen(true);
+                toggleChattingOpen();
             }}
         >
             <FontAwesomeIcon icon={faCommentDots} size="2x" />
@@ -31,14 +31,14 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 60px;
+    top: 45px;
     right: 0;
     width: 65px;
     height: 65px;
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
-    color: #ffffff;
-    background-color: ${(props) => props.theme.mainBlue};
+    color: ${(props) => props.theme.mainBlue};
+    background-color: white;
     animation: ${buttonShow} 0.8s ${(props) => props.theme.animationCubic};
     :hover {
         cursor: pointer;

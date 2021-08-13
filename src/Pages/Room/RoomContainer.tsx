@@ -225,8 +225,8 @@ export default function RoomContainer() {
             />
             {roomType === RoomType.CUSTOM && (
                 <>
-                    <RoomChattingOpenButton />
                     <RoomChatting />
+                    <RoomChattingOpenButton />
                 </>
             )}
         </Container>

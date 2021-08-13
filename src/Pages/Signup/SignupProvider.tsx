@@ -102,7 +102,7 @@ export default function SignupProvider({ children }: ChildrenProp) {
                     secretInputRef?.current?.focus();
                     toastMailSendSuccessMessage(emailInput);
                 } else {
-                    toastErrorMessage(response.data.errorMessage);
+                    toastErrorMessage(response.data.message);
                     emailInputRef?.current?.focus();
                 }
             })
@@ -127,7 +127,7 @@ export default function SignupProvider({ children }: ChildrenProp) {
                     passwordInputRef?.current?.focus();
                     toastSecretVerifySuccessMessage();
                 } else {
-                    toastErrorMessage(response.data.errorMessage);
+                    toastErrorMessage(response.data.message);
                 }
             })
             .catch((error) => {
@@ -157,7 +157,7 @@ export default function SignupProvider({ children }: ChildrenProp) {
                     toastSignupSuccessMessage(emailInput);
                     history.push("/login");
                 } else {
-                    toastErrorMessage(response.data.errorMessage);
+                    toastErrorMessage(response.data.message);
                 }
             })
             .catch((error) => {

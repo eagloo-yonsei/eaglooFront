@@ -155,7 +155,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     interface ResponseProp {
         success: boolean;
         roomId: string;
-        errorMessage?: string;
+        message: string;
     }
 
     async function createRoomAndPushToEntry() {
@@ -182,7 +182,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
                 } else {
                     setCreatingRoom(false);
                     toastErrorMessage(
-                        response.data.errorMessage ||
+                        response.data.message ||
                             "방을 만드는 도중 오류가 발생했어요."
                     );
                 }
