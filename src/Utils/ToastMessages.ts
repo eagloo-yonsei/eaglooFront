@@ -28,6 +28,10 @@ export function toastRequestLoginMessage() {
     toast.info(`🧐 서비스 이용을 위해 로그인 해 주세요.`);
 }
 
+export function toastSuccessMessage(message: string) {
+    toast.success(`😀 ${message}`);
+}
+
 export function toastErrorMessage(message: string) {
     toast.error(`😥 ${message}`);
 }

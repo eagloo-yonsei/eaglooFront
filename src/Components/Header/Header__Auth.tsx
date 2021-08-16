@@ -15,8 +15,14 @@ function LoggedIn() {
     return (
         <Container>
             <AuthMessage>
-                {`${userInfo?.email} 님 `}
-                <FontAwesomeIcon icon={faUserAlt} />
+                <IdBox>{`${
+                    userInfo?.nickName ? userInfo?.nickName : userInfo?.email
+                }`}</IdBox>
+                {` 님`}
+                <IconBox>
+                    <FontAwesomeIcon icon={faUserAlt} />
+                </IconBox>
+                <StylelessLink to={`/profile`}>{`내 정보`}</StylelessLink>
             </AuthMessage>
             <LogInOutButton
                 onClick={() => {
@@ -24,7 +30,7 @@ function LoggedIn() {
                     setUserInfo(undefined);
                 }}
             >
-                로그아웃
+                {`로그아웃`}
             </LogInOutButton>
         </Container>
     );
@@ -33,9 +39,9 @@ function LoggedIn() {
 function LoggedOut() {
     return (
         <Container>
-            <AuthMessage>로그인해주세요.</AuthMessage>
+            <AuthMessage>{`로그인해주세요`}.</AuthMessage>
             <StylelessLink to={"/login"}>
-                <LogInOutButton>로그인</LogInOutButton>
+                <LogInOutButton>{`로그인`}</LogInOutButton>
             </StylelessLink>
         </Container>
     );
@@ -45,14 +51,31 @@ const Container = styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    width: 260px;
+    width: 350px;
+    height: 50px;
 `;
 
 const AuthMessage = styled.div`
+    display: flex;
     font-size: 13px;
     font-family: ${(props) => props.theme.plainTextFont};
     color: ${(props) => props.theme.loginMessageGray};
-    margin-right: 12px;
+    margin-right: 18px;
+`;
+
+const IdBox = styled.div`
+    display: flex;
+    width: 100px;
+    justify-content: flex-end;
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+const IconBox = styled.div`
+    margin-left: 12px;
+    margin-right: 15px;
 `;
 
 const LogInOutButton = styled.div`

@@ -103,7 +103,10 @@ interface SubmitButtonProp {
     loadingStatus?: boolean;
     submitFunction: () => void;
     disabledCondition?: boolean;
+    width?: string;
+    height?: string;
     fontSize?: string;
+    ringSize?: number;
 }
 
 export function SubmitButton({
@@ -111,21 +114,43 @@ export function SubmitButton({
     loadingStatus,
     submitFunction,
     disabledCondition,
+    width,
+    height,
     fontSize,
+    ringSize,
 }: SubmitButtonProp) {
     if (disabledCondition) {
-        return <UnReadyButtonContainer>{buttonContent}</UnReadyButtonContainer>;
+        return (
+            <UnReadyButtonContainer
+                width={width}
+                height={height}
+                fontSize={fontSize}
+            >
+                {buttonContent}
+            </UnReadyButtonContainer>
+        );
     }
 
     if (loadingStatus) {
         return (
-            <SubmittingButtonContainer fontSize={fontSize}>
-                <CircularProgress color="inherit" size={30} thickness={5} />
+            <SubmittingButtonContainer
+                width={width}
+                height={height}
+                fontSize={fontSize}
+            >
+                <CircularProgress
+                    color="inherit"
+                    size={ringSize || 30}
+                    thickness={5}
+                />
             </SubmittingButtonContainer>
         );
     } else {
         return (
             <ReadyButtonContainer
+                width={width}
+                height={height}
+                fontSize={fontSize}
                 onClick={() => {
                     submitFunction();
                 }}
@@ -136,12 +161,16 @@ export function SubmitButton({
     }
 }
 
-const SubmittingButtonContainer = styled.div<{ fontSize?: string }>`
+const SubmittingButtonContainer = styled.div<{
+    width?: string;
+    height?: string;
+    fontSize?: string;
+}>`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 46px;
+    width: ${(props) => (props.width ? props.width : "100%")};
+    height: ${(props) => (props.height ? props.height : "46px")};
     color: white;
     font-size: ${(props) => (props.fontSize ? props.fontSize : "22px")};
     font-family: ${(props) => props.theme.subLabelFont};

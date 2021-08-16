@@ -155,6 +155,8 @@ export default function SignupProvider({ children }: ChildrenProp) {
                 setSigningUp(false);
                 if (response.data.success) {
                     toastSignupSuccessMessage(emailInput);
+                    // TODO (enhancement) 로그인 이후 돌아갈 때 이전 페이지 주소를 받을 수 있는 방법은 없는가?
+                    history.push("/");
                     history.push("/login");
                 } else {
                     toastErrorMessage(response.data.message);

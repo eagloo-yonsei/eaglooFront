@@ -10,6 +10,7 @@ import Header from "../../Components/Header";
 import Home from "../../Pages/Home";
 import Login from "../../Pages/Login";
 import Signup from "../../Pages/Signup";
+import Profile from "../../Pages/Profile";
 import List from "../../Pages/List";
 import Entry from "../../Pages/Entry";
 import Room from "../../Pages/Room";
@@ -37,6 +38,7 @@ function UserRouter() {
                 <Router exact path={"/"} component={Home} />
                 <Router path={"/login"} component={Login} />
                 <Router path={"/signup"} component={Signup} />
+                <Router path={"/profile"} component={Profile} />
                 <Router path={"/list"} component={List} />
                 <Router path={"/entry"} component={Entry} />
                 <Router path={"/room"} component={Room} />

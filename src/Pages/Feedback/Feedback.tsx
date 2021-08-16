@@ -1,15 +1,11 @@
 import React from "react";
-import styled from "styled-components";
-import { SlideUpPageContainer } from "../../Styles/StyledComponents/StyledComponents";
+import FeedbackProvider from "./FeedbackProvider";
+import FeedbackContainer from "./FeedbackContainer";
 
 export default function Feedback() {
-    return <Container>피드백 페이지</Container>;
+    return (
+        <FeedbackProvider>
+            <FeedbackContainer />
+        </FeedbackProvider>
+    );
 }
-
-const Container = styled(SlideUpPageContainer)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;
-    font-family: ${(props) => props.theme.plainTextFont};
-`;
