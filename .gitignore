@@ -23,5 +23,5 @@ dist
 build
 
 # experiment
-src/Foo.ts
+foo.ts
 

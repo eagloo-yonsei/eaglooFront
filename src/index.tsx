@@ -15,7 +15,7 @@ const AppSizeFitter = styled.div`
     position: relative;
     align-items: center;
     justify-content: center;
-    min-width: 1300px;
+    min-width: 1380px;
     min-height: 760px;
     width: 100vw;
     height: 100vh;

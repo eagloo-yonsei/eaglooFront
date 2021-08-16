@@ -15,4 +15,5 @@ const Container = styled.div`
     font-size: 30px;
     font-weight: bold;
     font-family: "RecipeKorea";
+    width: 140px;
 `;

@@ -9,15 +9,15 @@ import { headerLessPages } from "../../Constants";
 export default function Header() {
     if (headerLessPages.includes(useLocation().pathname)) return null;
     return (
-        <HeaderDiv>
+        <Container>
             <HomeIcon />
             <MiddleComponents />
             <HeaderAuth />
-        </HeaderDiv>
+        </Container>
     );
 }
 
-const HeaderDiv = styled.div`
+const Container = styled.div`
     display: flex;
     position: absolute;
     top: 0;

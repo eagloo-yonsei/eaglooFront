@@ -6,10 +6,12 @@ export interface ChildrenProp {
     children: JSX.Element;
 }
 
+// DB 연동 Model (Room 관련 제외)
 export interface User {
     id: string;
     email: string;
     nickName?: string;
+    realName?: string;
 }
 
 export interface Task {
@@ -17,6 +19,13 @@ export interface Task {
     content: string;
     importance: number;
     done: boolean;
+}
+
+export enum FeedbackCategory {
+    GENERAL = "GENERAL",
+    BUG = "BUG",
+    SUGGESTION = "SUGGESTION",
+    ENHANCEMENT = "ENHANCEMENT",
 }
 
 // 방 종류 : List, Entry, Room 에서 모두 사용

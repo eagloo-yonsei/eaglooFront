@@ -49,7 +49,7 @@ export default function LoginProvider({ children }: ChildrenProp) {
         hashedPassword.update(passwordInput);
         await axios
             .get<{ user: User; success: boolean; message: string }>(
-                `${API_ENDPOINT}/api/user/${emailInput}/${hashedPassword.digest(
+                `${API_ENDPOINT}/api/user/auth/${emailInput}/${hashedPassword.digest(
                     "hex"
                 )}`
             )
@@ -58,7 +58,8 @@ export default function LoginProvider({ children }: ChildrenProp) {
                     setIsLoggedIn(true);
                     setUserInfo(data.user);
                     toastLoginSuccessMessage(emailInput);
-                    history.push("/");
+                    history.goBack();
+                    // history.push("/");
                 } else {
                     setSigningIn(false);
                     toastErrorMessage(data.message);

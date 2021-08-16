@@ -49,7 +49,6 @@ const Container = styled.div`
     :hover {
         cursor: pointer;
     }
-
     padding-top: 6px;
 `;
 
