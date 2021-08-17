@@ -5,12 +5,10 @@ import { PeerStateProp } from "../../../Constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface SeatProp {
-    peersState: PeerStateProp[];
     seatNo: number;
 }
 
 interface MiddleWareProp {
-    peersState: PeerStateProp[];
     seatNo: number;
     userSeatNo: number;
 }
@@ -19,19 +17,14 @@ interface EmptySeatProp {
     seatNo: number;
 }
 
-export default function RoomSeat({ peersState, seatNo }: SeatProp) {
+export default function RoomSeat({ seatNo }: SeatProp) {
     const { userSeatNo } = useRoomContext();
 
-    return (
-        <MiddleWare
-            peersState={peersState}
-            seatNo={seatNo}
-            userSeatNo={userSeatNo}
-        />
-    );
+    return <MiddleWare seatNo={seatNo} userSeatNo={userSeatNo} />;
 }
 
-function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
+function MiddleWare({ seatNo, userSeatNo }: MiddleWareProp) {
+    const { peersState } = useRoomContext();
     if (seatNo === userSeatNo) {
         return <SelfSeat />;
     }
@@ -60,6 +53,7 @@ function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
 function FilledSeat({ peer, seatNo }: PeerStateProp) {
     const peerStream = useRef<HTMLVideoElement>(null);
     const [gotStream, setGotStream] = useState<boolean>(false);
+
     useEffect(() => {
         peer.on("stream", (stream: MediaStream) => {
             setGotStream(true);
@@ -74,6 +68,7 @@ function FilledSeat({ peer, seatNo }: PeerStateProp) {
             // ref.current?.remove();
         };
     }, []);
+
     if (gotStream) {
         return <PeerCam ref={peerStream} playsInline autoPlay />;
     } else {

@@ -1,37 +1,20 @@
-import React, { RefObject } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useRoomContext } from "../../RoomProvider";
-import RoomChatting from "../Room__Chatting";
-import { RoomParentProp, PeerStateProp, RoomType } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-interface StreamProp {
-    userStreamRef: RefObject<HTMLVideoElement>;
-}
-
-interface PanelButtonProp {
-    peersState: PeerStateProp[];
-    stopSelfStreamAndExit: () => void;
-}
-
-export function Room16SeatsControlPanel({
-    peersState,
-    userStreamRef,
-    stopSelfStreamAndExit,
-}: RoomParentProp) {
+export function Room16SeatsControlPanel() {
     return (
         <Container>
-            <UserStream userStreamRef={userStreamRef} />
-            <ControlButtons
-                peersState={peersState}
-                stopSelfStreamAndExit={stopSelfStreamAndExit}
-            />
+            <UserStream />
+            <ControlButtons />
         </Container>
     );
 }
 
-function UserStream({ userStreamRef }: StreamProp) {
+function UserStream() {
+    const { userStreamRef } = useRoomContext();
     return (
         <CamContainer>
             <UserCam ref={userStreamRef} autoPlay playsInline />
@@ -39,11 +22,15 @@ function UserStream({ userStreamRef }: StreamProp) {
     );
 }
 
-function ControlButtons({
-    peersState,
-    stopSelfStreamAndExit,
-}: PanelButtonProp) {
-    const { roomType, roomInfo, userSeatNo } = useRoomContext();
+function ControlButtons() {
+    const {
+        peersState,
+        roomType,
+        roomInfo,
+        userSeatNo,
+        stopSelfStream,
+        exitToList,
+    } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -59,7 +46,8 @@ function ControlButtons({
             <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat>
             <ExitButton
                 onClick={() => {
-                    stopSelfStreamAndExit();
+                    stopSelfStream();
+                    exitToList();
                 }}
             >
                 {`나가기`}

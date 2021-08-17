@@ -1,15 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import RoomSeat from "../Room__Seat";
-import { PeerStateProp } from "../../../../Constants";
 
 interface Room16SeatsOuterColumnProp {
-    peersState: PeerStateProp[];
     seatNums: number[];
 }
 
 export default function Room16SeatsOuterColumn({
-    peersState,
     seatNums,
 }: Room16SeatsOuterColumnProp) {
     return (
@@ -17,7 +14,7 @@ export default function Room16SeatsOuterColumn({
             {seatNums.map((seatNo) => {
                 return (
                     <ColumnSeat key={`seat${seatNo}`}>
-                        <RoomSeat seatNo={seatNo} peersState={peersState} />
+                        <RoomSeat seatNo={seatNo} />
                     </ColumnSeat>
                 );
             })}
