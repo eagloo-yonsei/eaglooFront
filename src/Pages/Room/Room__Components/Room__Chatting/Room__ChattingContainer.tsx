@@ -13,7 +13,7 @@ export default function RoomChattingContainer() {
 
     useEffect(() => {
         // TODO (SIGNIFICANT) !#socket !#useEffect
-        // setTimeout을 걸지 않으면 socketRef에 socket이 연결되기 전에 먼저 가져오는 경우가 발생
+        // setTimeout을 걸지 않으면 socketRef에 socket이 연결되기 전에 먼저 가져와서 socket이 undefined인 경우가 발생
         setTimeout(() => {
             socketRef?.current?.on(
                 Channel.RECEIVE_CHATTING,

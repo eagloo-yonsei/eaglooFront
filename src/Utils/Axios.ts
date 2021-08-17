@@ -9,7 +9,7 @@ export interface PublicRoomResponse {
 }
 export async function getAllPublicRooms() {
     await axios
-        .get<Room[]>(`${API_ENDPOINT}/api/room`)
+        .get<Room[]>(`${API_ENDPOINT}/api/publicroom`)
         .then((response) => {
             return {
                 data: response.data,

@@ -101,7 +101,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         await axios
             .get<Room | CustomRoom>(
                 roomType === RoomType.PUBLIC
-                    ? `${API_ENDPOINT}/api/room/${roomId}`
+                    ? `${API_ENDPOINT}/api/publicroom/${roomId}`
                     : `${API_ENDPOINT}/api/customroom/${roomId}`
             )
             .then((response) => {
@@ -130,7 +130,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
     ) {
         const response = await axios.post<{ success: boolean; type?: number }>(
             roomType === RoomType.PUBLIC
-                ? `${API_ENDPOINT}/api/room/${roomId}/seat/${seatNo}`
+                ? `${API_ENDPOINT}/api/publicroom/${roomId}/seat/${seatNo}`
                 : `${API_ENDPOINT}/api/customroom/${roomId}/seat/${seatNo}`
         );
         const data: { success: boolean; type?: number } = response.data;

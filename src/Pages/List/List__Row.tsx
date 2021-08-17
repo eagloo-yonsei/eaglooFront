@@ -220,6 +220,10 @@ const RoomButtonIcon = styled.div`
 
 const RoomButtonTitle = styled.div`
     font-size: 18px;
+    // TODO (code clearance) 나중에 @media 통합
+    @media screen and (max-width: 1300px) {
+        font-size: 15px;
+    }
     margin-bottom: 12px;
 `;
 

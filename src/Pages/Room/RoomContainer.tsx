@@ -223,12 +223,8 @@ export default function RoomContainer() {
                 userStreamRef={userStreamRef}
                 stopSelfStreamAndExit={stopSelfStreamAndExit}
             />
-            {roomType === RoomType.CUSTOM && (
-                <>
-                    <RoomChatting />
-                    <RoomChattingOpenButton />
-                </>
-            )}
+            <RoomChatting />
+            <RoomChattingOpenButton />
         </Container>
     );
 }

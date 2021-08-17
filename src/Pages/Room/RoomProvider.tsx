@@ -89,7 +89,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         await axios
             .get<Room | CustomRoom>(
                 roomType === RoomType.PUBLIC
-                    ? `${API_ENDPOINT}/api/room/${roomId}`
+                    ? `${API_ENDPOINT}/api/publicroom/${roomId}`
                     : `${API_ENDPOINT}/api/customroom/${roomId}`
             )
             .then((response) => {
