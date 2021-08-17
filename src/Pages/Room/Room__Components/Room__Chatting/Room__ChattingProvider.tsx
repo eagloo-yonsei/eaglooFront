@@ -67,7 +67,7 @@ export default function RoomChattingProvider({ children }: ChildrenProp) {
         await axios
             .post<{ success: boolean }>(
                 roomType === RoomType.PUBLIC
-                    ? `${API_ENDPOINT}/api/room/chat`
+                    ? `${API_ENDPOINT}/api/publicroom/chat`
                     : `${API_ENDPOINT}/api/customroom/chat`,
                 {
                     roomId: roomId,

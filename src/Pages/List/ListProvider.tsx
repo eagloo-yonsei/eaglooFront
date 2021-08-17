@@ -47,7 +47,7 @@ export default function ListProvider({ children }: ChildrenProp) {
     async function getPublicRooms() {
         setLoadingPublicRooms(true);
         await axios
-            .get<Room[]>(`${API_ENDPOINT}/api/room`)
+            .get<Room[]>(`${API_ENDPOINT}/api/publicroom`)
             .then((response) => {
                 setPublicRooms(response.data);
                 setLoadingPublicRooms(false);

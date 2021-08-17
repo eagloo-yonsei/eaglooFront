@@ -19,6 +19,11 @@ export default function Header() {
 
 const Container = styled.div`
     display: flex;
+    gap: 120px;
+    // TODO (code clearance) @media 나중에 통합할 것
+    @media screen and (max-width: 1300px) {
+        gap: 35px;
+    }
     position: absolute;
     top: 0;
     width: 100%;

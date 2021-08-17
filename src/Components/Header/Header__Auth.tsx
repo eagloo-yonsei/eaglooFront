@@ -11,7 +11,8 @@ export default function HeaderAuth() {
 }
 
 function LoggedIn() {
-    const { setIsLoggedIn, userInfo, setUserInfo } = useAppContext();
+    const { isLoggedIn, userInfo, setIsLoggedIn, setUserInfo } =
+        useAppContext();
     return (
         <Container>
             <AuthMessage>
@@ -22,9 +23,12 @@ function LoggedIn() {
                 <IconBox>
                     <FontAwesomeIcon icon={faUserAlt} />
                 </IconBox>
-                <StylelessLink to={`/profile`}>{`내 정보`}</StylelessLink>
+                <StylelessLink to={`/profile`}>
+                    <ProfileButton>{`내 정보`}</ProfileButton>
+                </StylelessLink>
             </AuthMessage>
             <LogInOutButton
+                isLoggedIn={isLoggedIn}
                 onClick={() => {
                     setIsLoggedIn(false);
                     setUserInfo(undefined);
@@ -37,11 +41,14 @@ function LoggedIn() {
 }
 
 function LoggedOut() {
+    const { isLoggedIn } = useAppContext();
     return (
         <Container>
             <AuthMessage>{`로그인해주세요`}.</AuthMessage>
             <StylelessLink to={"/login"}>
-                <LogInOutButton>{`로그인`}</LogInOutButton>
+                <LogInOutButton
+                    isLoggedIn={isLoggedIn}
+                >{`로그인`}</LogInOutButton>
             </StylelessLink>
         </Container>
     );
@@ -78,11 +85,18 @@ const IconBox = styled.div`
     margin-right: 15px;
 `;
 
-const LogInOutButton = styled.div`
+const ProfileButton = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: fit-content;
+    width: 50px;
+`;
+
+const LogInOutButton = styled.div<{ isLoggedIn: boolean }>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: ${(props) => (props.isLoggedIn ? "120px" : "fit-content")};
     height: 30px;
     padding: 0px 20px;
     border-radius: 15px;

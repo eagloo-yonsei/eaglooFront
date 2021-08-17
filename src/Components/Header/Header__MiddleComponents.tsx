@@ -54,12 +54,10 @@ function LinkButton({ content, url }: { content: string; url: string }) {
 
 const Container = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     width: calc(100% - 460px);
     height: 50px;
-    padding-left: 50px;
-    padding-right: 20px;
 `;
 
 const LinkBlock = styled.div`
