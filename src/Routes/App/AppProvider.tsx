@@ -45,10 +45,10 @@ export default function AppProvider({ children }: ChildrenProp) {
         nickName: "봄낙엽",
     };
     const userStream = useRef<HTMLVideoElement>(null);
-    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    // const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-    const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
+    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+    // const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
@@ -56,6 +56,7 @@ export default function AppProvider({ children }: ChildrenProp) {
 
     function toggleSchedulerOpen() {
         setSchedulerOpen(!schedulerOpen);
+        console.log("do push to main");
     }
 
     const appContext = {

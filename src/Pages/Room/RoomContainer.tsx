@@ -60,8 +60,8 @@ export default function RoomContainer() {
                 socketRef?.current?.on(
                     Channel.GET_CURRENT_ROOM,
                     (roomDetails) => {
-                        console.log(`${state.roomId}방 기존 정보 : `);
-                        console.dir(roomDetails);
+                        // console.log(`${state.roomId}방 기존 정보 : `);
+                        // console.dir(roomDetails);
                         if (!!roomDetails?.length) {
                             const peers: PeerStateProp[] = [];
                             roomDetails?.forEach((seatInfo: Seat) => {
@@ -95,9 +95,9 @@ export default function RoomContainer() {
                         signal: Peer.SignalData;
                         callerSeatInfo: Seat;
                     }) => {
-                        console.log(
-                            `${payload.callerSeatInfo.socketId}(${payload.callerSeatInfo.seatNo}번 참여자)로부터 연결 요청`
-                        );
+                        // console.log(
+                        //     `${payload.callerSeatInfo.socketId}(${payload.callerSeatInfo.seatNo}번 참여자)로부터 연결 요청`
+                        // );
                         // 중복 요청인지 확인
                         const peerRef = peersRef?.current?.find(
                             (peer) =>
@@ -129,7 +129,7 @@ export default function RoomContainer() {
 
                 /* 6. 최종 연결 */
                 socketRef?.current?.on(Channel.RECEIVING_SIGNAL, (payload) => {
-                    console.log(`${payload.id}가 연결 요청을 수락`);
+                    // console.log(`${payload.id}가 연결 요청을 수락`);
                     // console.log("peersRef.current: ", peersRef.current);
                     const peerRef = peersRef?.current?.find(
                         (peer) => peer.seatInfo.socketId === payload.id
