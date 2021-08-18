@@ -17,6 +17,7 @@ export default {
     // color__entry
     entryMainBlue: "#3653FF",
     entryLightBlue: "#9AA9FF",
+    arrowBlue: "#B7C8ED",
     // color__modal
     customRoomModalLightBlue: "#547FDD",
     customRoomModalInputBoxBlue: "#B7C8ED",
@@ -46,4 +47,7 @@ export default {
     plainLightTextFont: "NexonGothicLv1Light",
     plainBoldTextFont: "NexonGothicLv1Bold",
     inButtonFont: "SamlipHopang",
+
+    // screens
+    tabletWidth: "1300px",
 };

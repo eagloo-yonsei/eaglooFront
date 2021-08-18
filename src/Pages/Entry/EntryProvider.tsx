@@ -27,16 +27,15 @@ interface EntryContextProp {
     roomType: RoomType;
     roomInfo: Room | CustomRoom;
     selectedSeatNo: number;
-    occupiedSeatNums: number[];
+    timeToStudy: number;
     camAccepted: boolean;
     userStreamRef?: RefObject<HTMLVideoElement>;
     selectSeat: (seatNo: number) => void;
-    checkVacancy: (
-        roomType: RoomType,
-        roomId: string,
-        seatNo: number
-    ) => Promise<boolean>;
-    enterRoom: (roomType: RoomType, roomId: string, seatNo: number) => void;
+    decreaseTimeToStudy: () => void;
+    increaseTimeToStudy: () => void;
+    checkVacancy: () => Promise<boolean>;
+    enterRoom: () => void;
+    getUserStream: () => void;
     stopSelfStream: () => void;
 }
 
@@ -48,13 +47,16 @@ const InitialEntryContext: EntryContextProp = {
         seats: [],
     },
     selectedSeatNo: 0,
-    occupiedSeatNums: [],
+    timeToStudy: 2,
     camAccepted: false,
     selectSeat: () => {},
+    decreaseTimeToStudy: () => {},
+    increaseTimeToStudy: () => {},
     checkVacancy: () => {
         return new Promise(() => false);
     },
     enterRoom: () => {},
+    getUserStream: () => {},
     stopSelfStream: () => {},
 };
 
@@ -72,8 +74,8 @@ export default function EntryProvider({ children }: ChildrenProp) {
         roomName: "",
         seats: [],
     });
-    const [occupiedSeatNums, setOccupiedSeatNums] = useState<number[]>([]);
     const [selectedSeatNo, setSelectedSeatNo] = useState<number>(0);
+    const [timeToStudy, setTimeToStudy] = useState<number>(2);
 
     useEffect(() => {
         // 엔트리 입장시 roomId prop을 받고 온 게 아니면 /list로 push
@@ -82,20 +84,24 @@ export default function EntryProvider({ children }: ChildrenProp) {
             setRoomType(state.roomType);
             getRoomInfo(state.roomType, state.roomId);
 
-            navigator.mediaDevices
-                .getUserMedia({
-                    video: true,
-                })
-                .then((stream) => {
-                    userStreamRef.current!.srcObject = stream;
-                    setCamAccepted(true);
-                });
+            getUserStream();
         } else {
             history.push("/list");
         }
 
         return () => {};
     }, []);
+
+    function getUserStream() {
+        navigator.mediaDevices
+            .getUserMedia({
+                video: true,
+            })
+            .then((stream) => {
+                setCamAccepted(true);
+                userStreamRef.current!.srcObject = stream;
+            });
+    }
 
     async function getRoomInfo(roomType: RoomType, roomId: string) {
         await axios
@@ -106,11 +112,6 @@ export default function EntryProvider({ children }: ChildrenProp) {
             )
             .then((response) => {
                 setRoomInfo(response.data);
-                const occupiedSeats: number[] = [];
-                response.data.seats.forEach((seat) => {
-                    occupiedSeats.push(seat.seatNo);
-                });
-                setOccupiedSeatNums(occupiedSeats);
             });
     }
 
@@ -123,15 +124,23 @@ export default function EntryProvider({ children }: ChildrenProp) {
         return;
     }
 
-    async function checkVacancy(
-        roomType: RoomType,
-        roomId: string,
-        seatNo: number
-    ) {
+    function decreaseTimeToStudy() {
+        if (timeToStudy > 1) {
+            setTimeToStudy((timeToStudy) => timeToStudy - 0.5);
+        }
+    }
+
+    function increaseTimeToStudy() {
+        if (timeToStudy < 10) {
+            setTimeToStudy((timeToStudy) => timeToStudy + 0.5);
+        }
+    }
+
+    async function checkVacancy() {
         const response = await axios.post<{ success: boolean; type?: number }>(
             roomType === RoomType.PUBLIC
-                ? `${API_ENDPOINT}/api/publicroom/${roomId}/seat/${seatNo}`
-                : `${API_ENDPOINT}/api/customroom/${roomId}/seat/${seatNo}`
+                ? `${API_ENDPOINT}/api/publicroom/${roomInfo.id}/seat/${selectedSeatNo}`
+                : `${API_ENDPOINT}/api/customroom/${roomInfo.id}/seat/${selectedSeatNo}`
         );
         const data: { success: boolean; type?: number } = response.data;
         if (data.success) {
@@ -146,14 +155,15 @@ export default function EntryProvider({ children }: ChildrenProp) {
         }
     }
 
-    function enterRoom(roomType: RoomType, roomId: string, seatNo: number) {
+    function enterRoom() {
         stopSelfStream();
         history.push({
             pathname: "/room",
             state: {
                 roomType: roomType,
-                roomId: roomId,
-                userSeatNo: seatNo,
+                roomId: roomInfo.id,
+                userSeatNo: selectedSeatNo,
+                endTime: new Date().getTime() + 1000 * 60 * 60 * timeToStudy,
             },
         });
     }
@@ -172,12 +182,15 @@ export default function EntryProvider({ children }: ChildrenProp) {
         roomType,
         roomInfo,
         selectedSeatNo,
-        occupiedSeatNums,
+        timeToStudy,
         userStreamRef,
         camAccepted,
         selectSeat,
+        decreaseTimeToStudy,
+        increaseTimeToStudy,
         checkVacancy,
         enterRoom,
+        getUserStream,
         stopSelfStream,
     };
 

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useEntryContext } from "../EntryProvider";
-import { RoomType } from "../../../Constants";
+import TimerPerMinute from "../../../Components/Timer/Timer__PerMinute";
+import { Seat, RoomType } from "../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -9,22 +10,36 @@ interface EntrySeatProp {
     seatNo: number;
 }
 
-interface MiddleWareProp {
-    occupiedSeatNums: number[];
+interface EntryOccupiedSeatProp {
     seatNo: number;
+    occupiedSeatInfo: Seat;
 }
 
 export default function EntrySeat({ seatNo }: EntrySeatProp) {
-    const { occupiedSeatNums } = useEntryContext();
+    const { roomInfo } = useEntryContext();
+    const [occupiedSeatInfo, setOccupiedSeatInfo] = useState<Seat>({
+        seatNo: 0,
+        socketId: "",
+        userEmail: "",
+        endTime: 0,
+    });
 
-    return <MiddleWare occupiedSeatNums={occupiedSeatNums} seatNo={seatNo} />;
-}
+    useEffect(() => {
+        const matchedSeat = roomInfo.seats.find((seat) => {
+            return seat.seatNo === seatNo;
+        });
+        if (matchedSeat) {
+            setOccupiedSeatInfo(matchedSeat);
+        }
+    }, [roomInfo]);
 
-// TODO (enhancement) 함수명 최적화 + state 안 넘겨주고 최적화
-function MiddleWare({ occupiedSeatNums, seatNo }: MiddleWareProp) {
-    if (occupiedSeatNums.includes(seatNo)) {
-        return <OccupiedSeat seatNo={seatNo} />;
-    } else return <SelectableSeat seatNo={seatNo} />;
+    if (occupiedSeatInfo.seatNo !== 0) {
+        return (
+            <OccupiedSeat seatNo={seatNo} occupiedSeatInfo={occupiedSeatInfo} />
+        );
+    }
+
+    return <SelectableSeat seatNo={seatNo} />;
 }
 
 function SelectableSeat({ seatNo }: EntrySeatProp) {
@@ -57,18 +72,21 @@ function SelectedSeat({ seatNo }: EntrySeatProp) {
     const { roomType } = useEntryContext();
     return (
         <SelectedContainer roomType={roomType}>
-            <FontAwesomeIcon icon={faCheck} size="3x" />
+            <FontAwesomeIcon icon={faCheck} />
             <SeatNo seatNo={seatNo} />
         </SelectedContainer>
     );
 }
 
-function OccupiedSeat({ seatNo }: EntrySeatProp) {
+function OccupiedSeat({ seatNo, occupiedSeatInfo }: EntryOccupiedSeatProp) {
     const { roomType } = useEntryContext();
     return (
         <Container>
             <OccupiedContainer roomType={roomType}>
-                {`사용중`}
+                <OccupiedMessage>{`사용중`}</OccupiedMessage>
+                <TimerContainer>
+                    <TimerPerMinute endTime={occupiedSeatInfo.endTime} />
+                </TimerContainer>
                 <SeatNo seatNo={seatNo} />
             </OccupiedContainer>
         </Container>
@@ -102,8 +120,10 @@ const SeatContainer = styled.div<RoomTypeProp>`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 12px;
     width: 100%;
     height: 100%;
+    font-size: 21px;
     border: 4.5px solid
         ${(props) =>
             props.roomType === RoomType.PUBLIC
@@ -112,6 +132,9 @@ const SeatContainer = styled.div<RoomTypeProp>`
     border-radius: 8px;
     font-family: ${(props) => props.theme.plainBoldTextFont};
     overflow: hidden;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 16px;
+    }
 `;
 
 const EmptyContainer = styled(SeatContainer)`
@@ -126,22 +149,40 @@ const EmptyContainer = styled(SeatContainer)`
 `;
 
 const SelectedContainer = styled(SeatContainer)`
+    color: white;
+    font-size: 54px;
     background-color: ${(props) =>
         props.roomType === RoomType.PUBLIC
             ? props.theme.entryLightBlue
             : props.theme.listLightOrange};
+
     :hover {
         cursor: pointer;
     }
-    color: white;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 32px;
+    }
 `;
 
 const OccupiedContainer = styled(SeatContainer)`
+    display: flex;
+    flex-direction: column;
     border: 4.5px solid ${(props) => props.theme.loginMessageGray};
     background-color: ${(props) => props.theme.loginMessageGray};
     color: white;
-    font-size: 24px;
     letter-spacing: 5px;
+`;
+
+const OccupiedMessage = styled.span`
+    font-size: 18px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 12px;
+    }
+`;
+
+const TimerContainer = styled.div`
+    display: flex;
+    width: 100%;
 `;
 
 const SeatNoContainer = styled.span`
@@ -150,4 +191,7 @@ const SeatNoContainer = styled.span`
     bottom: 8px;
     font-size: 16px;
     letter-spacing: 0px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 12px;
+    }
 `;

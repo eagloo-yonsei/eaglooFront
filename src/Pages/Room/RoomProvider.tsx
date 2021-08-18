@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import axios from "axios";
 import io, { Socket } from "socket.io-client";
 import {
@@ -21,11 +22,13 @@ import {
     API_ENDPOINT,
 } from "../../Constants";
 import Peer from "simple-peer";
+import { toastSuccessMessage } from "../../Utils";
 
 interface RoomLocationStateProp {
     roomType: RoomType;
     roomId: string;
     userSeatNo: number;
+    endTime: number;
 }
 
 interface RoomContextProp {
@@ -37,13 +40,14 @@ interface RoomContextProp {
     roomId: string;
     roomInfo: Room | CustomRoom;
     userSeatNo: number;
+    endTime: number;
     chattingOpen: boolean;
     setPeersState: (peersState: PeerStateProp[]) => void;
     createPeer: (
         userToSignal: string,
-        callerId: string,
-        callerSeatNo: number,
-        stream: MediaStream
+        stream: MediaStream,
+        userSeatNo: number,
+        endTime: number
     ) => Peer.Instance;
     addPeer: (
         incomingSignal: Peer.SignalData,
@@ -65,6 +69,7 @@ const InitialRoomContext: RoomContextProp = {
         seats: [],
     },
     userSeatNo: 0,
+    endTime: 0,
     chattingOpen: false,
     setPeersState: () => {},
     createPeer: () => new Peer(),
@@ -80,6 +85,7 @@ export const useRoomContext = () => useContext(RoomContext);
 export default function RoomProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
+    const { userInfo } = useAppContext();
     const userStreamRef = useRef<HTMLVideoElement>(null);
     const socketRef = useRef<Socket | undefined>();
     const peersRef = useRef<PeerRefProp[]>([]);
@@ -93,15 +99,17 @@ export default function RoomProvider({ children }: ChildrenProp) {
     });
     const [userSeatNo, setUserSeatNo] = useState<number>(0);
     const [chattingOpen, setChattingOpen] = useState<boolean>(false);
+    const [endTime, setEndTime] = useState<number>(0);
 
     useEffect(() => {
         // 엔트리 입장시 roomId prop을 받고 온 게 아니면 /list로 push
         const state = location.state as RoomLocationStateProp;
         if (state !== undefined) {
+            getRoomInfo(state.roomType, state.roomId);
             setRoomType(state.roomType);
             setRoomId(state.roomId);
             setUserSeatNo(state.userSeatNo);
-            getRoomInfo(state.roomType, state.roomId);
+            setEndTime(state.endTime);
         } else {
             history.push("/list");
         }
@@ -112,7 +120,17 @@ export default function RoomProvider({ children }: ChildrenProp) {
                 : `${API_ENDPOINT}/customroom`
         );
 
-        return () => {};
+        setTimeout(() => {
+            toastSuccessMessage(
+                "설정한 공부 시간이 다 되어 퇴실 되었습니다. 보람찬 시간이었나요?"
+            );
+            stopSelfStream();
+            exitToList();
+        }, state.endTime - new Date().getTime());
+
+        return () => {
+            socketRef.current?.disconnect();
+        };
     }, []);
 
     async function getRoomInfo(roomType: RoomType, roomId: string) {
@@ -134,9 +152,9 @@ export default function RoomProvider({ children }: ChildrenProp) {
     /* 자신이 방에 들어왔을 때 기존 참여자들과의 Connection 설정 */
     function createPeer(
         userToSignal: string, // 기존 참여자 socket ID
-        callerId: string, // 본인 socket ID
-        callerSeatNo: number, // 본인 seatNo
-        stream: MediaStream // 본인 stream
+        stream: MediaStream, // 본인 stream
+        userSeatNo: number,
+        endTime: number
     ) {
         const peer = new Peer({
             initiator: true,
@@ -148,9 +166,14 @@ export default function RoomProvider({ children }: ChildrenProp) {
             // console.log(`${userToSignal}에게 연결 요청`);
             socketRef?.current?.emit(Channel.SENDING_SIGNAL, {
                 userToSignal,
-                callerId,
-                callerSeatNo,
                 signal,
+                callerSeatInfo: {
+                    seatNo: userSeatNo,
+                    socketId: socketRef?.current?.id,
+                    userEmail: userInfo?.email,
+                    userNickName: userInfo?.nickName,
+                    endTime,
+                },
             });
         });
         return peer;
@@ -201,6 +224,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         roomId,
         roomInfo,
         userSeatNo,
+        endTime,
         chattingOpen,
         setPeersState,
         createPeer,

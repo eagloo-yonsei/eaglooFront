@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import styled from "styled-components";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import { useRoomContext } from "./RoomProvider";
 import Room16Seats from "./Room__Components/Room__16Seats";
 import RoomChattingOpenButton from "./Room__Components/Room__Chatting/Room__Chatting__OpenButton";
@@ -14,11 +15,13 @@ interface RoomLocationStateProp {
     roomType: RoomType;
     roomId: string;
     userSeatNo: number;
+    endTime: number;
 }
 
 export default function RoomContainer() {
     const location = useLocation<Location | unknown>();
     const history = useHistory();
+    const { userInfo } = useAppContext();
     const {
         userStreamRef,
         socketRef,
@@ -44,7 +47,13 @@ export default function RoomContainer() {
                 /* 1. 방참가 */
                 socketRef?.current?.emit(Channel.JOIN, {
                     roomId: state.roomId,
-                    seatNo: state.userSeatNo,
+                    newSeat: {
+                        seatNo: state.userSeatNo,
+                        socketId: socketRef?.current?.id,
+                        userEmail: userInfo?.email,
+                        userNickName: userInfo?.nickName,
+                        endTime: state.endTime,
+                    },
                 });
 
                 /* 2. 참가한 방의 기존 사용자들 정보 수신 */
@@ -55,22 +64,21 @@ export default function RoomContainer() {
                         // console.dir(roomDetails);
                         if (!!roomDetails?.length) {
                             const peers: PeerStateProp[] = [];
-                            roomDetails?.forEach((otherUser: Seat) => {
+                            roomDetails?.forEach((seatInfo: Seat) => {
                                 // 각 사용자들마다 발신용 peer 객체 생성 후 연결 요청
                                 const peer = createPeer(
-                                    otherUser.socketId,
-                                    socketRef?.current!.id,
+                                    seatInfo.socketId,
+                                    stream,
                                     state.userSeatNo,
-                                    stream
+                                    state.endTime
                                 );
                                 peersRef?.current?.push({
                                     peer,
-                                    socketId: otherUser.socketId,
-                                    seatNo: otherUser.seatNo,
+                                    seatInfo,
                                 });
                                 peers.push({
-                                    peer: peer,
-                                    seatNo: otherUser.seatNo,
+                                    peer,
+                                    seatInfo,
                                 });
                             });
                             setPeersState(peers);
@@ -85,32 +93,35 @@ export default function RoomContainer() {
                     Channel.NEW_USER,
                     (payload: {
                         signal: Peer.SignalData;
-                        callerId: string;
-                        callerSeatNo: number;
+                        callerSeatInfo: Seat;
                     }) => {
                         // console.log(
-                        //     `${payload.callerId}(${payload.callerSeatNo}번 참여자)로부터 연결 요청`
+                        //     `${payload.callerSeatInfo.socketId}(${payload.callerSeatInfo.seatNo}번 참여자)로부터 연결 요청`
                         // );
                         // 중복 요청인지 확인
                         const peerRef = peersRef?.current?.find(
-                            (peer) => peer.socketId === payload.callerId
+                            (peer) =>
+                                peer.seatInfo.socketId ===
+                                payload.callerSeatInfo.socketId
                         );
                         // 수신용 peer 객체 생성 후 연결 요청 수락
                         if (!peerRef) {
                             const peer = addPeer(
                                 payload.signal,
-                                payload.callerId,
+                                payload.callerSeatInfo.socketId,
                                 stream
                             );
                             peersRef?.current?.push({
                                 peer,
-                                socketId: payload.callerId,
-                                seatNo: payload.callerSeatNo,
+                                seatInfo: payload.callerSeatInfo,
                             });
                             // TODO (BUG?) RoomContainer에서 peersState 이전 상태 가져올 때 implicitly any type이 됨.
                             setPeersState((peersState) => [
                                 ...peersState,
-                                { peer: peer, seatNo: payload.callerSeatNo },
+                                {
+                                    peer: peer,
+                                    seatInfo: payload.callerSeatInfo,
+                                },
                             ]);
                         }
                     }
@@ -121,7 +132,7 @@ export default function RoomContainer() {
                     // console.log(`${payload.id}가 연결 요청을 수락`);
                     // console.log("peersRef.current: ", peersRef.current);
                     const peerRef = peersRef?.current?.find(
-                        (peer) => peer.socketId === payload.id
+                        (peer) => peer.seatInfo.socketId === payload.id
                     );
                     peerRef?.peer.signal(payload.signal);
                 });
@@ -132,11 +143,11 @@ export default function RoomContainer() {
                     // document.getElementById(`room-${seatNo}`)?.remove();
                     setPeersState((peersState) =>
                         peersState.filter((peer) => {
-                            return peer.seatNo !== seatNo;
+                            return peer.seatInfo.seatNo !== seatNo;
                         })
                     );
                     const exitPeer = peersRef?.current?.find((peer) => {
-                        peer.seatNo === seatNo;
+                        peer.seatInfo.seatNo === seatNo;
                     });
                     if (!!exitPeer) {
                         exitPeer.peer.destroy();
