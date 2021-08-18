@@ -56,6 +56,7 @@ export default function AppProvider({ children }: ChildrenProp) {
 
     function toggleSchedulerOpen() {
         setSchedulerOpen(!schedulerOpen);
+        console.log("do push to main");
     }
 
     const appContext = {
