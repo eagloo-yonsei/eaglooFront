@@ -47,7 +47,11 @@ export default function CustomRoomModalCreate() {
                     spellCheck="false"
                     value={roomNameInput}
                     placeholder="방 이름을 설정해 주세요"
-                    onChange={(e) => setRoomNameInput(e.target.value)}
+                    onChange={(e) => {
+                        if (e.target.value.length <= 12) {
+                            setRoomNameInput(e.target.value);
+                        }
+                    }}
                 />
                 <EssentialContentAlert>
                     <FontAwesomeIcon icon={faExclamationCircle} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useEntryContext } from "../EntryProvider";
 import { RoomType } from "../../../Constants";
@@ -6,7 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function EntryHeader() {
-    const { roomType, roomInfo, occupiedSeatNums } = useEntryContext();
+    const { roomType, roomInfo } = useEntryContext();
+
+    useEffect(() => {
+        return () => {};
+    }, [roomInfo]);
 
     return (
         <Container>
@@ -14,11 +18,11 @@ export default function EntryHeader() {
                 <FontAwesomeIcon icon={faUnlock} />
             </TitleIcon>
             <Title roomType={roomType}>{`${roomInfo.roomName}`}</Title>
-            <SubTitle roomType={roomType}>대기실</SubTitle>
+            <SubTitle roomType={roomType}>{`대기실`}</SubTitle>
             <StateIcon>
                 <FontAwesomeIcon icon={faUserAlt} />
             </StateIcon>
-            <StateNumber>{`${occupiedSeatNums.length}/16`}</StateNumber>
+            <StateNumber>{`${roomInfo.seats.length}/16`}</StateNumber>
         </Container>
     );
 }
