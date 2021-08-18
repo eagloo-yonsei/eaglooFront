@@ -163,7 +163,8 @@ export default function RoomProvider({ children }: ChildrenProp) {
         });
         peer.on("signal", (signal: Peer.SignalData) => {
             /* 3. 기존 사용자에게 연결 요청 */
-            // console.log(`${userToSignal}에게 연결 요청`);
+            console.log(`${userToSignal}에게 연결 요청`);
+            console.log(`내 정보 : ${userSeatNo}번 ${endTime} 종료`);
             socketRef?.current?.emit(Channel.SENDING_SIGNAL, {
                 userToSignal,
                 signal,

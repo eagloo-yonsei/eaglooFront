@@ -60,8 +60,8 @@ export default function RoomContainer() {
                 socketRef?.current?.on(
                     Channel.GET_CURRENT_ROOM,
                     (roomDetails) => {
-                        // console.log(`${state.roomId}방 기존 정보 : `);
-                        // console.dir(roomDetails);
+                        console.log(`${state.roomId}방 기존 정보 : `);
+                        console.dir(roomDetails);
                         if (!!roomDetails?.length) {
                             const peers: PeerStateProp[] = [];
                             roomDetails?.forEach((seatInfo: Seat) => {
@@ -129,7 +129,7 @@ export default function RoomContainer() {
 
                 /* 6. 최종 연결 */
                 socketRef?.current?.on(Channel.RECEIVING_SIGNAL, (payload) => {
-                    // console.log(`${payload.id}가 연결 요청을 수락`);
+                    console.log(`${payload.id}가 연결 요청을 수락`);
                     // console.log("peersRef.current: ", peersRef.current);
                     const peerRef = peersRef?.current?.find(
                         (peer) => peer.seatInfo.socketId === payload.id
