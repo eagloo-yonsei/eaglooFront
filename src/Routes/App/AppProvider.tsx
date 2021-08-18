@@ -40,14 +40,15 @@ export const useAppContext = () => useContext(AppContext);
 
 export default function AppProvider({ children }: ChildrenProp) {
     const initialUser: User = {
-        id: "40a20233-d5a9-45c8-bd1d-8bea13befa0f",
-        email: "sample",
+        id: "11451278-98e7-49b3-a4a0-279ca6e03574",
+        email: "dennis2311",
+        nickName: "봄낙엽",
     };
     const userStream = useRef<HTMLVideoElement>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
-    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-    // const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
+    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    // const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+    const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);

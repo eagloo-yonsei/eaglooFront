@@ -8,9 +8,9 @@ export default function MiddleComponents() {
             <LinkBlock>
                 <StylelessLink to={"/"} children={"홈"} />
             </LinkBlock>
-            <LinkBlock>
+            {/* <LinkBlock>
                 <StylelessLink to={"/forum"} children={"게시판"} />
-            </LinkBlock>
+            </LinkBlock> */}
             <YonseiLinkBlock>
                 {`연세 바로가기`}
                 <LinkButtons>
@@ -32,9 +32,9 @@ export default function MiddleComponents() {
                     />
                 </LinkButtons>
             </YonseiLinkBlock>
-            <LinkBlock>
+            {/* <LinkBlock>
                 <StylelessLink to={"/about"} children={"어바웃 어스"} />
-            </LinkBlock>
+            </LinkBlock> */}
             <LinkBlock>
                 <StylelessLink to={"/feedback"} children={"피드백"} />
             </LinkBlock>

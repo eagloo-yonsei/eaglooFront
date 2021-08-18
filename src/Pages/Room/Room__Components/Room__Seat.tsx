@@ -1,37 +1,36 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "../RoomProvider";
-import { PeerStateProp } from "../../../Constants";
+import TimerPerMinute from "../../../Components/Timer/Timer__PerMinute";
+import { Seat, PeerStateProp } from "../../../Constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface SeatProp {
-    peersState: PeerStateProp[];
     seatNo: number;
 }
 
-interface MiddleWareProp {
-    peersState: PeerStateProp[];
-    seatNo: number;
-    userSeatNo: number;
-}
+export default function RoomSeat({ seatNo }: SeatProp) {
+    const { userSeatNo, roomInfo, peersState } = useRoomContext();
+    const [matchedSeatInfo, setMatchedSeatInfo] = useState<Seat>({
+        seatNo: 0,
+        socketId: "",
+        userEmail: "",
+        endTime: 0,
+    });
 
-interface EmptySeatProp {
-    seatNo: number;
-}
+    useEffect(() => {
+        return () => {};
+    }, [userSeatNo]);
 
-export default function RoomSeat({ peersState, seatNo }: SeatProp) {
-    const { userSeatNo } = useRoomContext();
+    useEffect(() => {
+        const matchedSeat = roomInfo.seats.find((seat) => {
+            return seat.seatNo === seatNo;
+        });
+        if (matchedSeat) {
+            setMatchedSeatInfo(matchedSeat);
+        }
+    }, [roomInfo]);
 
-    return (
-        <MiddleWare
-            peersState={peersState}
-            seatNo={seatNo}
-            userSeatNo={userSeatNo}
-        />
-    );
-}
-
-function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
     if (seatNo === userSeatNo) {
         return <SelfSeat />;
     }
@@ -41,14 +40,17 @@ function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
     }
 
     const matchedPeer = peersState.find((peerState) => {
-        return peerState.seatNo === seatNo;
+        return peerState.seatInfo.seatNo === seatNo;
     });
 
     return (
         <>
             {!!matchedPeer ? (
                 <Container>
-                    <FilledSeat peer={matchedPeer.peer} seatNo={seatNo} />
+                    <FilledSeat
+                        peer={matchedPeer.peer}
+                        seatInfo={matchedPeer.seatInfo}
+                    />
                 </Container>
             ) : (
                 <EmptySeat seatNo={seatNo} />
@@ -57,9 +59,10 @@ function MiddleWare({ peersState, seatNo, userSeatNo }: MiddleWareProp) {
     );
 }
 
-function FilledSeat({ peer, seatNo }: PeerStateProp) {
+function FilledSeat({ peer, seatInfo }: PeerStateProp) {
     const peerStream = useRef<HTMLVideoElement>(null);
     const [gotStream, setGotStream] = useState<boolean>(false);
+
     useEffect(() => {
         peer.on("stream", (stream: MediaStream) => {
             setGotStream(true);
@@ -67,15 +70,23 @@ function FilledSeat({ peer, seatNo }: PeerStateProp) {
         });
         peer.on("close", () => {
             setGotStream(false);
-            document.getElementById(`container-${seatNo}`)?.remove();
+            document.getElementById(`container-${seatInfo.seatNo}`)?.remove();
         });
         return () => {
-            document.getElementById(`container-${seatNo}`)?.remove();
+            document.getElementById(`container-${seatInfo.seatNo}`)?.remove();
             // ref.current?.remove();
         };
     }, []);
+
     if (gotStream) {
-        return <PeerCam ref={peerStream} playsInline autoPlay />;
+        return (
+            <>
+                <PeerCam ref={peerStream} playsInline autoPlay />
+                <TimerContainer>
+                    <TimerPerMinute endTime={seatInfo.endTime} />
+                </TimerContainer>
+            </>
+        );
     } else {
         return <GettingStream />;
     }
@@ -84,19 +95,17 @@ function FilledSeat({ peer, seatNo }: PeerStateProp) {
 function GettingStream() {
     return (
         <GettingStreamContainer>
-            <GettingStreamIcon>
-                <CircularProgress color="inherit" size={30} thickness={5} />
-            </GettingStreamIcon>
+            <CircularProgress color="inherit" size={30} thickness={5} />
             {`영상을 가져오는 중입니다`}
         </GettingStreamContainer>
     );
 }
 
 function SelfSeat() {
-    return <SelfContainer>사용중</SelfContainer>;
+    return <SelfContainer>{`사용중`}</SelfContainer>;
 }
 
-function EmptySeat({ seatNo }: EmptySeatProp) {
+function EmptySeat({ seatNo }: SeatProp) {
     return (
         <EmptyContainer>{`${seatNo}번 참여자를 기다리는 중`}</EmptyContainer>
     );
@@ -112,6 +121,7 @@ const GettingStreamContainer = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 25px;
     width: 100%;
     height: 100%;
     color: white;
@@ -120,11 +130,8 @@ const GettingStreamContainer = styled.div`
     padding-top: 15px;
 `;
 
-const GettingStreamIcon = styled.div`
-    margin-bottom: 25px;
-`;
-
 const Container = styled.div`
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,6 +143,20 @@ const Container = styled.div`
     overflow: hidden;
 `;
 
+const TimerContainer = styled.div`
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 28px;
+    color: white;
+    background-color: black;
+    font-size: 18px;
+    font-family: ${(props) => props.theme.plainBoldTextFont};
+`;
+
 const SelfContainer = styled(Container)`
     font-size: 24px;
     font-family: ${(props) => props.theme.plainBoldTextFont};
@@ -145,6 +166,9 @@ const SelfContainer = styled(Container)`
 `;
 
 const EmptyContainer = styled(Container)`
-    font-size: 15px;
+    font-size: 16px;
     color: white;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 12px;
+    }
 `;

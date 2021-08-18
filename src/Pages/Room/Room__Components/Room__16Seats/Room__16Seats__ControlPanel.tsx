@@ -1,37 +1,21 @@
-import React, { RefObject } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useRoomContext } from "../../RoomProvider";
-import RoomChatting from "../Room__Chatting";
-import { RoomParentProp, PeerStateProp, RoomType } from "../../../../Constants";
+import TimerPerSecond from "../../../../Components/Timer/Timer__PerSecond";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-interface StreamProp {
-    userStreamRef: RefObject<HTMLVideoElement>;
-}
-
-interface PanelButtonProp {
-    peersState: PeerStateProp[];
-    stopSelfStreamAndExit: () => void;
-}
-
-export function Room16SeatsControlPanel({
-    peersState,
-    userStreamRef,
-    stopSelfStreamAndExit,
-}: RoomParentProp) {
+export function Room16SeatsControlPanel() {
     return (
         <Container>
-            <UserStream userStreamRef={userStreamRef} />
-            <ControlButtons
-                peersState={peersState}
-                stopSelfStreamAndExit={stopSelfStreamAndExit}
-            />
+            <UserStream />
+            <ControlButtons />
         </Container>
     );
 }
 
-function UserStream({ userStreamRef }: StreamProp) {
+function UserStream() {
+    const { userStreamRef } = useRoomContext();
     return (
         <CamContainer>
             <UserCam ref={userStreamRef} autoPlay playsInline />
@@ -39,11 +23,16 @@ function UserStream({ userStreamRef }: StreamProp) {
     );
 }
 
-function ControlButtons({
-    peersState,
-    stopSelfStreamAndExit,
-}: PanelButtonProp) {
-    const { roomType, roomInfo, userSeatNo } = useRoomContext();
+function ControlButtons() {
+    const {
+        peersState,
+        roomType,
+        roomInfo,
+        userSeatNo,
+        endTime,
+        stopSelfStream,
+        exitToList,
+    } = useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
@@ -56,10 +45,14 @@ function ControlButtons({
                     {`  ${peersState.length + 1}/16`}
                 </RoomPeople>
             </RoomInfo>
-            <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat>
+            <TimerContainer>
+                <TimerPerSecond endTime={endTime} showSecond={true} />
+            </TimerContainer>
+            {/* <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat> */}
             <ExitButton
                 onClick={() => {
-                    stopSelfStreamAndExit();
+                    stopSelfStream();
+                    exitToList();
                 }}
             >
                 {`나가기`}
@@ -104,6 +97,10 @@ const ControlButtonContainer = styled.div`
 
 const RoomInfo = styled.div`
     display: flex;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        flex-direction: column;
+        gap: 16px;
+    }
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -113,12 +110,36 @@ const RoomInfo = styled.div`
 
 const RoomName = styled.div`
     font-size: 30px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 24px;
+    }
     color: white;
 `;
 
 const RoomPeople = styled.div`
     font-size: 20px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 16px;
+    }
     color: ${(props) => props.theme.loginMessageGray};
+`;
+
+const TimerContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%;
+    height: 64px;
+    color: orange;
+    font-size: 28px;
+    font-family: ${(props) => props.theme.inButtonFont};
+    background-color: white;
+    padding: 0px 24px;
+    border-radius: 12px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        width: 90%;
+        height: 46px;
+    }
 `;
 
 const MySeat = styled.div`

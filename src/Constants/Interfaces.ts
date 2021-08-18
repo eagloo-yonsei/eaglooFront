@@ -1,4 +1,3 @@
-import { RefObject } from "react";
 import Peer from "simple-peer";
 
 // 모든 Provider 공통
@@ -35,27 +34,22 @@ export enum RoomType {
 }
 
 // 방에서 사용하는 simple-peer 라이브러리 prop
-export interface RoomParentProp {
-    peersState: PeerStateProp[];
-    userStreamRef: RefObject<HTMLVideoElement>;
-    stopSelfStreamAndExit: () => void;
-}
-
 export interface PeerStateProp {
     peer: Peer.Instance;
-    seatNo: number;
+    seatInfo: Seat;
 }
 
 export interface PeerRefProp {
     peer: Peer.Instance;
-    socketId: string;
-    seatNo: number;
+    seatInfo: Seat;
 }
 
 export interface Seat {
     seatNo: number;
     socketId: string;
-    userName?: string;
+    userEmail: string;
+    userNickName?: string;
+    endTime: number;
 }
 
 export interface Room {
