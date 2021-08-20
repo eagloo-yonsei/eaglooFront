@@ -15,6 +15,7 @@ import {
     RoomType,
     Room,
     CustomRoom,
+    Seat,
     PeerStateProp,
     PeerRefProp,
     Channel,
@@ -42,6 +43,15 @@ interface RoomContextProp {
     userSeatNo: number;
     endTime: number;
     chattingOpen: boolean;
+    joinRoom: (
+        roomType: RoomType,
+        roomId: string,
+        newSeat: Seat
+    ) => Promise<{
+        success: boolean;
+        roomInfo: Room | CustomRoom;
+        message: string;
+    }>;
     setPeersState: (peersState: PeerStateProp[]) => void;
     createPeer: (
         userToSignal: string,
@@ -71,6 +81,15 @@ const InitialRoomContext: RoomContextProp = {
     userSeatNo: 0,
     endTime: 0,
     chattingOpen: false,
+    joinRoom: () => {
+        return new Promise(() => {
+            return {
+                success: false,
+                roomInfo: { id: "", roomName: "", seats: [] },
+                message: "",
+            };
+        });
+    },
     setPeersState: () => {},
     createPeer: () => new Peer(),
     addPeer: () => new Peer(),
@@ -145,8 +164,34 @@ export default function RoomProvider({ children }: ChildrenProp) {
             });
     }
 
-    function toggleChattingOpen() {
-        setChattingOpen(!chattingOpen);
+    async function joinRoom(roomType: RoomType, roomId: string, newSeat: Seat) {
+        const response = await axios
+            .post<{
+                success: boolean;
+                roomInfo: Room | CustomRoom;
+                message: string;
+            }>(
+                roomType === RoomType.PUBLIC
+                    ? `${API_ENDPOINT}/api/publicroom/joinRoom`
+                    : `${API_ENDPOINT}/api/customroom/joinRoom`,
+                {
+                    roomId,
+                    newSeat,
+                }
+            )
+            .catch((error) => {
+                console.error(error);
+                return {
+                    data: {
+                        success: false,
+                        roomInfo: { id: "", roomName: "", seats: [] },
+                        message:
+                            "방 입장 중 오류가 발생했습니다. 인터넷 연결을 확인해주세요.",
+                    },
+                };
+            });
+
+        return response.data;
     }
 
     /* 자신이 방에 들어왔을 때 기존 참여자들과의 Connection 설정 */
@@ -163,8 +208,9 @@ export default function RoomProvider({ children }: ChildrenProp) {
         });
         peer.on("signal", (signal: Peer.SignalData) => {
             /* 3. 기존 사용자에게 연결 요청 */
+            // TODO (Room에서 소켓 활용 최소화) 나중에 POST 요청으로.
             // console.log(`${userToSignal}에게 연결 요청`);
-            socketRef?.current?.emit(Channel.SENDING_SIGNAL, {
+            socketRef?.current?.emit(Channel.REQUEST_PEER_CONNECTION, {
                 userToSignal,
                 signal,
                 callerSeatInfo: {
@@ -193,13 +239,17 @@ export default function RoomProvider({ children }: ChildrenProp) {
         /* 5. 연결 요청 수락 */
         peer.on("signal", (signal: Peer.SignalData) => {
             // console.log(`${callerId}의 연결 요청 수락`);
-            socketRef?.current?.emit(Channel.RETURNING_SIGNAL, {
+            socketRef?.current?.emit(Channel.ACCEPT_PEER_CONNECTION_REQUEST, {
                 signal,
                 callerId,
             });
         });
         peer.signal(incomingSignal);
         return peer;
+    }
+
+    function toggleChattingOpen() {
+        setChattingOpen(!chattingOpen);
     }
 
     function stopSelfStream() {
@@ -227,6 +277,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         userSeatNo,
         endTime,
         chattingOpen,
+        joinRoom,
         setPeersState,
         createPeer,
         addPeer,

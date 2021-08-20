@@ -137,22 +137,31 @@ export default function EntryProvider({ children }: ChildrenProp) {
     }
 
     async function checkVacancy() {
-        const response = await axios.post<{ success: boolean; type?: number }>(
+        const response = await axios.post<{
+            success: boolean;
+            message: string;
+        }>(
             roomType === RoomType.PUBLIC
-                ? `${API_ENDPOINT}/api/publicroom/${roomInfo.id}/seat/${selectedSeatNo}`
-                : `${API_ENDPOINT}/api/customroom/${roomInfo.id}/seat/${selectedSeatNo}`
+                ? `${API_ENDPOINT}/api/publicroom/checkVacancy`
+                : `${API_ENDPOINT}/api/customroom/checkVacancy`,
+            {
+                roomId: roomInfo.id,
+                seatNo: selectedSeatNo,
+            }
         );
-        const data: { success: boolean; type?: number } = response.data;
-        if (data.success) {
+        if (response.data.success) {
             return true;
         } else {
-            if (data.type === 2) {
-                toastErrorMessage("사용 중인 자리입니다");
-                return false;
-            }
-            toastErrorMessage("잘못된 요청입니다");
+            toastErrorMessage(response.data.message);
             return false;
         }
+    }
+
+    async function checkDuplicateUse() {
+        // if(userInfo?.isAdmin){
+        //     return false
+        // }
+        // const response = await axios.post<{}>(`${API_ENDPOINT}`)
     }
 
     function enterRoom() {
