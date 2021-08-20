@@ -26,6 +26,7 @@ export default function RoomContainer() {
         userStreamRef,
         socketRef,
         peersRef,
+        joinRoom,
         setPeersState,
         createPeer,
         addPeer,
@@ -41,56 +42,45 @@ export default function RoomContainer() {
             .getUserMedia({
                 video: true,
             })
-            .then((stream) => {
+            .then(async (stream) => {
                 userStreamRef!.current!.srcObject = stream;
 
-                /* 1. 방참가 */
-                socketRef?.current?.emit(Channel.JOIN, {
-                    roomId: state.roomId,
-                    newSeat: {
-                        seatNo: state.userSeatNo,
-                        socketId: socketRef?.current?.id,
-                        userEmail: userInfo?.email,
-                        userNickName: userInfo?.nickName,
-                        endTime: state.endTime,
-                    },
+                const data = await joinRoom(state.roomType, state.roomId, {
+                    seatNo: state.userSeatNo,
+                    socketId: socketRef?.current?.id || "",
+                    userEmail: userInfo?.email || "",
+                    userNickName: userInfo?.nickName,
+                    endTime: state.endTime,
                 });
 
-                /* 2. 참가한 방의 기존 사용자들 정보 수신 */
-                socketRef?.current?.on(
-                    Channel.GET_CURRENT_ROOM,
-                    (roomDetails) => {
-                        // console.log(`${state.roomId}방 기존 정보 : `);
-                        // console.dir(roomDetails);
-                        if (!!roomDetails?.length) {
-                            const peers: PeerStateProp[] = [];
-                            roomDetails?.forEach((seatInfo: Seat) => {
-                                // 각 사용자들마다 발신용 peer 객체 생성 후 연결 요청
+                if (data.success) {
+                    if (!!data.roomInfo.seats) {
+                        const peers: PeerStateProp[] = [];
+                        data.roomInfo.seats.forEach((seat) => {
+                            if (seat.socketId !== socketRef?.current?.id) {
                                 const peer = createPeer(
-                                    seatInfo.socketId,
+                                    seat.socketId,
                                     stream,
                                     state.userSeatNo,
                                     state.endTime
                                 );
                                 peersRef?.current?.push({
                                     peer,
-                                    seatInfo,
+                                    seatInfo: seat,
                                 });
                                 peers.push({
                                     peer,
-                                    seatInfo,
+                                    seatInfo: seat,
                                 });
-                            });
-                            setPeersState(peers);
-                        } else {
-                            setPeersState([]);
-                        }
+                            }
+                        });
+                        setPeersState(peers);
                     }
-                );
+                }
 
                 /* 4. 새 유저가 접속한경우 */
                 socketRef?.current?.on(
-                    Channel.NEW_USER,
+                    Channel.PEER_CONNECTION_REQUESTED,
                     (payload: {
                         signal: Peer.SignalData;
                         callerSeatInfo: Seat;
@@ -128,14 +118,17 @@ export default function RoomContainer() {
                 );
 
                 /* 6. 최종 연결 */
-                socketRef?.current?.on(Channel.RECEIVING_SIGNAL, (payload) => {
-                    // console.log(`${payload.id}가 연결 요청을 수락`);
-                    // console.log("peersRef.current: ", peersRef.current);
-                    const peerRef = peersRef?.current?.find(
-                        (peer) => peer.seatInfo.socketId === payload.id
-                    );
-                    peerRef?.peer.signal(payload.signal);
-                });
+                socketRef?.current?.on(
+                    Channel.PEER_CONNECTION_REQUEST_ACCEPTED,
+                    (payload) => {
+                        // console.log(`${payload.id}가 연결 요청을 수락`);
+                        // console.log("peersRef.current: ", peersRef.current);
+                        const peerRef = peersRef?.current?.find(
+                            (peer) => peer.seatInfo.socketId === payload.id
+                        );
+                        peerRef?.peer.signal(payload.signal);
+                    }
+                );
 
                 /* 다른 유저 퇴장시 */
                 socketRef?.current?.on(Channel.DISCONNECT, (seatNo) => {
