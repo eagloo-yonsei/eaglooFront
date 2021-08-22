@@ -2,19 +2,22 @@ import React, {
     createContext,
     RefObject,
     useContext,
+    useEffect,
     useRef,
     useState,
 } from "react";
-import { ChildrenProp, User } from "../../Constants";
+import { API_ENDPOINT, ChildrenProp, User } from "../../Constants";
+import io, { Socket } from "socket.io-client";
 
 interface AppContext {
+    socketRef?: RefObject<Socket | undefined>;
+    userStream?: RefObject<HTMLVideoElement>;
+    token?: string;
     isLoggedIn: boolean;
     userInfo: User | undefined;
     isAdmin: boolean;
     showCustomRoomModal: boolean;
     schedulerOpen: boolean;
-    userStream?: RefObject<HTMLVideoElement>;
-    token?: string;
     setIsLoggedIn: (status: boolean) => void;
     setUserInfo: (userInfo: User | undefined) => void;
     setIsAdmin: (status: boolean) => void;
@@ -44,21 +47,36 @@ export default function AppProvider({ children }: ChildrenProp) {
         email: "dennis2311",
         nickName: "봄낙엽",
     };
+    const socketRef = useRef<Socket | undefined>();
     const userStream = useRef<HTMLVideoElement>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
-    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-    // const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
+    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    // const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+    const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
     const [schedulerOpen, setSchedulerOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            if (userInfo && !socketRef.current) {
+                socketRef.current = io(API_ENDPOINT, {
+                    query: { userInfo: JSON.stringify(userInfo) },
+                });
+            }
+        } else {
+            socketRef.current?.disconnect();
+            socketRef.current = undefined;
+        }
+    }, [isLoggedIn, userInfo]);
 
     function toggleSchedulerOpen() {
         setSchedulerOpen(!schedulerOpen);
     }
 
     const appContext = {
+        socketRef,
         isLoggedIn,
         userInfo,
         isAdmin,

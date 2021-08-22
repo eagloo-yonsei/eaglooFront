@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
 import { useEntryContext } from "./EntryProvider";
 import EntryHeader from "./Entry__Components/Entry__Header";
 import Entry16Seats from "./Entry__Components/Entry__16Seats/Entry__16Seats";
@@ -14,15 +13,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function EntryContainer() {
-    const { stopSelfStream } = useEntryContext();
-    const history = useHistory();
+    const { stopSelfStream, exitToList } = useEntryContext();
 
     return (
         <>
             <ModalBackGround
                 onClick={() => {
                     stopSelfStream();
-                    history.push("/list");
+                    exitToList();
                 }}
             />
             <Container>
@@ -35,16 +33,15 @@ export default function EntryContainer() {
 }
 
 function CloseIcon() {
-    const { stopSelfStream } = useEntryContext();
+    const { stopSelfStream, exitToList } = useEntryContext();
     return (
         <EntryClose
             onClick={() => {
                 stopSelfStream();
+                exitToList();
             }}
         >
-            <StylelessLink to={"/list"}>
-                <FontAwesomeIcon icon={faTimes} size="2x" />
-            </StylelessLink>
+            <FontAwesomeIcon icon={faTimes} size="2x" />
         </EntryClose>
     );
 }
@@ -64,4 +61,5 @@ const EntryClose = styled.div`
     top: 40px;
     right: 45px;
     color: ${(props) => props.theme.entryMainBlue};
+    cursor: pointer;
 `;

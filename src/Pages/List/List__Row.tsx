@@ -50,45 +50,40 @@ function Title({ roomType }: RoomTypeProp) {
 }
 
 function RoomButtonRow({ roomType }: RoomTypeProp) {
-    const { loadingPublicRooms, loadingCustomRooms, publicRooms, customRooms } =
-        useListContext();
+    const { loadingRooms, publicRooms, customRooms } = useListContext();
+
+    if (loadingRooms) {
+        return <LoadingMessage />;
+    }
 
     if (roomType === RoomType.PUBLIC) {
-        if (loadingPublicRooms) {
-            return <LoadingMessage />;
-        } else {
-            return (
-                <RoomButtonRowContainer>
-                    {publicRooms.map((publicRoom) => {
-                        return (
-                            <PublicRoomButton
-                                room={publicRoom}
-                                key={`publicRoom_${publicRoom.id}_button`}
-                            />
-                        );
-                    })}
-                </RoomButtonRowContainer>
-            );
-        }
+        return (
+            <RoomButtonRowContainer>
+                {publicRooms.map((publicRoom) => {
+                    return (
+                        <PublicRoomButton
+                            room={publicRoom}
+                            key={`publicRoom_${publicRoom.id}_button`}
+                        />
+                    );
+                })}
+            </RoomButtonRowContainer>
+        );
     }
 
     if (roomType === RoomType.CUSTOM) {
-        if (loadingCustomRooms) {
-            return <LoadingMessage />;
-        } else {
-            return (
-                <RoomButtonRowContainer>
-                    {customRooms.map((customRoom) => {
-                        return (
-                            <CustomRoomButton
-                                room={customRoom}
-                                key={`customRoom_${customRoom.id}_button`}
-                            />
-                        );
-                    })}
-                </RoomButtonRowContainer>
-            );
-        }
+        return (
+            <RoomButtonRowContainer>
+                {customRooms.map((customRoom) => {
+                    return (
+                        <CustomRoomButton
+                            room={customRoom}
+                            key={`customRoom_${customRoom.id}_button`}
+                        />
+                    );
+                })}
+            </RoomButtonRowContainer>
+        );
     }
 
     return null;
@@ -106,12 +101,12 @@ function LoadingMessage() {
 }
 
 function PublicRoomButton({ room }: PublicRoomButtonProp) {
-    const { pushToEntry } = useListContext();
+    const { enterEntry } = useListContext();
 
     return (
         <RoomButtonContainer
             onClick={() => {
-                pushToEntry(RoomType.PUBLIC, room.id);
+                enterEntry(RoomType.PUBLIC, room.id);
             }}
         >
             <RoomButtonIcon />
@@ -128,12 +123,12 @@ function PublicRoomButton({ room }: PublicRoomButtonProp) {
 }
 
 function CustomRoomButton({ room }: CustomRoomButtonProp) {
-    const { pushToEntry } = useListContext();
+    const { enterEntry } = useListContext();
 
     return (
         <RoomButtonContainer
             onClick={() => {
-                pushToEntry(RoomType.CUSTOM, room.id);
+                enterEntry(RoomType.CUSTOM, room.id);
             }}
         >
             <RoomButtonIcon />

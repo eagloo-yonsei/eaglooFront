@@ -12,19 +12,17 @@ import {
 } from "../../Constants";
 
 interface ListContextProp {
-    loadingPublicRooms: boolean;
-    loadingCustomRooms: boolean;
+    loadingRooms: boolean;
     publicRooms: Room[];
     customRooms: CustomRoom[];
-    pushToEntry: (roomType: RoomType, roomId: string) => void;
+    enterEntry: (roomType: RoomType, roomId: string) => void;
 }
 
 const InitialListContext: ListContextProp = {
-    loadingPublicRooms: true,
-    loadingCustomRooms: true,
+    loadingRooms: true,
     publicRooms: [],
     customRooms: [],
-    pushToEntry: () => {},
+    enterEntry: () => {},
 };
 
 const ListContext = createContext<ListContextProp>(InitialListContext);
@@ -33,46 +31,41 @@ export const useListContext = () => useContext(ListContext);
 export default function ListProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const { isLoggedIn } = useAppContext();
-    const [loadingPublicRooms, setLoadingPublicRooms] = useState<boolean>(true);
-    const [loadingCustomRooms, setLoadingCustomRooms] = useState<boolean>(true);
+    const [loadingRooms, setLoadingRooms] = useState<boolean>(true);
     const [publicRooms, setPublicRooms] = useState<Room[]>([]);
     const [customRooms, setCustomRooms] = useState<CustomRoom[]>([]);
 
     useEffect(() => {
-        getPublicRooms();
-        getCustomRooms();
+        getAllRooms();
         return () => {};
     }, []);
 
-    async function getPublicRooms() {
-        setLoadingPublicRooms(true);
+    async function getAllRooms() {
+        setLoadingRooms(true);
         await axios
-            .get<Room[]>(`${API_ENDPOINT}/api/publicroom`)
+            .get<(Room | CustomRoom)[]>(`${API_ENDPOINT}/api/room`)
             .then((response) => {
-                setPublicRooms(response.data);
-                setLoadingPublicRooms(false);
+                const publicRooms: Room[] = [];
+                const customRooms: CustomRoom[] = [];
+                response.data.forEach((room) => {
+                    if ("ownerId" in room) {
+                        customRooms.push(room);
+                    } else {
+                        publicRooms.push(room);
+                    }
+                });
+                setPublicRooms(publicRooms);
+                setCustomRooms(customRooms);
             })
-            .catch((e) => {
-                setPublicRooms([]);
-                setLoadingPublicRooms(false);
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoadingRooms(false);
             });
     }
 
-    async function getCustomRooms() {
-        setLoadingCustomRooms(true);
-        await axios
-            .get<CustomRoom[]>(`${API_ENDPOINT}/api/customroom`)
-            .then((response) => {
-                setCustomRooms(response.data);
-                setLoadingCustomRooms(false);
-            })
-            .catch((e) => {
-                setCustomRooms([]);
-                setLoadingCustomRooms(false);
-            });
-    }
-
-    function pushToEntry(roomType: RoomType, roomId: string) {
+    function enterEntry(roomType: RoomType, roomId: string) {
         if (isLoggedIn) {
             history.push({
                 pathname: "/entry",
@@ -85,11 +78,10 @@ export default function ListProvider({ children }: ChildrenProp) {
     }
 
     const listContext = {
-        loadingPublicRooms,
-        loadingCustomRooms,
+        loadingRooms,
         publicRooms,
         customRooms,
-        pushToEntry,
+        enterEntry,
     };
 
     return (
