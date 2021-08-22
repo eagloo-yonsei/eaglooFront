@@ -4,15 +4,16 @@ import React, {
     RefObject,
     useRef,
     useState,
+    useEffect,
 } from "react";
 import axios from "axios";
 import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomContext } from "../../RoomProvider";
 import {
     ChildrenProp,
+    Channel,
     ChattingContent,
     API_ENDPOINT,
-    RoomType,
 } from "../../../../Constants";
 import { toastErrorMessage } from "../../../../Utils";
 
@@ -44,19 +45,30 @@ const RoomChattingContext = createContext<RoomChattingContextProp>(
 export const useRoomChattingContext = () => useContext(RoomChattingContext);
 
 export default function RoomChattingProvider({ children }: ChildrenProp) {
-    const { userInfo } = useAppContext();
-    const { roomType, roomId, userSeatNo, chattingOpen } = useRoomContext();
+    const { socketRef, userInfo } = useAppContext();
+    const { roomId, userSeatNo, chattingOpen } = useRoomContext();
     const [chattingInput, setChattingInput] = useState<string>("");
     const [chattings, setChattings] = useState<ChattingContent[]>([]);
     const [chatSending, setChatSending] = useState<boolean>(false);
     const scrollerRef = useRef<HTMLDivElement>(null);
     const chattingInputRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        socketRef?.current?.on(
+            Channel.RECEIVE_CHATTING,
+            (payload: { chattingContent: ChattingContent }) => {
+                updateChatting(payload.chattingContent);
+            }
+        );
+        return () => {
+            socketRef?.current?.off(Channel.RECEIVE_CHATTING);
+        };
+    }, []);
+
     async function sendChatting() {
         if (chatSending || chattingInput === "") {
             return;
         }
-        // TODO? BUG? (code clearance) Date 형식으로 넘겨준 시간이 서버를 거치면 string 형태가 됨
         setChatSending(true);
         const newChattingContent: ChattingContent = {
             user: userInfo ? userInfo : undefined,
@@ -65,16 +77,11 @@ export default function RoomChattingProvider({ children }: ChildrenProp) {
             key: new Date().getTime(),
         };
         await axios
-            .post<{ success: boolean }>(
-                roomType === RoomType.PUBLIC
-                    ? `${API_ENDPOINT}/api/publicroom/chat`
-                    : `${API_ENDPOINT}/api/customroom/chat`,
-                {
-                    roomId: roomId,
-                    userSeatNo: userSeatNo,
-                    chattingContent: newChattingContent,
-                }
-            )
+            .post<{ success: boolean }>(`${API_ENDPOINT}/api/room/chat`, {
+                roomId: roomId,
+                userSeatNo: userSeatNo,
+                chattingContent: newChattingContent,
+            })
             .then((response) => {
                 if (response.data.success) {
                     updateChatting(newChattingContent);
@@ -112,7 +119,7 @@ export default function RoomChattingProvider({ children }: ChildrenProp) {
     }
 
     function updateChatting(newChatting: ChattingContent) {
-        // NOTE (!#socket !#useEffect !#context)
+        // NOTE (!#useState)
         // 단순히 setChattings([...chattings, newChatting]) 으로 하면 안 됨
         // 위의 방식 console을 찍어보면 기존 chatting이 제대로 가져와지지 않음
         setChattings((chattings) => [...chattings, newChatting]);

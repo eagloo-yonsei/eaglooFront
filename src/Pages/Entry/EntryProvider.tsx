@@ -37,6 +37,7 @@ interface EntryContextProp {
     enterRoom: () => void;
     getUserStream: () => void;
     stopSelfStream: () => void;
+    exitToList: () => void;
 }
 
 const InitialEntryContext: EntryContextProp = {
@@ -58,6 +59,7 @@ const InitialEntryContext: EntryContextProp = {
     enterRoom: () => {},
     getUserStream: () => {},
     stopSelfStream: () => {},
+    exitToList: () => {},
 };
 
 const EntryContext = createContext<EntryContextProp>(InitialEntryContext);
@@ -105,11 +107,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
 
     async function getRoomInfo(roomType: RoomType, roomId: string) {
         await axios
-            .get<Room | CustomRoom>(
-                roomType === RoomType.PUBLIC
-                    ? `${API_ENDPOINT}/api/publicroom/${roomId}`
-                    : `${API_ENDPOINT}/api/customroom/${roomId}`
-            )
+            .get<Room | CustomRoom>(`${API_ENDPOINT}/api/room/${roomId}`)
             .then((response) => {
                 setRoomInfo(response.data);
             });
@@ -140,15 +138,10 @@ export default function EntryProvider({ children }: ChildrenProp) {
         const response = await axios.post<{
             success: boolean;
             message: string;
-        }>(
-            roomType === RoomType.PUBLIC
-                ? `${API_ENDPOINT}/api/publicroom/checkVacancy`
-                : `${API_ENDPOINT}/api/customroom/checkVacancy`,
-            {
-                roomId: roomInfo.id,
-                seatNo: selectedSeatNo,
-            }
-        );
+        }>(`${API_ENDPOINT}/api/room/checkVacancy`, {
+            roomId: roomInfo.id,
+            seatNo: selectedSeatNo,
+        });
         if (response.data.success) {
             return true;
         } else {
@@ -187,6 +180,10 @@ export default function EntryProvider({ children }: ChildrenProp) {
         }
     }
 
+    function exitToList() {
+        history.push("/list");
+    }
+
     const entryContext = {
         roomType,
         roomInfo,
@@ -201,6 +198,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         enterRoom,
         getUserStream,
         stopSelfStream,
+        exitToList,
     };
 
     return (

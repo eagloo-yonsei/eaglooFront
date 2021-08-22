@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import {
     ChildrenProp,
     RoomType,
+    Room,
     CustomRoom,
     API_ENDPOINT,
 } from "../../Constants";
@@ -27,7 +28,7 @@ interface CustomRoomModalContext {
     setsearchingRoomNameInput: (input: string) => void;
     setSelectedRoomId: (input: string) => void;
     selectRoom: (input: string) => void;
-    joinRoom: (roomId: string) => void;
+    enterRoom: (roomId: string) => void;
     setRoomNameInput: (input: string) => void;
     setRoomDescriptionInput: (input: string) => void;
     setUsePassword: (status: boolean) => void;
@@ -56,7 +57,7 @@ const InitialCustomRoomModalContext: CustomRoomModalContext = {
     setsearchingRoomNameInput: () => {},
     setSelectedRoomId: () => {},
     selectRoom: () => {},
-    joinRoom: () => {},
+    enterRoom: () => {},
     setRoomNameInput: () => {},
     setRoomDescriptionInput: () => {},
     setUsePassword: () => {},
@@ -101,9 +102,15 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     async function getCustomRooms() {
         setLoadingCustomRooms(true);
         await axios
-            .get<CustomRoom[]>(`${API_ENDPOINT}/api/customroom`)
+            .get<(Room | CustomRoom)[]>(`${API_ENDPOINT}/api/room`)
             .then((response) => {
-                setCustomRooms(response.data);
+                const customRooms: CustomRoom[] = [];
+                response.data.forEach((room) => {
+                    if ("ownerId" in room) {
+                        customRooms.push(room);
+                    }
+                });
+                setCustomRooms(customRooms);
                 setLoadingCustomRooms(false);
             })
             .catch((e) => {
@@ -120,7 +127,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
         }
     }
 
-    function joinRoom(roomId: string) {
+    function enterRoom(roomId: string) {
         setShowCustomRoomModal(false);
         if (isLoggedIn) {
             history.push({
@@ -161,14 +168,16 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     async function createRoomAndPushToEntry() {
         setCreatingRoom(true);
         await axios
-            .post<ResponseProp>(`${API_ENDPOINT}/api/customroom`, {
-                roomName: roomNameInput,
-                roomDescription: roomDescriptionInput,
-                ownerId: userInfo?.id,
-                openToPublic: true,
-                usePassword: usePassword,
-                password: passwordInput,
-                allowMic,
+            .post<ResponseProp>(`${API_ENDPOINT}/api/room`, {
+                newRoom: {
+                    roomName: roomNameInput,
+                    roomDescription: roomDescriptionInput,
+                    ownerId: userInfo?.id,
+                    openToPublic: true,
+                    usePassword: usePassword,
+                    password: passwordInput,
+                    allowMic,
+                },
             })
             .then((response) => {
                 if (response.data.success) {
@@ -212,7 +221,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
         setsearchingRoomNameInput,
         setSelectedRoomId,
         selectRoom,
-        joinRoom,
+        enterRoom,
         setRoomNameInput,
         setRoomDescriptionInput,
         setUsePassword,

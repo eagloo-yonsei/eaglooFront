@@ -104,12 +104,12 @@ function EnterButton() {
 }
 
 function JoinButton() {
-    const { joinRoom, selectedRoomId } = useCustomRoomModalContext();
+    const { enterRoom, selectedRoomId } = useCustomRoomModalContext();
     if (!!selectedRoomId) {
         return (
             <ReadyButton
                 onClick={() => {
-                    joinRoom(selectedRoomId);
+                    enterRoom(selectedRoomId);
                 }}
             >
                 참여하기
