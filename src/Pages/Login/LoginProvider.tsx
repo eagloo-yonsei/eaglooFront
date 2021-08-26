@@ -56,8 +56,8 @@ export default function LoginProvider({ children }: ChildrenProp) {
             .then(function ({ data }) {
                 if (data.success) {
                     setIsLoggedIn(true);
-                    setUserInfo(data.user);
-                    toastLoginSuccessMessage(data.user?.nickName || emailInput);
+                    setUserInfo(data.user as User);
+                    toastLoginSuccessMessage(data.user.nickName || emailInput);
                     history.goBack();
                     // history.push("/");
                 } else {

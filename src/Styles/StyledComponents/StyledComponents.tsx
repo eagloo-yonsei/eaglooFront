@@ -73,6 +73,12 @@ export const HeaderPageContainer = styled(PageContainer)`
     margin-top: ${(props) => props.theme.headerHeight};
 `;
 
+export const AdminRouterContainer = styled(FullScreenContainer)`
+    animation: ${FadeInFull} 0.5s ease-out;
+    margin-top: ${(props) => props.theme.adminHeaderHeight};
+    padding: 40px 18px;
+`;
+
 export const StylelessButton = styled.button`
     border: none;
     outline: none;

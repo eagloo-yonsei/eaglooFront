@@ -6,6 +6,7 @@ import {
     Route as Router,
     Redirect,
 } from "react-router-dom";
+import styled from "styled-components";
 import Header from "../../Components/Header";
 import Home from "../../Pages/Home";
 import Login from "../../Pages/Login";
@@ -20,12 +21,21 @@ import About from "../../Pages/About";
 import SchedulerOpenButton from "../../Components/Scheduler/Scheduler__OpenButton";
 import Scheduler from "../../Components/Scheduler";
 
+import { AdminRouterContainer } from "../../Styles/StyledComponents";
+import AdminHeader from "../../Admin/Admin__Header";
+import AdminHome from "../../Admin/Admin__Home";
+import AdminUser from "../../Admin/Admin__User";
+import AdminRoom from "../../Admin/Admin__Room";
+import AdminFeedback from "../../Admin/Admin__Feedback";
+
 function AppContainer() {
-    const { isAdmin } = useAppContext();
+    const { userInfo } = useAppContext();
 
     return (
         <BrowserRouter>
-            {isAdmin ? <AdminRouter /> : <UserRouter />}
+            <Container>
+                {userInfo?.isAdmin ? <AdminRouter /> : <UserRouter />}
+            </Container>
         </BrowserRouter>
     );
 }
@@ -54,7 +64,34 @@ function UserRouter() {
 }
 
 function AdminRouter() {
-    return <>Admin Page</>;
+    return (
+        <>
+            <AdminHeader />
+            <AdminRouterContainer>
+                <Switch>
+                    <Router exact path={"/"} component={AdminHome} />
+                    <Router path={"/user"} component={AdminUser} />
+                    <Router path={"/room"} component={AdminRoom} />
+                    <Router path={"/feedback"} component={AdminFeedback} />
+                    <Redirect to={"/"} from={"*"} />
+                </Switch>
+            </AdminRouterContainer>
+        </>
+    );
 }
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    min-width: 1024px;
+    min-height: 768px;
+    width: 100vw;
+    height: 100vh;
+    background: ${(props) => props.theme.blueGradient};
+`;
 
 export default AppContainer;

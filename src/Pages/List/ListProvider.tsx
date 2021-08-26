@@ -36,11 +36,11 @@ export default function ListProvider({ children }: ChildrenProp) {
     const [customRooms, setCustomRooms] = useState<CustomRoom[]>([]);
 
     useEffect(() => {
-        getAllRooms();
+        getAllRoom();
         return () => {};
     }, []);
 
-    async function getAllRooms() {
+    async function getAllRoom() {
         setLoadingRooms(true);
         await axios
             .get<(Room | CustomRoom)[]>(`${API_ENDPOINT}/api/room`)

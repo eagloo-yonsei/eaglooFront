@@ -1,9 +1,5 @@
-import React, { useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
-import { Location } from "history";
+import React from "react";
 import styled from "styled-components";
-import { useAppContext } from "../../Routes/App/AppProvider";
-import { useRoomContext } from "./RoomProvider";
 import Room16Seats from "./Room__Components/Room__16Seats";
 import RoomChattingOpenButton from "./Room__Components/Room__Chatting/Room__Chatting__OpenButton";
 import RoomChatting from "./Room__Components/Room__Chatting";
