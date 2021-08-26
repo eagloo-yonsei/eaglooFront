@@ -22,7 +22,7 @@ import {
     API_ENDPOINT,
 } from "../../Constants";
 import Peer from "simple-peer";
-import { toastSuccessMessage } from "../../Utils";
+import { toastErrorMessage, toastSuccessMessage } from "../../Utils";
 
 interface RoomLocationStateProp {
     roomType: RoomType;
@@ -225,6 +225,13 @@ export default function RoomProvider({ children }: ChildrenProp) {
                     //     peer.seatNo !== seatNo;
                     // });
                 });
+
+                /* 방장, 혹은 관리자에 의해 퇴출 */
+                socketRef?.current?.on(Channel.EXILED, (message: string) => {
+                    toastErrorMessage(message);
+                    stopSelfStream();
+                    exitToList();
+                });
             });
 
         const timeOver = setTimeout(() => {
@@ -245,6 +252,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
             socketRef?.current?.off(Channel.PEER_CONNECTION_REQUESTED);
             socketRef?.current?.off(Channel.PEER_CONNECTION_REQUEST_ACCEPTED);
             socketRef?.current?.off(Channel.PEER_QUIT_ROOM);
+            socketRef?.current?.off(Channel.EXILED);
         };
     }, []);
 

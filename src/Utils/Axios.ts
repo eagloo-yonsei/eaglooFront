@@ -7,7 +7,7 @@ export interface PublicRoomResponse {
     success: boolean;
     type: number;
 }
-export async function getAllPublicRooms() {
+export async function getAllPublicRoom() {
     await axios
         .get<Room[]>(`${API_ENDPOINT}/api/publicroom`)
         .then((response) => {

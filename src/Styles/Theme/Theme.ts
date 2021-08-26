@@ -38,6 +38,7 @@ export default {
 
     // width, height
     headerHeight: "160px",
+    adminHeaderHeight: "100px",
     slideMenuWidth: "600px",
 
     // fonts

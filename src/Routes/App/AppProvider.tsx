@@ -43,16 +43,18 @@ export const useAppContext = () => useContext(AppContext);
 
 export default function AppProvider({ children }: ChildrenProp) {
     const initialUser: User = {
-        id: "11451278-98e7-49b3-a4a0-279ca6e03574",
-        email: "dennis2311",
-        nickName: "봄낙엽",
+        id: "c8c095e6-777b-43f4-a727-bfce7f0e3192",
+        email: "tester",
+        isAdmin: false,
     };
     const socketRef = useRef<Socket | undefined>();
     const userStream = useRef<HTMLVideoElement>(null);
-    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    // const [userInfo, setUserInfo] = useState<User | undefined>(undefined);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-    const [userInfo, setUserInfo] = useState<User | undefined>(initialUser);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+        API_ENDPOINT === "http://localhost:5000" ? true : false
+    );
+    const [userInfo, setUserInfo] = useState<User | undefined>(
+        API_ENDPOINT === "http://localhost:5000" ? initialUser : undefined
+    );
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
@@ -60,7 +62,7 @@ export default function AppProvider({ children }: ChildrenProp) {
 
     useEffect(() => {
         if (isLoggedIn) {
-            if (userInfo && !socketRef.current) {
+            if (userInfo && !userInfo.isAdmin && !socketRef.current) {
                 socketRef.current = io(API_ENDPOINT, {
                     query: { userInfo: JSON.stringify(userInfo) },
                 });

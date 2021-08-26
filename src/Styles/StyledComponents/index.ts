@@ -1,2 +1,2 @@
-export * from "./StyledComponents";
 export * from "./MaterialUIComponents";
+export * from "./StyledComponents";

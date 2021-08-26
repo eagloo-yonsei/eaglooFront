@@ -32,6 +32,10 @@ export function toastSuccessMessage(message: string) {
     toast.success(`😀 ${message}`);
 }
 
+export function toastInfoMessage(message: string) {
+    toast.info(`${message}`);
+}
+
 export function toastErrorMessage(message: string) {
     toast.error(`😥 ${message}`);
 }
