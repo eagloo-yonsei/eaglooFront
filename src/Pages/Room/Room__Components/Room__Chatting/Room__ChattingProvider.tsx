@@ -11,7 +11,7 @@ import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomContext } from "../../RoomProvider";
 import {
     ChildrenProp,
-    Channel,
+    SocketChannel,
     ChattingContent,
     API_ENDPOINT,
 } from "../../../../Constants";
@@ -55,13 +55,13 @@ export default function RoomChattingProvider({ children }: ChildrenProp) {
 
     useEffect(() => {
         socketRef?.current?.on(
-            Channel.RECEIVE_CHATTING,
+            SocketChannel.RECEIVE_CHATTING,
             (payload: { chattingContent: ChattingContent }) => {
                 updateChatting(payload.chattingContent);
             }
         );
         return () => {
-            socketRef?.current?.off(Channel.RECEIVE_CHATTING);
+            socketRef?.current?.off(SocketChannel.RECEIVE_CHATTING);
         };
     }, []);
 

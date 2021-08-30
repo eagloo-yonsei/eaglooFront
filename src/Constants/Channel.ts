@@ -1,4 +1,4 @@
-export enum Channel {
+export enum SocketChannel {
     QUIT_ROOM = "QUIT_ROOM",
     PEER_QUIT_ROOM = "PEER_QUIT_ROOM",
     JOIN_ROOM = "JOIN_ROOM",
@@ -9,4 +9,8 @@ export enum Channel {
     PEER_CONNECTION_REQUEST_ACCEPTED = "PEER_CONNECTION_REQUEST_ACCEPTED",
     RECEIVE_CHATTING = "RECEIVE_CHATTING",
     EXILED = "EXILED",
+    HALT_AUDIO = "HALT_AUDIO",
+    RESUME_AUDIO = "RESUME_AUDIO",
 }
+
+export enum PeerChannel {}

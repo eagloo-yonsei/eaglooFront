@@ -15,24 +15,15 @@ export default function Entry16SeatsControlPanel() {
 }
 
 function CamPreview() {
-    const { camAccepted, userStreamRef, getUserStream } = useEntryContext();
+    const { camAccepted, userStreamRef } = useEntryContext();
     if (!camAccepted) {
-        return (
-            <CamContainer>
-                {`카메라 권한을 허용해주세요`}
-                {/* <CamRequestMessage
-                    onClick={() => {
-                        getUserStream();
-                    }}
-                >{`내 영상 받아오기`}</CamRequestMessage> */}
-            </CamContainer>
-        );
+        return <CamContainer>{`카메라 권한을 허용해주세요`}</CamContainer>;
     }
 
     return (
         <CamContainer>
             {userStreamRef && (
-                <UserCam ref={userStreamRef} autoPlay playsInline />
+                <UserCam ref={userStreamRef} muted autoPlay playsInline />
             )}
         </CamContainer>
     );
@@ -124,11 +115,6 @@ const CamContainer = styled.div`
     background-color: black;
     border-radius: 15px;
     overflow: hidden;
-`;
-
-const CamRequestMessage = styled.div`
-    font-size: 18px;
-    cursor: pointer;
 `;
 
 const UserCam = styled.video`

@@ -44,12 +44,17 @@ export interface PeerRefProp {
     seatInfo: Seat;
 }
 
+// Seat 속성을 변경하는 경우 RoomProvider의 JOIN_ROOM 과 creatPeer() 부분도 같이 수정
 export interface Seat {
     seatNo: number;
     socketId: string;
     userEmail: string;
     userNickName?: string;
     endTime: number;
+    streamState: {
+        video: boolean;
+        audio: boolean;
+    };
 }
 
 export interface Room {
@@ -67,7 +72,7 @@ export interface CustomRoom {
     openToPublic: boolean;
     usePassword: boolean;
     password: string;
-    enableMic: boolean;
+    allowMic: boolean;
     seats: Seat[];
 }
 

@@ -22,6 +22,10 @@ export default function EntrySeat({ seatNo }: EntrySeatProp) {
         socketId: "",
         userEmail: "",
         endTime: 0,
+        streamState: {
+            video: false,
+            audio: false,
+        },
     });
 
     useEffect(() => {
