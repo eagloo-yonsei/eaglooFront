@@ -3,34 +3,51 @@ import styled from "styled-components";
 import { useRoomContext } from "../../RoomProvider";
 import TimerPerSecond from "../../../../Components/Timer/Timer__PerSecond";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+    faMicrophone,
+    faMicrophoneSlash,
+    faUnlock,
+    faUserAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function Room16SeatsControlPanel() {
     return (
         <Container>
-            <UserStream />
-            <ControlButtons />
+            <StreamPanel />
+            <ButtonPanel />
         </Container>
     );
 }
 
-function UserStream() {
-    const { userStreamRef } = useRoomContext();
+function StreamPanel() {
+    const { userStreamHTMLRef, userMuted } = useRoomContext();
     return (
         <CamContainer>
-            <UserCam ref={userStreamRef} autoPlay playsInline />
+            <UserCam ref={userStreamHTMLRef} autoPlay playsInline />
+            <MicrophoneIconContainer userMuted={userMuted}>
+                {userMuted ? (
+                    <FontAwesomeIcon icon={faMicrophoneSlash} />
+                ) : (
+                    <FontAwesomeIcon icon={faMicrophone} />
+                )}
+            </MicrophoneIconContainer>
         </CamContainer>
     );
 }
 
-function ControlButtons() {
+function ButtonPanel() {
     const {
         peersState,
-        roomType,
         roomInfo,
         userSeatNo,
         endTime,
+        userMuted,
+        userResting,
         stopSelfStream,
+        muteSelfAudio,
+        unmuteSelfAudio,
+        haltSelfVideo,
+        resumeSelfVideo,
         exitToList,
     } = useRoomContext();
     return (
@@ -49,14 +66,43 @@ function ControlButtons() {
                 <TimerPerSecond endTime={endTime} showSecond={true} />
             </TimerContainer>
             {/* <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat> */}
-            <ExitButton
-                onClick={() => {
-                    stopSelfStream();
-                    exitToList();
-                }}
-            >
-                {`나가기`}
-            </ExitButton>
+            <ButtonsRow>
+                {userMuted ? (
+                    <ResumeMicButton
+                        onClick={() => {
+                            unmuteSelfAudio();
+                        }}
+                    >{`음소거 해제`}</ResumeMicButton>
+                ) : (
+                    <HaltMicButton
+                        onClick={() => {
+                            muteSelfAudio();
+                        }}
+                    >{`음소거`}</HaltMicButton>
+                )}
+                {/* {userResting ? (
+                    <HaltMicButton
+                        onClick={() => {
+                            resumeSelfVideo();
+                        }}
+                    >{`방으로`}</HaltMicButton>
+                ) : (
+                    <HaltMicButton
+                        onClick={() => {
+                            haltSelfVideo();
+                        }}
+                    >{`휴게실`}</HaltMicButton>
+                )} */}
+
+                <ExitButton
+                    onClick={() => {
+                        stopSelfStream();
+                        exitToList();
+                    }}
+                >
+                    {`나가기`}
+                </ExitButton>
+            </ButtonsRow>
         </ControlButtonContainer>
     );
 }
@@ -70,6 +116,7 @@ const Container = styled.div`
 `;
 
 const CamContainer = styled.div`
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,6 +130,19 @@ const CamContainer = styled.div`
 const UserCam = styled.video`
     max-width: 100%;
     max-height: 100%;
+`;
+
+const MicrophoneIconContainer = styled.div<{ userMuted: boolean }>`
+    position: absolute;
+    right: 24px;
+    bottom: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    font-size: ${(props) => (props.userMuted ? "36px" : "34px")};
+    color: ${(props) => (props.userMuted ? "black" : "red")};
 `;
 
 const ControlButtonContainer = styled.div`
@@ -147,18 +207,46 @@ const MySeat = styled.div`
     color: white;
 `;
 
+const ButtonsRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 45px;
+`;
+
+const MicrophoneControlButton = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: 100%;
+    font-size: 24px;
+    font-family: ${(props) => props.theme.inButtonFont};
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+`;
+
+const HaltMicButton = styled(MicrophoneControlButton)`
+    color: red;
+    border: 3px solid red;
+`;
+const ResumeMicButton = styled(MicrophoneControlButton)`
+    color: white;
+    border: 3px solid white;
+`;
+
 const ExitButton = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     width: 130px;
-    height: 45px;
+    height: 100%;
     color: white;
     font-size: 24px;
     font-family: ${(props) => props.theme.inButtonFont};
     border-radius: 15px;
     background: ${(props) => props.theme.orangeGradient};
-    :hover {
-        cursor: pointer;
-    }
+    cursor: pointer;
 `;

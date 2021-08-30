@@ -2,8 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useRoomContext } from "../RoomProvider";
 import TimerPerMinute from "../../../Components/Timer/Timer__PerMinute";
-import { Seat, PeerStateProp } from "../../../Constants";
+import { Seat, PeerStateProp, SocketChannel } from "../../../Constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faMicrophone,
+    faMicrophoneSlash,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface SeatProp {
     seatNo: number;
@@ -11,25 +16,10 @@ interface SeatProp {
 
 export default function RoomSeat({ seatNo }: SeatProp) {
     const { userSeatNo, roomInfo, peersState } = useRoomContext();
-    const [matchedSeatInfo, setMatchedSeatInfo] = useState<Seat>({
-        seatNo: 0,
-        socketId: "",
-        userEmail: "",
-        endTime: 0,
-    });
 
     useEffect(() => {
         return () => {};
-    }, [userSeatNo]);
-
-    useEffect(() => {
-        const matchedSeat = roomInfo.seats.find((seat) => {
-            return seat.seatNo === seatNo;
-        });
-        if (matchedSeat) {
-            setMatchedSeatInfo(matchedSeat);
-        }
-    }, [roomInfo]);
+    }, [roomInfo, userSeatNo]);
 
     if (seatNo === userSeatNo) {
         return <SelfSeat />;
@@ -60,28 +50,51 @@ export default function RoomSeat({ seatNo }: SeatProp) {
 }
 
 function FilledSeat({ peer, seatInfo }: PeerStateProp) {
-    const peerStream = useRef<HTMLVideoElement>(null);
+    const peerStreamHTMLRef = useRef<HTMLVideoElement>(null);
     const [gotStream, setGotStream] = useState<boolean>(false);
+    const [peerMuted, setPeerMuted] = useState<boolean>(
+        !seatInfo.streamState.audio
+    );
+    const [peerResting, setPeerResting] = useState<boolean>(
+        !seatInfo.streamState.video
+    );
+    const decoder = new TextDecoder();
 
     useEffect(() => {
         peer.on("stream", (stream: MediaStream) => {
             setGotStream(true);
-            peerStream.current!.srcObject = stream;
+            peerStreamHTMLRef.current!.srcObject = stream;
+        });
+        peer.on("data", (chunk) => {
+            const chunkData = decoder.decode(chunk);
+            if (chunkData == SocketChannel.HALT_AUDIO) {
+                setPeerMuted(true);
+            }
+            if (chunkData == SocketChannel.RESUME_AUDIO) {
+                setPeerMuted(false);
+            }
         });
         peer.on("close", () => {
             setGotStream(false);
-            document.getElementById(`container-${seatInfo.seatNo}`)?.remove();
+            peer.removeAllListeners();
         });
         return () => {
-            document.getElementById(`container-${seatInfo.seatNo}`)?.remove();
-            // ref.current?.remove();
+            peer.removeAllListeners();
+            peerStreamHTMLRef.current?.remove();
         };
     }, []);
 
     if (gotStream) {
         return (
             <>
-                <PeerCam ref={peerStream} playsInline autoPlay />
+                <PeerCam ref={peerStreamHTMLRef} playsInline autoPlay />
+                <MicrophoneIconContainer peerMuted={peerMuted}>
+                    {peerMuted ? (
+                        <FontAwesomeIcon icon={faMicrophoneSlash} />
+                    ) : (
+                        <FontAwesomeIcon icon={faMicrophone} />
+                    )}
+                </MicrophoneIconContainer>
                 <TimerContainer>
                     <TimerPerMinute endTime={seatInfo.endTime} />
                 </TimerContainer>
@@ -141,6 +154,19 @@ const Container = styled.div`
     background-color: black;
     border-radius: 15px;
     overflow: hidden;
+`;
+
+const MicrophoneIconContainer = styled.div<{ peerMuted: boolean }>`
+    position: absolute;
+    right: 12px;
+    bottom: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    font-size: ${(props) => (props.peerMuted ? "26px" : "24px")};
+    color: ${(props) => (props.peerMuted ? "black" : "red")};
 `;
 
 const TimerContainer = styled.div`

@@ -1,3 +1,3 @@
 export * from "./AppVariables";
+export * from "./Channel";
 export * from "./Interfaces";
-export * from "./SocketChannel";

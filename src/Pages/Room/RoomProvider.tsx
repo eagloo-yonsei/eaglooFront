@@ -5,6 +5,7 @@ import React, {
     useRef,
     useState,
     useEffect,
+    MutableRefObject,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
@@ -17,7 +18,7 @@ import {
     Seat,
     PeerStateProp,
     PeerRefProp,
-    Channel,
+    SocketChannel,
     ChildrenProp,
     API_ENDPOINT,
 } from "../../Constants";
@@ -32,7 +33,8 @@ interface RoomLocationStateProp {
 }
 
 interface RoomContextProp {
-    userStreamRef?: RefObject<HTMLVideoElement>;
+    userStreamRef?: MutableRefObject<MediaStream | undefined>;
+    userStreamHTMLRef?: RefObject<HTMLVideoElement>;
     peersRef?: RefObject<PeerRefProp[]>;
     peersState: PeerStateProp[];
     roomType: RoomType;
@@ -40,6 +42,8 @@ interface RoomContextProp {
     roomInfo: Room | CustomRoom;
     userSeatNo: number;
     endTime: number;
+    userMuted: boolean;
+    userResting: boolean;
     chattingOpen: boolean;
     setPeersState: (peersState: PeerStateProp[]) => void;
     createPeer: (
@@ -55,6 +59,10 @@ interface RoomContextProp {
     ) => Peer.Instance;
     toggleChattingOpen: () => void;
     stopSelfStream: () => void;
+    muteSelfAudio: () => void;
+    unmuteSelfAudio: () => void;
+    haltSelfVideo: () => void;
+    resumeSelfVideo: () => void;
     exitToList: () => void;
 }
 
@@ -69,12 +77,18 @@ const InitialRoomContext: RoomContextProp = {
     },
     userSeatNo: 0,
     endTime: 0,
+    userMuted: true,
+    userResting: false,
     chattingOpen: false,
     setPeersState: () => {},
     createPeer: () => new Peer(),
     addPeer: () => new Peer(),
     toggleChattingOpen: () => {},
     stopSelfStream: () => {},
+    muteSelfAudio: () => {},
+    unmuteSelfAudio: () => {},
+    haltSelfVideo: () => {},
+    resumeSelfVideo: () => {},
     exitToList: () => {},
 };
 
@@ -85,7 +99,8 @@ export default function RoomProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
     const { socketRef, userInfo } = useAppContext();
-    const userStreamRef = useRef<HTMLVideoElement>(null);
+    const userStreamRef = useRef<MediaStream | undefined>();
+    const userStreamHTMLRef = useRef<HTMLVideoElement>(null);
     const peersRef = useRef<PeerRefProp[]>([]);
     const [peersState, setPeersState] = useState<PeerStateProp[]>([]);
     const [roomType, setRoomType] = useState<RoomType>(RoomType.PUBLIC);
@@ -96,6 +111,8 @@ export default function RoomProvider({ children }: ChildrenProp) {
         seats: [],
     });
     const [userSeatNo, setUserSeatNo] = useState<number>(0);
+    const [userMuted, setUserMuted] = useState<boolean>(true);
+    const [userResting, setUserResting] = useState<boolean>(false);
     const [chattingOpen, setChattingOpen] = useState<boolean>(false);
     const [endTime, setEndTime] = useState<number>(0);
 
@@ -114,13 +131,18 @@ export default function RoomProvider({ children }: ChildrenProp) {
 
         navigator.mediaDevices
             .getUserMedia({
-                video: true,
+                video: { width: { max: 640 }, height: { max: 480 } },
+                audio: true,
             })
             .then(async (stream) => {
-                userStreamRef!.current!.srcObject = stream;
+                stream.getAudioTracks().forEach((audioTrack) => {
+                    audioTrack.enabled = false;
+                });
+                userStreamRef.current = stream;
+                userStreamHTMLRef!.current!.srcObject = stream;
 
                 /* 1. 방 입장 요청 */
-                socketRef?.current?.emit(Channel.JOIN_ROOM, {
+                socketRef?.current?.emit(SocketChannel.JOIN_ROOM, {
                     roomType: state.roomType,
                     roomId: state.roomId,
                     newSeat: {
@@ -129,11 +151,15 @@ export default function RoomProvider({ children }: ChildrenProp) {
                         userEmail: userInfo?.email,
                         userNickName: userInfo?.nickName,
                         endTime: state.endTime,
+                        streamState: {
+                            video: true,
+                            audio: false,
+                        },
                     },
                 });
 
                 socketRef?.current?.on(
-                    Channel.GET_CURRENT_ROOM,
+                    SocketChannel.GET_CURRENT_ROOM,
                     (currentRoom: Room | CustomRoom) => {
                         // console.log(`기존 방 정보 수신 :`);
                         // console.dir(currentRoom.seats);
@@ -144,7 +170,8 @@ export default function RoomProvider({ children }: ChildrenProp) {
                                 if (seat.socketId !== socketRef?.current?.id) {
                                     const peer = createPeer(
                                         seat.socketId,
-                                        stream,
+                                        // stream,
+                                        userStreamRef.current,
                                         state.userSeatNo,
                                         state.endTime
                                     );
@@ -166,7 +193,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
 
                 /* 4. 새 유저가 접속한경우 */
                 socketRef?.current?.on(
-                    Channel.PEER_CONNECTION_REQUESTED,
+                    SocketChannel.PEER_CONNECTION_REQUESTED,
                     (payload: {
                         signal: Peer.SignalData;
                         callerSeatInfo: Seat;
@@ -177,7 +204,8 @@ export default function RoomProvider({ children }: ChildrenProp) {
                         const peer = addPeer(
                             payload.signal,
                             payload.callerSeatInfo.socketId,
-                            stream
+                            // stream
+                            userStreamRef.current
                         );
                         peersRef?.current?.push({
                             peer,
@@ -196,7 +224,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
 
                 /* 6. 최종 연결 */
                 socketRef?.current?.on(
-                    Channel.PEER_CONNECTION_REQUEST_ACCEPTED,
+                    SocketChannel.PEER_CONNECTION_REQUEST_ACCEPTED,
                     (payload) => {
                         // console.log(`${payload.id}가 연결 요청을 수락`);
                         const peerRef = peersRef?.current?.find(
@@ -207,19 +235,25 @@ export default function RoomProvider({ children }: ChildrenProp) {
                 );
 
                 /* 다른 유저 퇴장시 */
-                socketRef?.current?.on(Channel.PEER_QUIT_ROOM, (seatNo) => {
-                    // console.log(`${seatNo}번 참여자 퇴장`);
-                    // document.getElementById(`room-${seatNo}`)?.remove();
-                    setPeersState((peersState) =>
-                        peersState.filter((peer) => {
-                            return peer.seatInfo.seatNo !== seatNo;
-                        })
-                    );
-                    const exitPeer = peersRef?.current?.find((peer) => {
-                        peer.seatInfo.seatNo === seatNo;
-                    });
-                    if (!!exitPeer) {
-                        exitPeer.peer.destroy();
+                socketRef?.current?.on(
+                    SocketChannel.PEER_QUIT_ROOM,
+                    (seatNo) => {
+                        // console.log(`${seatNo}번 참여자 퇴장`);
+                        // document.getElementById(`room-${seatNo}`)?.remove();
+                        setPeersState((peersState) =>
+                            peersState.filter((peer) => {
+                                return peer.seatInfo.seatNo !== seatNo;
+                            })
+                        );
+                        const exitPeer = peersRef?.current?.find((peer) => {
+                            peer.seatInfo.seatNo === seatNo;
+                        });
+                        if (!!exitPeer) {
+                            exitPeer.peer.destroy();
+                        }
+                        // peersRef?.current = peersRef?.current?.filter((peer) => {
+                        //     peer.seatNo !== seatNo;
+                        // });
                     }
                     // peersRef?.current = peersRef?.current?.filter((peer) => {
                     //     peer.seatNo !== seatNo;
@@ -244,7 +278,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
 
         return () => {
             clearTimeout(timeOver);
-            socketRef?.current?.emit(Channel.QUIT_ROOM, {
+            socketRef?.current?.emit(SocketChannel.QUIT_ROOM, {
                 roomId: state.roomId,
                 seatNo: state.userSeatNo,
             });
@@ -267,7 +301,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
     /* 자신이 방에 들어왔을 때 기존 참여자들과의 Connection 설정 */
     function createPeer(
         userToSignal: string, // 기존 참여자 socket ID
-        stream: MediaStream, // 본인 stream
+        stream: MediaStream | undefined, // 본인 stream
         userSeatNo: number,
         endTime: number
     ) {
@@ -279,7 +313,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
         peer.on("signal", (signal: Peer.SignalData) => {
             /* 3. 기존 사용자에게 연결 요청 */
             // console.log(`${userToSignal}에게 연결 요청`);
-            socketRef?.current?.emit(Channel.REQUEST_PEER_CONNECTION, {
+            socketRef?.current?.emit(SocketChannel.REQUEST_PEER_CONNECTION, {
                 userToSignal,
                 signal,
                 callerSeatInfo: {
@@ -288,6 +322,10 @@ export default function RoomProvider({ children }: ChildrenProp) {
                     userEmail: userInfo?.email,
                     userNickName: userInfo?.nickName,
                     endTime,
+                    streamState: {
+                        video: true,
+                        audio: false,
+                    },
                 },
             });
         });
@@ -297,7 +335,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
     function addPeer(
         incomingSignal: Peer.SignalData,
         callerId: string, // 신규 참여자 socket ID
-        stream: MediaStream
+        stream: MediaStream | undefined
     ) {
         const peer = new Peer({
             initiator: false,
@@ -308,10 +346,13 @@ export default function RoomProvider({ children }: ChildrenProp) {
         /* 5. 연결 요청 수락 */
         peer.on("signal", (signal: Peer.SignalData) => {
             // console.log(`${callerId}의 연결 요청 수락`);
-            socketRef?.current?.emit(Channel.ACCEPT_PEER_CONNECTION_REQUEST, {
-                signal,
-                callerId,
-            });
+            socketRef?.current?.emit(
+                SocketChannel.ACCEPT_PEER_CONNECTION_REQUEST,
+                {
+                    signal,
+                    callerId,
+                }
+            );
         });
         peer.signal(incomingSignal);
         return peer;
@@ -322,13 +363,72 @@ export default function RoomProvider({ children }: ChildrenProp) {
     }
 
     function stopSelfStream() {
-        const selfStream = userStreamRef?.current?.srcObject as MediaStream;
-        const tracks = selfStream?.getTracks();
+        const tracks = userStreamRef.current?.getTracks();
         if (tracks) {
             tracks.forEach((track) => {
                 track.stop();
             });
         }
+        const selfHTMLStream = userStreamHTMLRef?.current
+            ?.srcObject as MediaStream;
+        const HTMLtracks = selfHTMLStream?.getTracks();
+        if (HTMLtracks) {
+            HTMLtracks.forEach((track) => {
+                track.stop();
+            });
+        }
+    }
+
+    function muteSelfAudio() {
+        const audioTracks = userStreamRef.current?.getAudioTracks();
+        if (audioTracks) {
+            audioTracks.forEach((audioTrack) => {
+                audioTrack.enabled = false;
+            });
+            peersState.forEach((peerState) => {
+                if (peerState.peer.connected) {
+                    peerState.peer.send(SocketChannel.HALT_AUDIO);
+                }
+            });
+            setUserMuted(true);
+        }
+    }
+
+    function unmuteSelfAudio() {
+        const audioTracks = userStreamRef.current?.getAudioTracks();
+        if (audioTracks) {
+            audioTracks.forEach((audioTrack) => {
+                audioTrack.enabled = true;
+            });
+            peersState.forEach((peerState) => {
+                if (peerState.peer.connected) {
+                    peerState.peer.send(SocketChannel.RESUME_AUDIO);
+                }
+            });
+            setUserMuted(false);
+        }
+    }
+
+    function haltSelfVideo() {
+        stopSelfStream();
+        setUserResting(true);
+    }
+
+    function resumeSelfVideo() {
+        navigator.mediaDevices
+            .getUserMedia({
+                video: { width: { max: 640 }, height: { max: 480 } },
+            })
+            .then((stream) => {
+                userStreamHTMLRef!.current!.srcObject = stream;
+                const tracks = userStreamRef.current?.getTracks();
+                if (tracks) {
+                    tracks.forEach((track) => {
+                        track.enabled = true;
+                    });
+                }
+                setUserResting(false);
+            });
     }
 
     function exitToList() {
@@ -337,6 +437,7 @@ export default function RoomProvider({ children }: ChildrenProp) {
 
     const roomContext = {
         userStreamRef,
+        userStreamHTMLRef,
         peersRef,
         peersState,
         roomType,
@@ -344,12 +445,18 @@ export default function RoomProvider({ children }: ChildrenProp) {
         roomInfo,
         userSeatNo,
         endTime,
+        userMuted,
+        userResting,
         chattingOpen,
         setPeersState,
         createPeer,
         addPeer,
         toggleChattingOpen,
         stopSelfStream,
+        muteSelfAudio,
+        unmuteSelfAudio,
+        haltSelfVideo,
+        resumeSelfVideo,
         exitToList,
     };
 

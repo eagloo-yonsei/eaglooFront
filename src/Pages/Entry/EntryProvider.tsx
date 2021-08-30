@@ -98,6 +98,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         navigator.mediaDevices
             .getUserMedia({
                 video: true,
+                audio: true,
             })
             .then((stream) => {
                 setCamAccepted(true);
