@@ -11,6 +11,20 @@ export interface User {
     email: string;
     nickName?: string;
     realName?: string;
+    isAdmin: boolean;
+}
+
+export interface MinimalUser {
+    id: string;
+    email: string;
+    nickName?: string;
+}
+
+export interface ConnectedUser {
+    socketId: string;
+    userInfo: MinimalUser;
+    roomId?: string;
+    seatNo?: number;
 }
 
 export interface Task {
@@ -18,6 +32,14 @@ export interface Task {
     content: string;
     importance: number;
     done: boolean;
+}
+
+export interface Feedback {
+    // TODO (code clearance) 피드백 작성자 이름을 user가 아니라 email로..
+    id: string;
+    user: string;
+    content: string;
+    category: FeedbackCategory;
 }
 
 export enum FeedbackCategory {
