@@ -11,6 +11,10 @@ export enum SocketChannel {
     EXILED = "EXILED",
     HALT_AUDIO = "HALT_AUDIO",
     RESUME_AUDIO = "RESUME_AUDIO",
+    ENTER_LOUNGE = "ENTER_LOUNGE",
+    PEER_ENTER_LOUNGE = "PEER_ENTER_LOUNGE",
+    COME_BACK_ROOM = "COME_BACK_ROOM",
+    PEER_COME_BACK_ROOM = "PEER_COME_BACK_ROOM",
 }
 
 export enum PeerChannel {}

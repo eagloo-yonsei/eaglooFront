@@ -1,14 +1,16 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomContext } from "../../RoomProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function RoomChattingHeader() {
-    const { roomInfo, setChattingOpen } = useRoomContext();
+    const { roomUsingInfo } = useAppContext();
+    const { setChattingOpen } = useRoomContext();
     return (
         <Container>
-            {`${roomInfo.roomName} 채팅방`}
+            {`${roomUsingInfo?.roomName} 채팅방`}
             <CloseIcon
                 onClick={() => {
                     setChattingOpen(false);

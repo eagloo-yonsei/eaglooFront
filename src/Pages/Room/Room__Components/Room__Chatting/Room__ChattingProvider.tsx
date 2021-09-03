@@ -45,8 +45,8 @@ const RoomChattingContext = createContext<RoomChattingContextProp>(
 export const useRoomChattingContext = () => useContext(RoomChattingContext);
 
 export default function RoomChattingProvider({ children }: ChildrenProp) {
-    const { socketRef, userInfo } = useAppContext();
-    const { roomId, userSeatNo, chattingOpen } = useRoomContext();
+    const { socketRef, userInfo, roomUsingInfo } = useAppContext();
+    const { chattingOpen } = useRoomContext();
     const [chattingInput, setChattingInput] = useState<string>("");
     const [chattings, setChattings] = useState<ChattingContent[]>([]);
     const [chatSending, setChatSending] = useState<boolean>(false);
@@ -78,8 +78,8 @@ export default function RoomChattingProvider({ children }: ChildrenProp) {
         };
         await axios
             .post<{ success: boolean }>(`${API_ENDPOINT}/api/room/chat`, {
-                roomId: roomId,
-                userSeatNo: userSeatNo,
+                roomId: roomUsingInfo?.roomId,
+                userSeatNo: roomUsingInfo?.seatNo,
                 chattingContent: newChattingContent,
             })
             .then((response) => {

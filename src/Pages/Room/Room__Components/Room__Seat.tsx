@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../Routes/App/AppProvider";
 import { useRoomContext } from "../RoomProvider";
 import TimerPerMinute from "../../../Components/Timer/Timer__PerMinute";
-import { Seat, PeerStateProp, SocketChannel } from "../../../Constants";
+import { PeerStateProp, SocketChannel } from "../../../Constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,23 +16,31 @@ interface SeatProp {
 }
 
 export default function RoomSeat({ seatNo }: SeatProp) {
-    const { userSeatNo, roomInfo, peersState } = useRoomContext();
-
-    useEffect(() => {
-        return () => {};
-    }, [roomInfo, userSeatNo]);
-
-    if (seatNo === userSeatNo) {
-        return <SelfSeat />;
-    }
-
-    if (peersState === undefined) {
-        return <EmptySeat seatNo={seatNo} />;
-    }
+    const { roomUsingInfo } = useAppContext();
+    const { peersState, restingPeersSeatNo } = useRoomContext();
+    const [peerResting, setPeerResting] = useState<boolean>(false);
 
     const matchedPeer = peersState.find((peerState) => {
         return peerState.seatInfo.seatNo === seatNo;
     });
+
+    useEffect(() => {
+        if (restingPeersSeatNo.includes(seatNo)) {
+            console.log(`${seatNo}번 참여자 휴게실 입장`);
+            setPeerResting(true);
+        } else {
+            setPeerResting(false);
+        }
+        return () => {};
+    }, [restingPeersSeatNo]);
+
+    if (seatNo === roomUsingInfo!.seatNo) {
+        return <SelfSeat />;
+    }
+
+    if (peerResting) {
+        return <PeerResting />;
+    }
 
     return (
         <>
@@ -55,17 +64,14 @@ function FilledSeat({ peer, seatInfo }: PeerStateProp) {
     const [peerMuted, setPeerMuted] = useState<boolean>(
         !seatInfo.streamState.audio
     );
-    const [peerResting, setPeerResting] = useState<boolean>(
-        !seatInfo.streamState.video
-    );
     const decoder = new TextDecoder();
 
     useEffect(() => {
-        peer.on("stream", (stream: MediaStream) => {
+        peer?.on("stream", (stream: MediaStream) => {
             setGotStream(true);
             peerStreamHTMLRef.current!.srcObject = stream;
         });
-        peer.on("data", (chunk) => {
+        peer?.on("data", (chunk) => {
             const chunkData = decoder.decode(chunk);
             if (chunkData == SocketChannel.HALT_AUDIO) {
                 setPeerMuted(true);
@@ -74,12 +80,12 @@ function FilledSeat({ peer, seatInfo }: PeerStateProp) {
                 setPeerMuted(false);
             }
         });
-        peer.on("close", () => {
+        peer?.on("close", () => {
             setGotStream(false);
-            peer.removeAllListeners();
+            peer?.removeAllListeners();
         });
         return () => {
-            peer.removeAllListeners();
+            peer?.removeAllListeners();
             peerStreamHTMLRef.current?.remove();
         };
     }, []);
@@ -103,6 +109,10 @@ function FilledSeat({ peer, seatInfo }: PeerStateProp) {
     } else {
         return <GettingStream />;
     }
+}
+
+function PeerResting() {
+    return <GettingStreamContainer>{`휴식중`}</GettingStreamContainer>;
 }
 
 function GettingStream() {

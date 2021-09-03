@@ -15,15 +15,15 @@ export default function Entry16SeatsControlPanel() {
 }
 
 function CamPreview() {
-    const { camAccepted, userStreamRef } = useEntryContext();
+    const { camAccepted, userStreamHTMLRef } = useEntryContext();
     if (!camAccepted) {
         return <CamContainer>{`카메라 권한을 허용해주세요`}</CamContainer>;
     }
 
     return (
         <CamContainer>
-            {userStreamRef && (
-                <UserCam ref={userStreamRef} muted autoPlay playsInline />
+            {userStreamHTMLRef && (
+                <UserCam ref={userStreamHTMLRef} muted autoPlay playsInline />
             )}
         </CamContainer>
     );

@@ -6,7 +6,12 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { API_ENDPOINT, ChildrenProp, User } from "../../Constants";
+import {
+    API_ENDPOINT,
+    ChildrenProp,
+    User,
+    RoomUsingInfo,
+} from "../../Constants";
 import io, { Socket } from "socket.io-client";
 
 interface AppContext {
@@ -15,12 +20,12 @@ interface AppContext {
     token?: string;
     isLoggedIn: boolean;
     userInfo: User | undefined;
-    isAdmin: boolean;
+    roomUsingInfo: RoomUsingInfo | undefined;
     showCustomRoomModal: boolean;
     schedulerOpen: boolean;
     setIsLoggedIn: (status: boolean) => void;
     setUserInfo: (userInfo: User | undefined) => void;
-    setIsAdmin: (status: boolean) => void;
+    setRoomUsingInfo: (roomUsingInfo: RoomUsingInfo | undefined) => void;
     setShowCustomRoomModal: (status: boolean) => void;
     toggleSchedulerOpen: () => void;
 }
@@ -28,12 +33,12 @@ interface AppContext {
 const InitialAppContext: AppContext = {
     isLoggedIn: false,
     userInfo: undefined,
-    isAdmin: false,
+    roomUsingInfo: undefined,
     showCustomRoomModal: false,
     schedulerOpen: false,
     setIsLoggedIn: () => {},
     setUserInfo: () => {},
-    setIsAdmin: () => {},
+    setRoomUsingInfo: () => {},
     setShowCustomRoomModal: () => {},
     toggleSchedulerOpen: () => {},
 };
@@ -55,7 +60,10 @@ export default function AppProvider({ children }: ChildrenProp) {
     const [userInfo, setUserInfo] = useState<User | undefined>(
         API_ENDPOINT === "http://localhost:5000" ? initialUser : undefined
     );
-    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    // 방에 입장한 경우 저장되는 정보
+    const [roomUsingInfo, setRoomUsingInfo] = useState<
+        RoomUsingInfo | undefined
+    >(undefined);
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
     const [schedulerOpen, setSchedulerOpen] = useState<boolean>(false);
@@ -81,13 +89,13 @@ export default function AppProvider({ children }: ChildrenProp) {
         socketRef,
         isLoggedIn,
         userInfo,
-        isAdmin,
+        roomUsingInfo,
         showCustomRoomModal,
         schedulerOpen,
         userStream,
         setIsLoggedIn,
         setUserInfo,
-        setIsAdmin,
+        setRoomUsingInfo,
         setShowCustomRoomModal,
         toggleSchedulerOpen,
     };
