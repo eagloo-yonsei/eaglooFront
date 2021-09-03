@@ -15,6 +15,7 @@ import Profile from "../../Pages/Profile";
 import List from "../../Pages/List";
 import Entry from "../../Pages/Entry";
 import Room from "../../Pages/Room";
+import Lounge from "../../Pages/Lounge";
 import Forum from "../../Pages/Forum";
 import Feedback from "../../Pages/Feedback";
 import About from "../../Pages/About";
@@ -52,6 +53,7 @@ function UserRouter() {
                 <Router path={"/list"} component={List} />
                 <Router path={"/entry"} component={Entry} />
                 <Router path={"/room"} component={Room} />
+                {/* <Router path={"/lounge"} component={Lounge} /> */}
                 <Router path={"/forum"} component={Forum} />
                 <Router path={"/feedback"} component={Feedback} />
                 <Router path={"/about"} component={About} />

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomContext } from "../../RoomProvider";
 import TimerPerSecond from "../../../../Components/Timer/Timer__PerSecond";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +24,7 @@ function StreamPanel() {
     const { userStreamHTMLRef, userMuted } = useRoomContext();
     return (
         <CamContainer>
-            <UserCam ref={userStreamHTMLRef} autoPlay playsInline />
+            <UserCam ref={userStreamHTMLRef} muted autoPlay playsInline />
             <MicrophoneIconContainer userMuted={userMuted}>
                 {userMuted ? (
                     <FontAwesomeIcon icon={faMicrophoneSlash} />
@@ -36,26 +37,15 @@ function StreamPanel() {
 }
 
 function ButtonPanel() {
-    const {
-        peersState,
-        roomInfo,
-        userSeatNo,
-        endTime,
-        userMuted,
-        userResting,
-        stopSelfStream,
-        muteSelfAudio,
-        unmuteSelfAudio,
-        haltSelfVideo,
-        resumeSelfVideo,
-        exitToList,
-    } = useRoomContext();
+    const { roomUsingInfo } = useAppContext();
+    const { peersState, stopSelfStream, enterLounge, exitToList } =
+        useRoomContext();
     return (
         <ControlButtonContainer>
             <RoomInfo>
                 <RoomName>
                     <FontAwesomeIcon icon={faUnlock} />
-                    {`  ${roomInfo.roomName}`}
+                    {`  ${roomUsingInfo?.roomName}`}
                 </RoomName>
                 <RoomPeople>
                     <FontAwesomeIcon icon={faUserAlt} />
@@ -63,10 +53,40 @@ function ButtonPanel() {
                 </RoomPeople>
             </RoomInfo>
             <TimerContainer>
-                <TimerPerSecond endTime={endTime} showSecond={true} />
+                <TimerPerSecond
+                    endTime={roomUsingInfo!.endTime}
+                    showSecond={true}
+                />
             </TimerContainer>
-            {/* <MySeat>{`내 자리 : ${userSeatNo}번`}</MySeat> */}
+            {/* <MySeat>{`내 자리 : ${roomUsingInfo!.seatNo}번`}</MySeat> */}
             <ButtonsRow>
+                <MicControlButton />
+                {/* <HaltMicButton
+                    onClick={() => {
+                        enterLounge();
+                    }}
+                >{`휴게실`}</HaltMicButton> */}
+
+                <ExitButton
+                    onClick={() => {
+                        stopSelfStream();
+                        exitToList();
+                    }}
+                >
+                    {`나가기`}
+                </ExitButton>
+            </ButtonsRow>
+        </ControlButtonContainer>
+    );
+}
+
+function MicControlButton() {
+    const { roomInfo, userMuted, muteSelfAudio, unmuteSelfAudio } =
+        useRoomContext();
+
+    if ("allowMic" in roomInfo && roomInfo.allowMic) {
+        return (
+            <>
                 {userMuted ? (
                     <ResumeMicButton
                         onClick={() => {
@@ -80,31 +100,11 @@ function ButtonPanel() {
                         }}
                     >{`음소거`}</HaltMicButton>
                 )}
-                {/* {userResting ? (
-                    <HaltMicButton
-                        onClick={() => {
-                            resumeSelfVideo();
-                        }}
-                    >{`방으로`}</HaltMicButton>
-                ) : (
-                    <HaltMicButton
-                        onClick={() => {
-                            haltSelfVideo();
-                        }}
-                    >{`휴게실`}</HaltMicButton>
-                )} */}
-
-                <ExitButton
-                    onClick={() => {
-                        stopSelfStream();
-                        exitToList();
-                    }}
-                >
-                    {`나가기`}
-                </ExitButton>
-            </ButtonsRow>
-        </ControlButtonContainer>
-    );
+            </>
+        );
+    } else {
+        return null;
+    }
 }
 
 const Container = styled.div`
@@ -209,8 +209,9 @@ const MySeat = styled.div`
 
 const ButtonsRow = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: 12px;
     width: 100%;
     height: 45px;
 `;
@@ -221,7 +222,7 @@ const MicrophoneControlButton = styled.div`
     align-items: center;
     width: fit-content;
     height: 100%;
-    font-size: 24px;
+    font-size: 21px;
     font-family: ${(props) => props.theme.inButtonFont};
     border-radius: 15px;
     padding: 15px;

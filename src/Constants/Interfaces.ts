@@ -5,7 +5,6 @@ export interface ChildrenProp {
     children: JSX.Element;
 }
 
-// DB 연동 Model (Room 관련 제외)
 export interface User {
     id: string;
     email: string;
@@ -14,17 +13,27 @@ export interface User {
     isAdmin: boolean;
 }
 
+// 민감한 정보는 제외한 유저 정보
 export interface MinimalUser {
     id: string;
     email: string;
     nickName?: string;
 }
 
+// 관리자 페이지에서 활용
 export interface ConnectedUser {
     socketId: string;
     userInfo: MinimalUser;
     roomId?: string;
     seatNo?: number;
+}
+
+export interface RoomUsingInfo {
+    roomType: RoomType;
+    roomId: string;
+    roomName: string;
+    seatNo: number;
+    endTime: number;
 }
 
 export interface Task {
@@ -57,12 +66,12 @@ export enum RoomType {
 
 // 방에서 사용하는 simple-peer 라이브러리 prop
 export interface PeerStateProp {
-    peer: Peer.Instance;
+    peer: Peer.Instance | undefined;
     seatInfo: Seat;
 }
 
 export interface PeerRefProp {
-    peer: Peer.Instance;
+    peer: Peer.Instance | undefined;
     seatInfo: Seat;
 }
 

@@ -9,6 +9,7 @@ import React, {
 import { useHistory, useLocation } from "react-router-dom";
 import { Location } from "history";
 import axios from "axios";
+import { useAppContext } from "../../Routes/App/AppProvider";
 import {
     RoomType,
     Room,
@@ -29,7 +30,7 @@ interface EntryContextProp {
     selectedSeatNo: number;
     timeToStudy: number;
     camAccepted: boolean;
-    userStreamRef?: RefObject<HTMLVideoElement>;
+    userStreamHTMLRef?: RefObject<HTMLVideoElement>;
     selectSeat: (seatNo: number) => void;
     decreaseTimeToStudy: () => void;
     increaseTimeToStudy: () => void;
@@ -68,7 +69,8 @@ export const useEntryContext = () => useContext(EntryContext);
 export default function EntryProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const location = useLocation<Location | unknown>();
-    const userStreamRef = useRef<HTMLVideoElement>(null);
+    const { setRoomUsingInfo } = useAppContext();
+    const userStreamHTMLRef = useRef<HTMLVideoElement>(null);
     const [camAccepted, setCamAccepted] = useState<boolean>(false);
     const [roomType, setRoomType] = useState<RoomType>(RoomType.PUBLIC);
     const [roomInfo, setRoomInfo] = useState<Room | CustomRoom>({
@@ -84,8 +86,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         const state = location.state as EntryLocationStateProp;
         if (state !== undefined) {
             setRoomType(state.roomType);
-            getRoomInfo(state.roomType, state.roomId);
-
+            getRoomInfo(state.roomId);
             getUserStream();
         } else {
             history.push("/list");
@@ -102,11 +103,11 @@ export default function EntryProvider({ children }: ChildrenProp) {
             })
             .then((stream) => {
                 setCamAccepted(true);
-                userStreamRef.current!.srcObject = stream;
+                userStreamHTMLRef.current!.srcObject = stream;
             });
     }
 
-    async function getRoomInfo(roomType: RoomType, roomId: string) {
+    async function getRoomInfo(roomId: string) {
         await axios
             .get<Room | CustomRoom>(`${API_ENDPOINT}/api/room/${roomId}`)
             .then((response) => {
@@ -160,19 +161,21 @@ export default function EntryProvider({ children }: ChildrenProp) {
 
     function enterRoom() {
         stopSelfStream();
-        history.push({
-            pathname: "/room",
-            state: {
-                roomType: roomType,
-                roomId: roomInfo.id,
-                userSeatNo: selectedSeatNo,
-                endTime: new Date().getTime() + 1000 * 60 * 60 * timeToStudy,
-            },
+        const endTime = new Date().getTime() + 1000 * 60 * 60 * timeToStudy;
+
+        setRoomUsingInfo({
+            roomType,
+            roomId: roomInfo.id,
+            roomName: roomInfo.roomName,
+            seatNo: selectedSeatNo,
+            endTime,
         });
+
+        history.push("/room");
     }
 
     function stopSelfStream() {
-        const selfStream = userStreamRef.current?.srcObject as MediaStream;
+        const selfStream = userStreamHTMLRef.current?.srcObject as MediaStream;
         const tracks = selfStream?.getTracks();
         if (tracks) {
             tracks.forEach((track) => {
@@ -190,7 +193,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         roomInfo,
         selectedSeatNo,
         timeToStudy,
-        userStreamRef,
+        userStreamHTMLRef,
         camAccepted,
         selectSeat,
         decreaseTimeToStudy,
