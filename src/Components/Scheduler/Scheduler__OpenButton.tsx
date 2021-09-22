@@ -1,8 +1,11 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import { useLocation } from "react-router-dom";
 import { useAppContext } from "../../Routes/App/AppProvider";
+import { todoLessPages } from "../../Constants";
 
 export default function SchedulerOpenButton() {
+    if (todoLessPages.includes(useLocation().pathname)) return null;
     const { toggleSchedulerOpen } = useAppContext();
     return (
         <Container

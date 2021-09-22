@@ -17,14 +17,12 @@ export default function ProfileBody() {
         modalOpenCondition,
         updating,
         nickNameInput,
-        realNameInput,
         newPasswordInput,
         newPasswordConfirmInput,
         previousPasswordInput,
         openConfirmModal,
         setNickNameAvailable,
         setNickNameInput,
-        setRealNameInput,
         setNewPasswordInput,
         setNewPasswordConfirmInput,
         setPreviousNewPasswordInput,
@@ -46,7 +44,7 @@ export default function ProfileBody() {
                             value={nickNameInput}
                             placeholder="닉네임 (3자 이상)"
                             onChange={(e) => {
-                                if (e.target.value.length <= 12) {
+                                if (e.target.value.length <= 10) {
                                     setNickNameInput(e.target.value);
                                 }
                                 if (nickNameAvailable) {
@@ -94,23 +92,7 @@ export default function ProfileBody() {
             </InputRow>
             <InputRow>
                 <InputRowTitle>{`실명`}</InputRowTitle>
-                {userInfo?.realName ? (
-                    <ExistingValueBox>{`${userInfo.realName}`}</ExistingValueBox>
-                ) : (
-                    <>
-                        <InputBox
-                            disabled={updating}
-                            type="text"
-                            value={realNameInput}
-                            placeholder="실명"
-                            onChange={(e) => {
-                                if (e.target.value.length <= 8) {
-                                    setRealNameInput(e.target.value);
-                                }
-                            }}
-                        />
-                    </>
-                )}
+                <ExistingValueBox>{`${userInfo?.realName}`}</ExistingValueBox>
             </InputRow>
             <InputRow>
                 <InputRowTitle>{`비밀번호 변경`}</InputRowTitle>

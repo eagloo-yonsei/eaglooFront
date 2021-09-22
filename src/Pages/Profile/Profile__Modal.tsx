@@ -1,17 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import { useAppContext } from "../../Routes/App/AppProvider";
 import { useProfileContext } from "./ProfileProvider";
 import { ModalBackGround, SubmitButton } from "../../Styles/StyledComponents";
 
 export default function ProfileModal() {
-    const { userInfo } = useAppContext();
     const {
         confirmModalOpen,
         updating,
         nickNameAvailable,
         nickNameInput,
-        realNameInput,
         setConfirmModalOpen,
         updateUserInfo,
     } = useProfileContext();
@@ -25,18 +22,12 @@ export default function ProfileModal() {
                     }}
                 />
                 <Container>
-                    <Header>{`닉네임과 실명은 변경할 수 없습니다`}</Header>
+                    <Header>{`닉네임은 변경할 수 없습니다`}</Header>
                     <Body>
                         {nickNameAvailable && (
                             <InfoRow>
                                 <InfoRowTitle>{`닉네임`}</InfoRowTitle>
                                 <InputInfo>{nickNameInput}</InputInfo>
-                            </InfoRow>
-                        )}
-                        {!!realNameInput && (
-                            <InfoRow>
-                                <InfoRowTitle>{`실명`}</InfoRowTitle>
-                                <InputInfo>{realNameInput}</InputInfo>
                             </InfoRow>
                         )}
                     </Body>
