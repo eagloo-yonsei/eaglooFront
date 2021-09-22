@@ -14,7 +14,6 @@ interface ProfileContextProp {
     updatable: boolean;
     updating: boolean;
     nickNameInput: string;
-    realNameInput: string;
     newPasswordInput: string;
     newPasswordConfirmInput: string;
     previousPasswordInput: string;
@@ -22,7 +21,6 @@ interface ProfileContextProp {
     setConfirmModalOpen: (status: boolean) => void;
     setNickNameAvailable: (status: boolean) => void;
     setNickNameInput: (input: string) => void;
-    setRealNameInput: (input: string) => void;
     setNewPasswordInput: (input: string) => void;
     setNewPasswordConfirmInput: (input: string) => void;
     setPreviousNewPasswordInput: (input: string) => void;
@@ -38,7 +36,6 @@ const InitialProfileContext: ProfileContextProp = {
     updatable: false,
     updating: false,
     nickNameInput: "",
-    realNameInput: "",
     newPasswordInput: "",
     newPasswordConfirmInput: "",
     previousPasswordInput: "",
@@ -46,7 +43,6 @@ const InitialProfileContext: ProfileContextProp = {
     setConfirmModalOpen: () => {},
     setNickNameAvailable: () => {},
     setNickNameInput: () => {},
-    setRealNameInput: () => {},
     setNewPasswordInput: () => {},
     setNewPasswordConfirmInput: () => {},
     setPreviousNewPasswordInput: () => {},
@@ -66,7 +62,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         useState<boolean>(false);
     const [updating, setUpdating] = useState<boolean>(false);
     const [nickNameInput, setNickNameInput] = useState<string>("");
-    const [realNameInput, setRealNameInput] = useState<string>("");
     const [newPasswordInput, setNewPasswordInput] = useState<string>("");
     const [newPasswordConfirmInput, setNewPasswordConfirmInput] =
         useState<string>("");
@@ -76,7 +71,7 @@ export default function ProfileProvider({ children }: ChildrenProp) {
     const hashedNewPassword = new SHA3(512);
     const hashedPreviousPassword = new SHA3(512);
 
-    const modalOpenCondition: boolean = !!nickNameInput || !!realNameInput;
+    const modalOpenCondition: boolean = !!nickNameInput;
 
     const updatable: boolean =
         (!!userInfo?.nickName || !nickNameInput || nickNameAvailable) &&
@@ -103,7 +98,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         setNickNameValidating(false);
         setUpdating(false);
         setNickNameInput("");
-        setRealNameInput("");
         setNewPasswordInput("");
         setNewPasswordConfirmInput("");
         setPreviousNewPasswordInput("");
@@ -148,9 +142,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
                     nickName: nickNameInput
                         ? nickNameInput
                         : userInfo?.nickName,
-                    realName: realNameInput
-                        ? realNameInput
-                        : userInfo?.realName,
                     newPassword: newPasswordInput
                         ? hashedNewPassword.digest("hex")
                         : undefined,
@@ -166,9 +157,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
                             nickName: nickNameInput
                                 ? nickNameInput
                                 : userInfo.nickName,
-                            realName: realNameInput
-                                ? realNameInput
-                                : userInfo.realName,
                         });
                     }
                     toastSuccessMessage(response.data.message);
@@ -193,7 +181,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         updatable,
         updating,
         nickNameInput,
-        realNameInput,
         newPasswordInput,
         newPasswordConfirmInput,
         previousPasswordInput,
@@ -201,7 +188,6 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         setConfirmModalOpen,
         setNickNameAvailable,
         setNickNameInput,
-        setRealNameInput,
         setNewPasswordInput,
         setNewPasswordConfirmInput,
         setPreviousNewPasswordInput,

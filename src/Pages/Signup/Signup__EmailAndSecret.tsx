@@ -75,6 +75,7 @@ function Secret() {
                 disabled={!secretSended || secretAuthenticating}
                 mutable={secretSended}
                 type="text"
+                spellCheck="false"
                 value={secretInput}
                 placeholder="인증 단어"
                 onChange={(e) => {
@@ -113,7 +114,6 @@ const InputBox = styled.input<InputBoxProp>`
     background-color: ${(props) =>
         props.mutable ? "none" : props.theme.loginMessageGray};
     padding: 0 12px;
-    margin-bottom: 15px;
     border: none;
     border-radius: 8px;
     :focus {

@@ -3,14 +3,13 @@ import styled from "styled-components";
 import { SubmitButton } from "../../Styles/StyledComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-
 import { useSignupContext } from "./SignupProvider";
 
 export default function SignupPassword() {
     const {
         passwordInput,
         passwordConfirmInput,
-        signingUp,
+        settingPassword,
         setPasswordInput,
         setPasswordConfirmInput,
         setPassword,
@@ -52,7 +51,7 @@ export default function SignupPassword() {
             />
             <SubmitButton
                 buttonContent={`비밀번호 설정하기`}
-                loadingStatus={signingUp}
+                loadingStatus={settingPassword}
                 submitFunction={setPassword}
                 disabledCondition={
                     passwordInput.length < 8 ||
@@ -111,7 +110,6 @@ const InputBox = styled.input`
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 12px;
-    margin-bottom: 15px;
     border: none;
     border-radius: 8px;
     :focus {
