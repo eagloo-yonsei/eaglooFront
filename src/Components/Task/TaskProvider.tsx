@@ -13,14 +13,19 @@ import { ChildrenProp, Task, API_ENDPOINT } from "../../Constants";
 
 interface TaskContextProp {
     taskOpen: boolean;
+    taskSorted: boolean;
+    sortedByImportanceAscending: boolean;
     tasks: Task[];
     newTaskInput: string;
+    newTaksDday: Date | null;
     newTaskImportance: number;
     taskLoading: boolean;
     taskLoadingError: boolean;
     taskUploading: boolean;
     toggleTaskOpen: () => void;
+    sortTasksByImportance: (changeStandard: boolean) => void;
     setNewTaskInput: (input: string) => void;
+    setNewTaskDday: (input: Date) => void;
     selectNewTaskImportance: (importance: number) => void;
     createTask: () => void;
     updateTask: (
@@ -35,14 +40,19 @@ interface TaskContextProp {
 
 const InitialTaskContext: TaskContextProp = {
     taskOpen: true,
+    taskSorted: false,
+    sortedByImportanceAscending: false,
     tasks: [],
     newTaskInput: "",
+    newTaksDday: null,
     newTaskImportance: 1,
     taskLoading: false,
     taskLoadingError: false,
     taskUploading: false,
     toggleTaskOpen: () => {},
+    sortTasksByImportance: () => {},
     setNewTaskInput: () => {},
+    setNewTaskDday: () => {},
     selectNewTaskImportance: () => {},
     createTask: () => {},
     updateTask: () => {
@@ -57,8 +67,12 @@ export const useTaskContext = () => useContext(TaskContext);
 export default function TaskProvider({ children }: ChildrenProp) {
     const { userInfo } = useAppContext();
     const [taskOpen, setTaskOpen] = useState<boolean>(true);
+    const [taskSorted, setTaskSorted] = useState<boolean>(false);
+    const [sortedByImportanceAscending, setSortedByImportanceAscending] =
+        useState<boolean>(false);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newTaskInput, setNewTaskInput] = useState<string>("");
+    const [newTaksDday, setNewTaskDday] = useState<Date | null>(null);
     const [newTaskImportance, setNewTaskImportance] = useState<number>(1);
     const [taskLoading, setTaskLoading] = useState<boolean>(false);
     const [taskLoadingError, setTaskLoadingError] = useState<boolean>(false);
@@ -86,6 +100,7 @@ export default function TaskProvider({ children }: ChildrenProp) {
             .then((response) => {
                 if (response.data.success) {
                     setTasks(response.data.tasks);
+                    // sortTasksByImportance(false);
                 } else {
                     toastErrorMessage(response.data.message);
                 }
@@ -157,6 +172,22 @@ export default function TaskProvider({ children }: ChildrenProp) {
             });
     }
 
+    function sortTasksByImportance(changeStandard: boolean) {
+        if (!taskSorted) {
+            setTaskSorted(true);
+        }
+        let arrangedTasks = [...tasks];
+        if (changeStandard) {
+            setSortedByImportanceAscending(!sortedByImportanceAscending);
+        }
+        arrangedTasks.sort((a, b) => {
+            return sortedByImportanceAscending
+                ? b.importance - a.importance
+                : a.importance - b.importance;
+        });
+        setTasks(arrangedTasks);
+    }
+
     function selectNewTaskImportance(importance: number) {
         setNewTaskImportance(importance);
     }
@@ -193,14 +224,19 @@ export default function TaskProvider({ children }: ChildrenProp) {
 
     const taskContext = {
         taskOpen,
+        taskSorted,
+        sortedByImportanceAscending,
         tasks,
         newTaskInput,
+        newTaksDday,
         newTaskImportance,
         taskLoading,
         taskLoadingError,
         taskUploading,
         toggleTaskOpen,
+        sortTasksByImportance,
         setNewTaskInput,
+        setNewTaskDday,
         selectNewTaskImportance,
         createTask,
         updateTask,

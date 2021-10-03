@@ -70,7 +70,7 @@ const LinkBlock = styled.div`
     height: 100%;
     color: white;
     font-size: 14px;
-    font-family: ${(props) => props.theme.plainTextFont};
+    font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 
 const LinkButtonContainer = styled.a`

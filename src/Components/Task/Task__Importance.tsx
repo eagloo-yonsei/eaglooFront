@@ -48,7 +48,8 @@ function ImportanceCircle({
 
     return (
         <ImportanceCircleContainer
-            color={index <= importance ? colors[importance] : colors[0]}
+            color={index <= importance ? colors[importance] : "white"}
+            filled={index <= importance ? true : false}
             onClick={() => {
                 importanceSettingFunc(index);
             }}
@@ -64,11 +65,16 @@ const Container = styled.div`
     height: 100%;
 `;
 
-const ImportanceCircleContainer = styled.div<{ color: string }>`
-    width: 10px;
-    height: 10px;
-    margin: 0 3px;
-    border-radius: 50%;
+const ImportanceCircleContainer = styled.div<{
+    color?: string;
+    filled: boolean;
+}>`
+    width: 20px;
+    aspect-ratio: 1;
+    margin: 0 1.5px;
+    border: ${(props) =>
+        props.filled ? `1px solid ${props.color}` : "1px solid #c0daff"};
+    border-radius: 20%;
     background-color: ${(props) => props.color};
     :hover {
         cursor: pointer;

@@ -26,7 +26,7 @@ export function HomeMainMessage() {
             <MainMessageLine12>
                 연세대학교
                 <br />
-                온라인 스터디 공간
+                온라인 스터디 서비스
                 <br />
             </MainMessageLine12>
             <MainMessageLine3>EAGLOO</MainMessageLine3>
@@ -37,12 +37,11 @@ export function HomeMainMessage() {
 export function HomeSubMessage() {
     return (
         <SubMessage>
-            이제 어디서나 도서관에 있는 것처럼 함께 공부해요
+            이제 어디서나 스터디 카페를 즐기세요. EAGLOO는 비대면 온라인
             <br />
-            가상 스터디룸에서 익숙하면서도 새로운 경험을 해보세요
+            시대에 발맞추어 필요한 모든 서비스를 제공하고 있습니다.
             <br />
-            EAGLOO는 비대면 온라인 시대에 발맞추어 필요한 모든 서비스를
-            제공하겠습니다
+            온라인스터디룸에서 익숙하면서도 새로운 경험을 해보세요.
         </SubMessage>
     );
 }
@@ -64,7 +63,7 @@ const MainMessageLine3 = styled.div`
 
 const SubMessage = styled.div`
     font-size: 16px;
-    font-family: ${(props) => props.theme.plainLightTextFont};
+    font-family: ${(props) => props.theme.plainTextFont};
     line-height: 34px;
     margin-bottom: 40px;
 `;

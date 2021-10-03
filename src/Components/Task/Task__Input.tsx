@@ -1,17 +1,21 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { useTaskContext } from "./TaskProvider";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import TaskImportance from "./Task__Importance";
 
 export default function TaskInput() {
     const { isLoggedIn } = useAppContext();
     const {
         newTaskInput,
+        newTaksDday,
         taskLoading,
         taskLoadingError,
         taskUploading,
         setNewTaskInput,
+        setNewTaskDday,
         createTask,
         newTaskInputRef,
     } = useTaskContext();
@@ -41,9 +45,21 @@ export default function TaskInput() {
                     }
                 }}
             />
-            {/* <TaskDdayBox>{`기간`}</TaskDdayBox> */}
+            {/* <NewTaskDday /> */}
+            {/* <TaskDdayBox /> */}
             <NewTaskImportance />
         </Container>
+    );
+}
+
+function NewTaskDday() {
+    const { newTaksDday, setNewTaskDday } = useTaskContext();
+
+    return (
+        <DatePicker
+            selected={newTaksDday}
+            onChange={(date) => setNewTaskDday(date as Date)}
+        />
     );
 }
 
@@ -103,6 +119,7 @@ const TaskDdayBox = styled.div`
     color: white;
     font-size: 15px;
     font-family: ${(props) => props.theme.subLabelFont};
+    background-color: white;
 `;
 
 const NewTaskImportanceContainer = styled.div`

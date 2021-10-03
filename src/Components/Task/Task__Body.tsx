@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { useAppContext } from "../../Routes/App/AppProvider";
 import { useTaskContext } from "./TaskProvider";
 import TaskEach from "./Task__Each";
-import { Task } from "../../Constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
 export default function TaskBody() {
     const { isLoggedIn } = useAppContext();
@@ -27,6 +28,7 @@ export default function TaskBody() {
 
     return (
         <Container taskOpen={taskOpen}>
+            <TaskSorter />
             <ScrollContainer>
                 {tasks.map((task) => {
                     return <TaskEach key={task.id} task={task} />;
@@ -35,6 +37,8 @@ export default function TaskBody() {
         </Container>
     );
 }
+
+// TODO (code clearance) task body 예쁘게 케이싱할 것
 
 function Unauthorized() {
     const { taskOpen } = useTaskContext();
@@ -56,7 +60,7 @@ function TaskLoadingError() {
     const { taskOpen } = useTaskContext();
     return (
         <Container taskOpen={taskOpen}>
-            {`일정을 불러오는 데 실패했습니다. 다시 가져오기`}
+            {`일정을 불러오는 데 실패했습니다.`}
         </Container>
     );
 }
@@ -67,6 +71,25 @@ function TaskEmpty() {
         <Container taskOpen={taskOpen}>
             {`아직 일정이 없습니다. 새로운 일정을 추가해 보세요!`}
         </Container>
+    );
+}
+
+function TaskSorter() {
+    const { taskSorted, sortedByImportanceAscending, sortTasksByImportance } =
+        useTaskContext();
+    return (
+        <TaskSorterContainer>
+            <TaskSortMessage
+                onClick={() => {
+                    sortTasksByImportance(true);
+                }}
+            >{`중요도순`}</TaskSortMessage>
+            {taskSorted && (
+                <FontAwesomeIcon
+                    icon={sortedByImportanceAscending ? faCaretUp : faCaretDown}
+                />
+            )}
+        </TaskSorterContainer>
     );
 }
 
@@ -81,16 +104,29 @@ const Container = styled.div<{ taskOpen: boolean }>`
     height: 100%;
     font-size: 20px;
     font-family: ${(props) => props.theme.subLabelFont};
-    background-color: ${(props) => props.theme.mainLightBlue};
     padding: 0px 16px 50px 16px; // TaskInput heigth
     padding-top: ${(props) => (props.taskOpen ? "15px" : "0px")};
     overflow: hidden;
+`;
+
+const TaskSorterContainer = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    height: 50px;
+    color: ${(props) => props.theme.taskLightBlue};
+`;
+
+const TaskSortMessage = styled.div`
+    font-size: 16px;
+    cursor: pointer;
 `;
 
 const ScrollContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
     overflow-y: auto;
 `;

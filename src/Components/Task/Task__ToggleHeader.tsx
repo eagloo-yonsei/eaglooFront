@@ -25,7 +25,7 @@ const Container = styled.div`
     width: 100%;
     height: 30px;
     color: white;
-    background-color: ${(props) => props.theme.mainLightBlue};
+    background-color: white;
     font-size: 14px;
     font-family: ${(props) => props.theme.subLabelFont};
     border-top-left-radius: 15px;
