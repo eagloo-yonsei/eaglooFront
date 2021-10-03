@@ -17,7 +17,8 @@ function PublicEntry() {
         <PublicDiv>
             <EntryTitle>{`공용 스터디룸`}</EntryTitle>
             <EntryMessage>
-                {`이글루가 자체적으로 제공하는 스터디룸입니다.`}
+                {`공용 스터디룸은 이글루에서 자체적으로 제공하고 있는 
+스터디룸입니다.`}
             </EntryMessage>
             <StylelessLink to={"/list"}>
                 <PublicButton>{`참가하기`}</PublicButton>
@@ -31,9 +32,9 @@ function PrivateEntry() {
     return (
         <PrivateDiv>
             <EntryTitle>{`개인 스터디룸`}</EntryTitle>
-            <EntryMessage>{`사용자가 설정한 스터디룸입니다.`}</EntryMessage>
+            <EntryMessage>{`개인 스터디룸은 사용자가 설정한 스터디룸입니다.`}</EntryMessage>
             <EntryMessage>
-                {`같은 목적을 가진 사람들과 함께 공부해 보세요!`}
+                {`같은 목표를 가진 사람들과 함께 공부해보세요!`}
             </EntryMessage>
             <PrivateButton
                 onClick={() => {
@@ -80,7 +81,7 @@ const EntryTitle = styled.div`
 const EntryMessage = styled.div`
     font-size: 17px;
     margin-bottom: 10px;
-    font-family: ${(props) => props.theme.plainTextFont};
+    font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 
 const EntryButton = styled.div`

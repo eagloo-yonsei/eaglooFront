@@ -27,6 +27,9 @@ export default {
     chattingPeerMessageBox: "#E8F4FF",
     chattingSelfMessage: "white",
     chattingSelfMessageBox: "#5D90D2",
+    // color__task
+    taskLightBlue: "#b3d0ff",
+    // color__scheduler
 
     // styles
     mainPageGradient: "linear-gradient(50deg, #0058d8, #1d74ff, #0058d8)",

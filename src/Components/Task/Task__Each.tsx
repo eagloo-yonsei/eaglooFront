@@ -36,13 +36,14 @@ export default function TaskEach({ task }: { task: Task }) {
         <Container>
             <ContainerLeft>
                 <CheckBox
+                    taskDone={taskDone}
                     onClick={async () => {
                         if (updating) {
                             return;
                         }
                         setUpdating(true);
                         if (
-                            updateTask(
+                            await updateTask(
                                 task.id,
                                 !taskDone,
                                 previousTaskContent,
@@ -71,7 +72,7 @@ export default function TaskEach({ task }: { task: Task }) {
                         if (e.key === "Enter") {
                             setUpdating(true);
                             if (
-                                updateTask(
+                                await updateTask(
                                     task.id,
                                     taskDone,
                                     taskContentInput,
@@ -107,13 +108,13 @@ export default function TaskEach({ task }: { task: Task }) {
             ) : (
                 <ContainerRight>
                     <ConfirmButton
-                        onClick={() => {
+                        onClick={async () => {
                             if (updating) {
                                 return;
                             }
                             setUpdating(true);
                             if (
-                                updateTask(
+                                await updateTask(
                                     task.id,
                                     taskDone,
                                     taskContentInput,
@@ -174,23 +175,26 @@ const ContainerRight = styled(ContainerLeft)`
     width: 30%;
 `;
 
-const CheckBox = styled.div`
+const CheckBox = styled.div<{ taskDone: boolean }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     margin-right: 12px;
-    border: 2.5px solid white;
+    border: 3px solid
+        ${(props) => (props.taskDone ? "#1d74ff" : props.theme.taskLightBlue)};
     border-radius: 25%;
     color: white;
+    background-color: ${(props) => props.taskDone && "#1d74ff"};
     cursor: pointer;
 `;
 
 const TaskContent = styled.input<{ taskDone: boolean }>`
     width: calc(100% - 56px);
     border: none;
-    color: ${(props) => (props.taskDone ? "#79a4d8" : "black")};
+    color: ${(props) =>
+        props.taskDone ? props.theme.taskLightBlue : "#0043a5"};
     font-size: 18px;
     font-family: ${(props) => props.theme.subLabelFont};
     background-color: inherit;
