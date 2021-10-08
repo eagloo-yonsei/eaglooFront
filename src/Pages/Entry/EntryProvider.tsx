@@ -27,10 +27,12 @@ interface EntryLocationStateProp {
 interface EntryContextProp {
     roomType: RoomType;
     roomInfo: Room | CustomRoom;
+    roomPasswordInput: string;
     selectedSeatNo: number;
     timeToStudy: number;
     camAccepted: boolean;
     userStreamHTMLRef?: RefObject<HTMLVideoElement>;
+    setRoomPasswordInput: (password: string) => void;
     selectSeat: (seatNo: number) => void;
     decreaseTimeToStudy: () => void;
     increaseTimeToStudy: () => void;
@@ -48,9 +50,11 @@ const InitialEntryContext: EntryContextProp = {
         roomName: "",
         seats: [],
     },
+    roomPasswordInput: "",
     selectedSeatNo: 0,
     timeToStudy: 2,
     camAccepted: false,
+    setRoomPasswordInput: () => {},
     selectSeat: () => {},
     decreaseTimeToStudy: () => {},
     increaseTimeToStudy: () => {},
@@ -78,6 +82,7 @@ export default function EntryProvider({ children }: ChildrenProp) {
         roomName: "",
         seats: [],
     });
+    const [roomPasswordInput, setRoomPasswordInput] = useState<string>("");
     const [selectedSeatNo, setSelectedSeatNo] = useState<number>(0);
     const [timeToStudy, setTimeToStudy] = useState<number>(2);
 
@@ -160,6 +165,13 @@ export default function EntryProvider({ children }: ChildrenProp) {
     }
 
     function enterRoom() {
+        // TODO (SIGNIFICANT) - 비밀번호 있는 room 입장 시 비밀번호 검증은 서버 http 요청으로 처리할 것. 귀찮아서 일단 미룸.
+        if ("usePassword" in roomInfo && roomInfo.usePassword) {
+            if (roomPasswordInput !== roomInfo.password) {
+                toastErrorMessage("비밀번호가 다릅니다.");
+                return;
+            }
+        }
         stopSelfStream();
         const endTime = new Date().getTime() + 1000 * 60 * 60 * timeToStudy;
 
@@ -191,10 +203,12 @@ export default function EntryProvider({ children }: ChildrenProp) {
     const entryContext = {
         roomType,
         roomInfo,
+        roomPasswordInput,
         selectedSeatNo,
         timeToStudy,
         userStreamHTMLRef,
         camAccepted,
+        setRoomPasswordInput,
         selectSeat,
         decreaseTimeToStudy,
         increaseTimeToStudy,

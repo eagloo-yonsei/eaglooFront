@@ -15,7 +15,7 @@ export default function HomeEntry() {
 function PublicEntry() {
     return (
         <PublicDiv>
-            <EntryTitle>{`공용 스터디룸`}</EntryTitle>
+            <EntryTitle>{`오픈 스터디룸`}</EntryTitle>
             <EntryMessage>
                 {`공용 스터디룸은 이글루에서 자체적으로 제공하고 있는 
 스터디룸입니다.`}
@@ -31,7 +31,7 @@ function PrivateEntry() {
     const { setShowCustomRoomModal } = useAppContext();
     return (
         <PrivateDiv>
-            <EntryTitle>{`개인 스터디룸`}</EntryTitle>
+            <EntryTitle>{`스터디룸 만들기/검색`}</EntryTitle>
             <EntryMessage>{`개인 스터디룸은 사용자가 설정한 스터디룸입니다.`}</EntryMessage>
             <EntryMessage>
                 {`같은 목표를 가진 사람들과 함께 공부해보세요!`}

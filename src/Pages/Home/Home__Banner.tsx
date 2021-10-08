@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import HomeImg__Yonsei from "../../Resources/Img/HomeImg__Yonsei.png";
+import HomeImg__Yonsei from "../../Resources/Img/HomeImg__Yonsei-min.png";
 
 export default function HomeBanner() {
     return (

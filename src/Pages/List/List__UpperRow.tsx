@@ -35,6 +35,6 @@ const Container = styled.div`
 const ListClose = styled.div`
     position: absolute;
     top: 40px;
-    right: 45px;
+    right: 65px;
     color: ${(props) => props.theme.entryMainBlue};
 `;
