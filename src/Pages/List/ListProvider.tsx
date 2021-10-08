@@ -49,7 +49,9 @@ export default function ListProvider({ children }: ChildrenProp) {
                 const customRooms: CustomRoom[] = [];
                 response.data.forEach((room) => {
                     if ("ownerId" in room) {
-                        customRooms.push(room);
+                        if (!room.usePassword) {
+                            customRooms.push(room);
+                        }
                     } else {
                         publicRooms.push(room);
                     }

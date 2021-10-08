@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useEntryContext } from "../EntryProvider";
 import { RoomType } from "../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faUnlock, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function EntryHeader() {
     const { roomType, roomInfo } = useEntryContext();
@@ -15,7 +15,13 @@ export default function EntryHeader() {
     return (
         <Container>
             <TitleIcon roomType={roomType}>
-                <FontAwesomeIcon icon={faUnlock} />
+                <FontAwesomeIcon
+                    icon={
+                        "usePassword" in roomInfo && roomInfo.usePassword
+                            ? faLock
+                            : faUnlock
+                    }
+                />
             </TitleIcon>
             <Title roomType={roomType}>{`${roomInfo.roomName}`}</Title>
             <SubTitle roomType={roomType}>{`대기실`}</SubTitle>

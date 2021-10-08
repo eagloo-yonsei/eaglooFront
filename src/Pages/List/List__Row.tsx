@@ -5,6 +5,7 @@ import { Room, CustomRoom, RoomType } from "../../Constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import fatIcon from "../../Resources/Img/icon-fat.png";
 
 interface PublicRoomButtonProp {
     room: Room;
@@ -109,7 +110,7 @@ function PublicRoomButton({ room }: PublicRoomButtonProp) {
                 enterEntry(RoomType.PUBLIC, room.id);
             }}
         >
-            <RoomButtonIcon />
+            <RoomButtonIcon src={fatIcon} />
             <RoomButtonTitle>{`${room.roomName}`}</RoomButtonTitle>
             {/* <RoomButtonMessage>
                 {`이글루에서 제공하는 스터디룸`}
@@ -131,7 +132,7 @@ function CustomRoomButton({ room }: CustomRoomButtonProp) {
                 enterEntry(RoomType.CUSTOM, room.id);
             }}
         >
-            <RoomButtonIcon />
+            <RoomButtonIcon src={fatIcon} />
             <RoomButtonTitle>{`${room.roomName}`}</RoomButtonTitle>
             <RoomButtonMessage>
                 {!!room.roomDescription ? room.roomDescription : ""}
@@ -148,6 +149,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     font-family: ${(props) => props.theme.plainBoldTextFont};
+    padding-right: 25px;
 `;
 
 const TitleContainer = styled.div`
@@ -205,12 +207,24 @@ const RoomButtonContainer = styled.div`
     }
 `;
 
-const RoomButtonIcon = styled.div`
+// const RoomButtonIcon = styled.div`
+//     width: 90%;
+//     aspect-ratio: 1;
+//     background-color: ${(props) => props.theme.loginMessageGray};
+//     border-radius: 18%;
+//     margin-bottom: 15px;
+// `;
+
+const RoomButtonIcon = styled.img`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 90%;
     aspect-ratio: 1;
-    background-color: ${(props) => props.theme.loginMessageGray};
     border-radius: 18%;
+    padding: 0px 12px;
     margin-bottom: 15px;
+    overflow: hidden;
 `;
 
 const RoomButtonTitle = styled.div`

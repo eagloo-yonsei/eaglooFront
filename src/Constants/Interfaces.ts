@@ -11,6 +11,7 @@ export interface User {
     nickName?: string;
     realName?: string;
     isAdmin: boolean;
+    owningRooms: CustomRoom[];
 }
 
 // 민감한 정보는 제외한 유저 정보
@@ -20,7 +21,7 @@ export interface MinimalUser {
     nickName?: string;
 }
 
-// 관리자 페이지에서 활용
+// 현재 접속한 유저 property. 관리자 페이지에서 활용
 export interface ConnectedUser {
     socketId: string;
     userInfo: MinimalUser;

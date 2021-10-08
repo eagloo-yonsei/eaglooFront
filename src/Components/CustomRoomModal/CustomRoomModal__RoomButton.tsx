@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCustomRoomModalContext } from "./CustomRoomModalProvider";
 import { CustomRoom } from "../../Constants";
+import fatIcon from "../../Resources/Img/icon-fat.png";
 
 interface CustomRoomButtonProp {
     room: CustomRoom;
@@ -22,7 +23,7 @@ export default function CustomRoomModalRoomButton({
                 selectRoom(room.id);
             }}
         >
-            <RoomIcon />
+            <RoomIcon src={fatIcon} />
             <RoomContentContainer>
                 <RoomName>{`${room.roomName}`}</RoomName>
                 <RoomDescription>
@@ -56,13 +57,24 @@ const Container = styled.div<ContainerProp>`
             : "none"};
 `;
 
-const RoomIcon = styled.div`
+// const RoomIcon = styled.div`
+//     height: 100%;
+//     aspect-ratio: 1;
+//     background-color: white;
+//     border-radius: 24px;
+//     margin-right: 15px;
+//     border: 3px solid black;
+// `;
+
+const RoomIcon = styled.img`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
     aspect-ratio: 1;
-    background-color: white;
     border-radius: 24px;
     margin-right: 15px;
-    border: 3px solid black;
+    overflow: hidden;
 `;
 
 const RoomContentContainer = styled.div`

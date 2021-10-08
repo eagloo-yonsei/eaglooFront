@@ -33,6 +33,7 @@ function ControlButtons() {
     return (
         <ControlButtonsContainer>
             <TimeSelectorRow />
+            <PasswordRow />
             <EnterButton />
         </ControlButtonsContainer>
     );
@@ -70,27 +71,66 @@ function TimeSelectorRow() {
     );
 }
 
-function EnterButton() {
-    const { selectedSeatNo, camAccepted, checkVacancy, enterRoom } =
+function PasswordRow() {
+    const { roomType, roomInfo, roomPasswordInput, setRoomPasswordInput } =
         useEntryContext();
+    if ("usePassword" in roomInfo && roomInfo.usePassword) {
+        return (
+            <PasswordRowContainer>
+                <PasswordTitle roomType={roomType}>{`비밀번호`}</PasswordTitle>
+                <EntryRowContent>
+                    <PasswordInput
+                        type="password"
+                        value={roomPasswordInput}
+                        onChange={(e) => {
+                            if (
+                                e.target.value === "" ||
+                                (Number(e.target.value) &&
+                                    e.target.value.length <= 4)
+                            ) {
+                                setRoomPasswordInput(e.target.value);
+                            }
+                        }}
+                    />
+                </EntryRowContent>
+            </PasswordRowContainer>
+        );
+    } else {
+        return null;
+    }
+}
 
-    return (
-        <>
-            {selectedSeatNo === 0 || !camAccepted ? (
-                <EnterButton__Disable>{`참여하기`}</EnterButton__Disable>
-            ) : (
-                <EnterButton__Enable
-                    onClick={async function () {
-                        if (await checkVacancy()) {
-                            enterRoom();
-                        }
-                    }}
-                >
-                    {`참여하기`}
-                </EnterButton__Enable>
-            )}
-        </>
-    );
+function EnterButton() {
+    const {
+        roomInfo,
+        roomPasswordInput,
+        selectedSeatNo,
+        camAccepted,
+        checkVacancy,
+        enterRoom,
+    } = useEntryContext();
+
+    if (
+        ("usePassword" in roomInfo &&
+            roomInfo.usePassword &&
+            roomPasswordInput.length !== 4) ||
+        selectedSeatNo === 0 ||
+        !camAccepted
+    ) {
+        return <EnterButton__Disable>{`참여하기`}</EnterButton__Disable>;
+    } else {
+        return (
+            <EnterButton__Enable
+                onClick={async function () {
+                    if (await checkVacancy()) {
+                        enterRoom();
+                    }
+                }}
+            >
+                {`참여하기`}
+            </EnterButton__Enable>
+        );
+    }
 }
 
 const Container = styled.div`
@@ -136,22 +176,31 @@ const ControlButtonsContainer = styled.div`
     }
 `;
 
+const EntryRowContent = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 40px;
+`;
+
 const TimeSelectorRowContainer = styled.div`
     display: flex;
     justify-content: space-between;
     width: 100%;
     height: fit-content;
-    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+    /* @media (max-width: ${(props) => props.theme.tabletWidth}) {
         flex-direction: column;
         align-items: center;
-    }
+    } */
 `;
 
 const TimeSelectorTitle = styled.div<{ roomType: RoomType }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 90px;
+    width: 40%;
+    /* min-width: 90px; */
     height: 40px;
     color: ${(props) =>
         props.roomType === RoomType.PUBLIC
@@ -168,7 +217,8 @@ const TimeSelector = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 160px;
+    width: 60%;
+    /* min-width: 160px; */
     height: 40px;
     gap: 10px;
 `;
@@ -189,6 +239,24 @@ const ArrowIcon = styled.div<{ roomType: RoomType }>`
             : props.theme.listMainOrange};
     font-size: 40px;
     cursor: pointer;
+`;
+
+const PasswordRowContainer = styled(TimeSelectorRowContainer)``;
+
+const PasswordTitle = styled(TimeSelectorTitle)``;
+
+const PasswordInput = styled.input`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 70%;
+    height: 40px;
+    text-align: center;
+    border: 3.5px solid ${(props) => props.theme.listLightOrange};
+    border-radius: 8px;
+    :focus {
+        outline: none;
+    }
 `;
 
 const EnterButtonDiv = styled.div`
