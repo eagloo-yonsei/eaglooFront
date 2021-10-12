@@ -10,6 +10,7 @@ interface ProfileContextProp {
     confirmModalOpen: boolean;
     nickNameAvailable: boolean;
     nickNameValidating: boolean;
+    nickNameChangeConfirmed: boolean;
     modalOpenCondition: boolean;
     updatable: boolean;
     updating: boolean;
@@ -20,6 +21,8 @@ interface ProfileContextProp {
     openConfirmModal: () => void;
     setConfirmModalOpen: (status: boolean) => void;
     setNickNameAvailable: (status: boolean) => void;
+    setNickNameChangeConfirmed: (status: boolean) => void;
+    setNickNameChangeConfirmedTrue: () => void;
     setNickNameInput: (input: string) => void;
     setNewPasswordInput: (input: string) => void;
     setNewPasswordConfirmInput: (input: string) => void;
@@ -32,6 +35,7 @@ const InitialProfileContext: ProfileContextProp = {
     confirmModalOpen: false,
     nickNameAvailable: false,
     nickNameValidating: false,
+    nickNameChangeConfirmed: false,
     modalOpenCondition: false,
     updatable: false,
     updating: false,
@@ -42,6 +46,8 @@ const InitialProfileContext: ProfileContextProp = {
     openConfirmModal: () => {},
     setConfirmModalOpen: () => {},
     setNickNameAvailable: () => {},
+    setNickNameChangeConfirmed: () => {},
+    setNickNameChangeConfirmedTrue: () => {},
     setNickNameInput: () => {},
     setNewPasswordInput: () => {},
     setNewPasswordConfirmInput: () => {},
@@ -60,6 +66,8 @@ export default function ProfileProvider({ children }: ChildrenProp) {
     const [nickNameAvailable, setNickNameAvailable] = useState<boolean>(false);
     const [nickNameValidating, setNickNameValidating] =
         useState<boolean>(false);
+    const [nickNameChangeConfirmed, setNickNameChangeConfirmed] =
+        useState<boolean>(userInfo?.nickName ? true : false);
     const [updating, setUpdating] = useState<boolean>(false);
     const [nickNameInput, setNickNameInput] = useState<string>("");
     const [newPasswordInput, setNewPasswordInput] = useState<string>("");
@@ -79,7 +87,7 @@ export default function ProfileProvider({ children }: ChildrenProp) {
             (newPasswordInput.length >= 8 &&
                 newPasswordInput === newPasswordConfirmInput &&
                 newPasswordInput !== previousPasswordInput)) &&
-        !!previousPasswordInput;
+        (!!nickNameInput || !!newPasswordInput);
 
     useEffect(() => {
         if (!userInfo) {
@@ -92,10 +100,15 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         setConfirmModalOpen(true);
     }
 
+    function setNickNameChangeConfirmedTrue() {
+        setNickNameChangeConfirmed(true);
+    }
+
     function resetConditions() {
         setConfirmModalOpen(false);
         setNickNameAvailable(false);
         setNickNameValidating(false);
+        setNickNameChangeConfirmed(userInfo?.nickName ? true : false);
         setUpdating(false);
         setNickNameInput("");
         setNewPasswordInput("");
@@ -177,6 +190,7 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         confirmModalOpen,
         nickNameAvailable,
         nickNameValidating,
+        nickNameChangeConfirmed,
         modalOpenCondition,
         updatable,
         updating,
@@ -187,6 +201,8 @@ export default function ProfileProvider({ children }: ChildrenProp) {
         openConfirmModal,
         setConfirmModalOpen,
         setNickNameAvailable,
+        setNickNameChangeConfirmed,
+        setNickNameChangeConfirmedTrue,
         setNickNameInput,
         setNewPasswordInput,
         setNewPasswordConfirmInput,

@@ -25,6 +25,7 @@ const Container = styled(SlideUpPageContainer)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 15px;
     font-size: 32px;
     font-family: ${(props) => props.theme.subLabelFont};
     padding: 80px 120px 40px 120px;

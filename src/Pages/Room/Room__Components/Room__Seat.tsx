@@ -94,13 +94,7 @@ function FilledSeat({ peer, seatInfo }: PeerStateProp) {
         return (
             <>
                 <PeerCam ref={peerStreamHTMLRef} playsInline autoPlay />
-                <MicrophoneIconContainer peerMuted={peerMuted}>
-                    {peerMuted ? (
-                        <FontAwesomeIcon icon={faMicrophoneSlash} />
-                    ) : (
-                        <FontAwesomeIcon icon={faMicrophone} />
-                    )}
-                </MicrophoneIconContainer>
+                <MicrophoneIcon peerMuted={peerMuted} />
                 <TimerContainer>
                     <TimerPerMinute endTime={seatInfo.endTime} />
                 </TimerContainer>
@@ -108,6 +102,23 @@ function FilledSeat({ peer, seatInfo }: PeerStateProp) {
         );
     } else {
         return <GettingStream />;
+    }
+}
+
+function MicrophoneIcon({ peerMuted }: { peerMuted: boolean }) {
+    const { roomInfo } = useRoomContext();
+    if ("allowMic" in roomInfo && roomInfo.allowMic) {
+        return (
+            <MicrophoneIconContainer peerMuted={peerMuted}>
+                {peerMuted ? (
+                    <FontAwesomeIcon icon={faMicrophoneSlash} />
+                ) : (
+                    <FontAwesomeIcon icon={faMicrophone} />
+                )}
+            </MicrophoneIconContainer>
+        );
+    } else {
+        return null;
     }
 }
 
@@ -125,12 +136,23 @@ function GettingStream() {
 }
 
 function SelfSeat() {
-    return <SelfContainer>{`사용중`}</SelfContainer>;
+    const { userStreamHTMLRef, userMuted } = useRoomContext();
+    return (
+        <SelfContainer>
+            <SelfCam ref={userStreamHTMLRef} muted autoPlay playsInline />
+            <MicrophoneIcon peerMuted={userMuted} />
+        </SelfContainer>
+    );
 }
 
 function EmptySeat({ seatNo }: SeatProp) {
     return (
-        <EmptyContainer>{`${seatNo}번 참여자를 기다리는 중`}</EmptyContainer>
+        <EmptyContainer>
+            <EmptyContainerMessage>
+                {`${seatNo}번 참여자를`}
+            </EmptyContainerMessage>
+            <EmptyContainerMessage>{`기다리는 중`}</EmptyContainerMessage>
+        </EmptyContainer>
     );
 }
 
@@ -193,18 +215,28 @@ const TimerContainer = styled.div`
     font-family: ${(props) => props.theme.plainBoldTextFont};
 `;
 
-const SelfContainer = styled(Container)`
-    font-size: 24px;
-    font-family: ${(props) => props.theme.plainBoldTextFont};
-    letter-spacing: 5px;
-    color: white;
-    background-color: ${(props) => props.theme.loginMessageGray};
+const SelfContainer = styled(Container)``;
+
+const SelfCam = styled.video`
+    max-width: 100%;
+    max-height: 100%;
 `;
 
 const EmptyContainer = styled(Container)`
-    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
+
+const EmptyContainerMessage = styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    font-size: 18px;
     color: white;
     @media (max-width: ${(props) => props.theme.tabletWidth}) {
-        font-size: 12px;
+        font-size: 14px;
     }
 `;

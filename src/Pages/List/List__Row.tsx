@@ -115,9 +115,9 @@ function PublicRoomButton({ room }: PublicRoomButtonProp) {
             {/* <RoomButtonMessage>
                 {`이글루에서 제공하는 스터디룸`}
             </RoomButtonMessage> */}
-            <RoomButtomInfo currentSeats={room.seats.length} maxSeats={16}>
+            <RoomButtomInfo currentSeats={room.seats.length} maxSeats={14}>
                 <FontAwesomeIcon icon={faUserAlt} size="1x" />
-                {`${room.seats.length}/16`}
+                {`${room.seats.length}/14`}
             </RoomButtomInfo>
         </RoomButtonContainer>
     );
@@ -137,9 +137,10 @@ function CustomRoomButton({ room }: CustomRoomButtonProp) {
             <RoomButtonMessage>
                 {!!room.roomDescription ? room.roomDescription : ""}
             </RoomButtonMessage>
-            <RoomButtomInfo currentSeats={room.seats.length} maxSeats={16}>
+            {/* TODO (enhancement) - 추후 list 및 entry 에서 사용자 설정방 최대 인원수 하드코딩하지 말고 변수로 가져올 것 */}
+            <RoomButtomInfo currentSeats={room.seats.length} maxSeats={14}>
                 <FontAwesomeIcon icon={faUserAlt} size="1x" />
-                {`${room.seats.length}/16`}
+                {`${room.seats.length}/14`}
             </RoomButtomInfo>
         </RoomButtonContainer>
     );

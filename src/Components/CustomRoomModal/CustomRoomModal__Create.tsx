@@ -92,7 +92,9 @@ export default function CustomRoomModalCreate() {
                     placeholder="비밀번호 4자리"
                     onChange={(e) => {
                         if (
+                            // TODO (bug?) 숫자 비밀번호 입력 제한 조건 설정시 0으로 시작이 안 됨.
                             e.target.value === "" ||
+                            e.target.value === "0" ||
                             (Number(e.target.value) &&
                                 e.target.value.length <= 4)
                         ) {
@@ -109,7 +111,9 @@ export default function CustomRoomModalCreate() {
                     placeholder="비밀번호 확인"
                     onChange={(e) => {
                         if (
+                            // TODO (bug?) 숫자 비밀번호 입력 제한 조건 설정시 0으로 시작이 안 됨.
                             e.target.value === "" ||
+                            e.target.value === "0" ||
                             (Number(e.target.value) &&
                                 e.target.value.length <= 4)
                         ) {

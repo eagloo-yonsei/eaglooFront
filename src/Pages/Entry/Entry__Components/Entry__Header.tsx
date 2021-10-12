@@ -28,7 +28,7 @@ export default function EntryHeader() {
             <StateIcon>
                 <FontAwesomeIcon icon={faUserAlt} />
             </StateIcon>
-            <StateNumber>{`${roomInfo.seats.length}/16`}</StateNumber>
+            <StateNumber>{`${roomInfo.seats.length}/14`}</StateNumber>
         </Container>
     );
 }

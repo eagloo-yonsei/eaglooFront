@@ -17,8 +17,7 @@ function PublicEntry() {
         <PublicDiv>
             <EntryTitle>{`오픈 스터디룸`}</EntryTitle>
             <EntryMessage>
-                {`공용 스터디룸은 이글루에서 자체적으로 제공하고 있는 
-스터디룸입니다.`}
+                {`누구나 입장할 수 있는 오픈 스터디룸입니다. 이글루에서 자체적으로 제공하는 공용 스터디룸과 사용자가 직접 만든 스터디룸에 참여해 보세요!`}
             </EntryMessage>
             <StylelessLink to={"/list"}>
                 <PublicButton>{`참가하기`}</PublicButton>
@@ -32,10 +31,7 @@ function PrivateEntry() {
     return (
         <PrivateDiv>
             <EntryTitle>{`스터디룸 만들기/검색`}</EntryTitle>
-            <EntryMessage>{`개인 스터디룸은 사용자가 설정한 스터디룸입니다.`}</EntryMessage>
-            <EntryMessage>
-                {`같은 목표를 가진 사람들과 함께 공부해보세요!`}
-            </EntryMessage>
+            <EntryMessage>{`사용자 설정 스터디룸을 검색하거나, 직접 생성할 수도 있습니다! 같은 목표를 가진 사람들과 함께 공부해 보세요!`}</EntryMessage>
             <PrivateButton
                 onClick={() => {
                     setShowCustomRoomModal(true);
@@ -79,7 +75,13 @@ const EntryTitle = styled.div`
 `;
 
 const EntryMessage = styled.div`
+    flex-wrap: wrap;
     font-size: 17px;
+    line-height: 24px;
+    @media (max-width: ${(props) => props.theme.tabletWidth}) {
+        font-size: 14px;
+        line-height: 21px;
+    }
     margin-bottom: 10px;
     font-family: ${(props) => props.theme.plainBoldTextFont};
 `;

@@ -1,3 +1,5 @@
+// deprecated : 기존 디자인에서 방 중앙에 사용자 캠화면과 음소거 등의 조작 버튼이 있는 곳이었음
+
 import React from "react";
 import styled from "styled-components";
 import { useAppContext } from "../../../../Routes/App/AppProvider";
@@ -11,7 +13,7 @@ import {
     faUserAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
-export function Room16SeatsControlPanel() {
+export function Room14SeatsControlPanel() {
     return (
         <Container>
             <StreamPanel />
