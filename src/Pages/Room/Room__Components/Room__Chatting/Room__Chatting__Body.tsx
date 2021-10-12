@@ -135,7 +135,7 @@ const Container = styled.div`
     height: calc(100% - 120px);
     border-top: 2px solid white;
     border-bottom: 2px solid white;
-    padding: 12px 0px;
+    padding: 12px 20px 12px 0px;
     overflow-y: auto;
 `;
 

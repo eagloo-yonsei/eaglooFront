@@ -1,26 +1,24 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 import { useProfileContext } from "./ProfileProvider";
 import { SubmitButton } from "../../Styles/StyledComponents";
 
 export default function ProfileFoot() {
-    const {
-        modalOpenCondition,
-        updating,
-        updatable,
-        openConfirmModal,
-        updateUserInfo,
-    } = useProfileContext();
+    const history = useHistory();
+    const { updating, updatable, openConfirmModal } = useProfileContext();
 
     return (
         <Container>
-            <CancelButton>{`취소`}</CancelButton>
+            <CancelButton
+                onClick={() => {
+                    history.push("/");
+                }}
+            >{`취소`}</CancelButton>
             <SubmitButton
                 buttonContent={"정보 변경"}
                 loadingStatus={updating}
-                submitFunction={
-                    modalOpenCondition ? openConfirmModal : updateUserInfo
-                }
+                submitFunction={openConfirmModal}
                 disabledCondition={!updatable}
                 width={"120px"}
                 fontSize={"18px"}

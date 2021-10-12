@@ -5,7 +5,7 @@ import { useEntryContext } from "../../EntryProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
-export default function Entry16SeatsControlPanel() {
+export default function Entry14SeatsControlPanel() {
     return (
         <Container>
             <CamPreview />
@@ -84,7 +84,9 @@ function PasswordRow() {
                         value={roomPasswordInput}
                         onChange={(e) => {
                             if (
+                                // TODO (bug?) 숫자 비밀번호 입력 제한 조건 설정시 0으로 시작이 안 됨.
                                 e.target.value === "" ||
+                                e.target.value === "0" ||
                                 (Number(e.target.value) &&
                                     e.target.value.length <= 4)
                             ) {
@@ -165,16 +167,18 @@ const UserCam = styled.video`
 const ControlButtonsContainer = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
-    width: 42%;
+    gap: 48px;
+    width: 50%;
     height: 92.5%;
     padding: 30px 0px;
     @media (max-width: ${(props) => props.theme.tabletWidth}) {
         padding: 15px 0px;
     }
 `;
+
+const GuideMessage = styled.div``;
 
 const EntryRowContent = styled.div`
     display: flex;

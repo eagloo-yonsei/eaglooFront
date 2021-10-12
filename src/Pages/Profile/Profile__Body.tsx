@@ -14,20 +14,15 @@ export default function ProfileBody() {
     const {
         nickNameAvailable,
         nickNameValidating,
-        modalOpenCondition,
         updating,
         nickNameInput,
         newPasswordInput,
         newPasswordConfirmInput,
-        previousPasswordInput,
-        openConfirmModal,
         setNickNameAvailable,
         setNickNameInput,
         setNewPasswordInput,
         setNewPasswordConfirmInput,
-        setPreviousNewPasswordInput,
         checkNickNameDuplicate,
-        updateUserInfo,
     } = useProfileContext();
 
     return (
@@ -123,27 +118,6 @@ export default function ProfileBody() {
                 />
                 <WarningMessages />
             </InputRow>
-            <LastRow>
-                <InputRowTitle>{`현재 비밀번호`}</InputRowTitle>
-                <PasswordBox
-                    disabled={updating}
-                    type="password"
-                    value={previousPasswordInput}
-                    placeholder="현재 비밀번호"
-                    onChange={(e) => {
-                        if (e.target.value.length <= 30) {
-                            setPreviousNewPasswordInput(e.target.value);
-                        }
-                    }}
-                    onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                            modalOpenCondition
-                                ? openConfirmModal()
-                                : updateUserInfo();
-                        }
-                    }}
-                />
-            </LastRow>
         </Container>
     );
 }
@@ -199,10 +173,6 @@ const InputRow = styled.div`
     width: fit-content;
     gap: 30px;
     height: 46px;
-`;
-
-const LastRow = styled(InputRow)`
-    margin-top: 32px;
 `;
 
 const InputRowTitle = styled.div`

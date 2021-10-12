@@ -2,11 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { useEntryContext } from "./EntryProvider";
 import EntryHeader from "./Entry__Components/Entry__Header";
-import Entry16Seats from "./Entry__Components/Entry__16Seats/Entry__16Seats";
+import Entry14Seats from "./Entry__Components/Entry__14Seats/Entry__14Seats";
 import {
     ModalBackGround,
     SlideUpPageContainer,
-    StylelessLink,
 } from "../../Styles/StyledComponents";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,7 +24,7 @@ export default function EntryContainer() {
             />
             <Container>
                 <EntryHeader />
-                <Entry16Seats />
+                <Entry14Seats />
                 <CloseIcon />
             </Container>
         </>

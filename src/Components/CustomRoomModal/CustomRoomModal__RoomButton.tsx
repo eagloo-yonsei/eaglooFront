@@ -31,7 +31,7 @@ export default function CustomRoomModalRoomButton({
                 </RoomDescription>
                 <RoomState>
                     <FontAwesomeIcon icon={faUserAlt} />
-                    {`  ${room.seats.length}/16`}
+                    {`  ${room.seats.length}/14`}
                 </RoomState>
             </RoomContentContainer>
         </Container>

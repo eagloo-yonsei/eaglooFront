@@ -1,19 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import EntrySeat from "../Entry__Seat";
+import RoomSeat from "../Room__Seat";
 
-interface OuterColumnProp {
+interface Room14SeatsOuterRowProp {
     seatNums: number[];
 }
 
-export default function Entry16SeatsOuterColumn({ seatNums }: OuterColumnProp) {
+export default function Room14SeatsOuterRow({
+    seatNums,
+}: Room14SeatsOuterRowProp) {
     return (
         <Container>
             {seatNums.map((seatNo) => {
                 return (
-                    <ColumnSeat key={`seat${seatNo}`}>
-                        <EntrySeat seatNo={seatNo} />
-                    </ColumnSeat>
+                    <RowSeat key={`seat${seatNo}`}>
+                        <RoomSeat seatNo={seatNo} />
+                    </RowSeat>
                 );
             })}
         </Container>
@@ -22,17 +24,16 @@ export default function Entry16SeatsOuterColumn({ seatNums }: OuterColumnProp) {
 
 const Container = styled.div`
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    width: 15.8%;
-    height: 100%;
+    width: 100%;
+    height: 20%;
 `;
 
-const ColumnSeat = styled.div`
+const RowSeat = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 50%;
+    width: 14%;
+    height: 100%;
     border-radius: 10px;
 `;

@@ -8,32 +8,32 @@ export default function ProfileModal() {
         confirmModalOpen,
         updating,
         nickNameAvailable,
-        nickNameInput,
+        nickNameChangeConfirmed,
+        setNickNameChangeConfirmed,
+        setNickNameChangeConfirmedTrue,
         setConfirmModalOpen,
         updateUserInfo,
     } = useProfileContext();
+
     if (!confirmModalOpen) return null;
     return (
         <ModalOuterContainer>
             <ModalInnerContainer>
                 <ModalBackGround
                     onClick={() => {
+                        setNickNameChangeConfirmed(false);
                         setConfirmModalOpen(false);
                     }}
                 />
                 <Container>
-                    <Header>{`닉네임은 변경할 수 없습니다`}</Header>
-                    <Body>
-                        {nickNameAvailable && (
-                            <InfoRow>
-                                <InfoRowTitle>{`닉네임`}</InfoRowTitle>
-                                <InputInfo>{nickNameInput}</InputInfo>
-                            </InfoRow>
-                        )}
-                    </Body>
+                    {nickNameAvailable && !nickNameChangeConfirmed
+                        ? NickNameChangeConfirmBody()
+                        : PasswordConfirmBody()}
                     <Footer>
                         <ConfirmingMessage>
-                            {`정보를 업데이트 할까요?`}
+                            {nickNameChangeConfirmed
+                                ? `현재 비밀번호를 입력해주세요`
+                                : `정보를 업데이트 할까요?`}
                         </ConfirmingMessage>
                         <ButtonsContainer>
                             <CancelButton
@@ -46,7 +46,11 @@ export default function ProfileModal() {
                             <SubmitButton
                                 buttonContent={"확인"}
                                 loadingStatus={updating}
-                                submitFunction={updateUserInfo}
+                                submitFunction={
+                                    nickNameChangeConfirmed
+                                        ? updateUserInfo
+                                        : setNickNameChangeConfirmedTrue
+                                }
                                 width={"80px"}
                                 height={"32px"}
                                 fontSize={"15px"}
@@ -59,6 +63,49 @@ export default function ProfileModal() {
         </ModalOuterContainer>
     );
 }
+
+function NickNameChangeConfirmBody() {
+    const { nickNameAvailable, nickNameInput } = useProfileContext();
+
+    return (
+        <>
+            <Header>{`닉네임은 변경할 수 없습니다`}</Header>
+            <Body>
+                {nickNameAvailable && (
+                    <InfoRow>
+                        <InfoRowTitle>{`닉네임`}</InfoRowTitle>
+                        <InputInfo>{nickNameInput}</InputInfo>
+                    </InfoRow>
+                )}
+            </Body>
+        </>
+    );
+}
+
+function PasswordConfirmBody() {
+    const { updating, previousPasswordInput, setPreviousNewPasswordInput } =
+        useProfileContext();
+
+    return (
+        <>
+            <Header>{`비밀번호 확인`}</Header>
+            <Body>
+                <PasswordBox
+                    disabled={updating}
+                    type="password"
+                    value={previousPasswordInput}
+                    placeholder="현재 비밀번호"
+                    onChange={(e) => {
+                        if (e.target.value.length <= 30) {
+                            setPreviousNewPasswordInput(e.target.value);
+                        }
+                    }}
+                />
+            </Body>
+        </>
+    );
+}
+
 const ModalOuterContainer = styled.div`
     position: absolute;
     display: flex;
@@ -133,6 +180,23 @@ const InfoRowTitle = styled.div`
 const InputInfo = styled(InfoRowTitle)`
     width: 50%;
     font-size: 28px;
+`;
+
+const PasswordBox = styled.input`
+    width: 400px;
+    height: 50px;
+    font-size: 15px;
+    text-align: center;
+    border: 2px solid gray;
+    border-radius: 8px;
+    padding: 0 12px;
+    :focus {
+        outline: none;
+    }
+    ::placeholder {
+        color: gray;
+        font-family: ${(props) => props.theme.subLabelFont};
+    }
 `;
 
 const Footer = styled(Header)`
