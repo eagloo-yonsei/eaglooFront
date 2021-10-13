@@ -36,5 +36,4 @@ const PreparingMessage = styled.div`
     position: absolute;
     top: 270px;
     color: white;
-    /* delete z-index */
 `;
