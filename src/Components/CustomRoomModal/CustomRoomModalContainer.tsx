@@ -15,7 +15,7 @@ export default function CustomRoomModalContainer() {
     const {
         showList,
         setShowList,
-        setsearchingRoomNameInput,
+        setSearchingRoomNameInput,
         setSelectedRoomId,
         setRoomNameInput,
         setRoomDescriptionInput,
@@ -28,7 +28,7 @@ export default function CustomRoomModalContainer() {
     function CloseCustomRoomModal() {
         setShowCustomRoomModal(false);
         setShowList(true);
-        setsearchingRoomNameInput("");
+        setSearchingRoomNameInput("");
         setSelectedRoomId("");
         setRoomNameInput("");
         setRoomDescriptionInput("");

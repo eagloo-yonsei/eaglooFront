@@ -6,7 +6,7 @@ export default function Room14SeatsPostBoard() {
     return (
         <Container>
             <PostBoardPreview src={PostBoardPreviewImg} />
-            <PreparingMessage>{`포스트보드 기능 준비 중입니다.`}</PreparingMessage>
+            <PreparingMessage>{`포스트보드 기능이 준비 중입니다! 기대해주세요!`}</PreparingMessage>
         </Container>
     );
 }
@@ -19,10 +19,11 @@ const Container = styled.div`
     width: 70%;
     height: 100%;
     color: white;
-    font-size: 36px;
-    font-family: ${(props) => props.theme.plainBoldTextFont};
+    font-size: 30px;
+    font-family: ${(props) => props.theme.plainTextFont};
     padding: 20px;
     padding-bottom: 45px;
+    overflow: hidden;
 `;
 
 const PostBoardPreview = styled.img`

@@ -61,8 +61,8 @@ const MicrophoneControlButton = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: fit-content;
-    height: 100%;
+    width: 100%;
+    height: 40%;
     font-size: 21px;
     font-family: ${(props) => props.theme.inButtonFont};
     border-radius: 15px;
