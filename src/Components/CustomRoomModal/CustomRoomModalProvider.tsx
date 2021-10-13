@@ -16,6 +16,7 @@ interface CustomRoomModalContext {
     searchingRoomNameInput: string;
     loadingCustomRooms: boolean;
     customRooms: CustomRoom[];
+    searchedRooms: CustomRoom[];
     selectedRoomId: string;
     roomNameInput: string;
     roomDescriptionInput: string;
@@ -24,10 +25,12 @@ interface CustomRoomModalContext {
     passwordConfirmInput: string;
     allowMic: boolean;
     creatingRoom: boolean;
+    filteringRoomsByName: () => void;
     setShowList: (status: boolean) => void;
-    setsearchingRoomNameInput: (input: string) => void;
+    setSearchingRoomNameInput: (input: string) => void;
     setSelectedRoomId: (input: string) => void;
     selectRoom: (input: string) => void;
+    setSearchedRooms: (rooms: CustomRoom[]) => void;
     enterRoom: (roomId: string) => void;
     setRoomNameInput: (input: string) => void;
     setRoomDescriptionInput: (input: string) => void;
@@ -45,6 +48,7 @@ const InitialCustomRoomModalContext: CustomRoomModalContext = {
     searchingRoomNameInput: "",
     loadingCustomRooms: true,
     customRooms: [],
+    searchedRooms: [],
     selectedRoomId: "",
     roomNameInput: "",
     roomDescriptionInput: "",
@@ -53,10 +57,12 @@ const InitialCustomRoomModalContext: CustomRoomModalContext = {
     passwordConfirmInput: "",
     allowMic: false,
     creatingRoom: false,
+    filteringRoomsByName: () => {},
     setShowList: () => {},
-    setsearchingRoomNameInput: () => {},
+    setSearchingRoomNameInput: () => {},
     setSelectedRoomId: () => {},
     selectRoom: () => {},
+    setSearchedRooms: () => {},
     enterRoom: () => {},
     setRoomNameInput: () => {},
     setRoomDescriptionInput: () => {},
@@ -79,10 +85,11 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
     const history = useHistory();
     const { isLoggedIn, userInfo, setShowCustomRoomModal } = useAppContext();
     const [showList, setShowList] = useState<boolean>(true);
-    const [searchingRoomNameInput, setsearchingRoomNameInput] =
+    const [searchingRoomNameInput, setSearchingRoomNameInput] =
         useState<string>("");
     const [loadingCustomRooms, setLoadingCustomRooms] = useState<boolean>(true);
     const [customRooms, setCustomRooms] = useState<CustomRoom[]>([]);
+    const [searchedRooms, setSearchedRooms] = useState<CustomRoom[]>([]);
     const [selectedRoomId, setSelectedRoomId] = useState<string>("");
     const [roomNameInput, setRoomNameInput] = useState<string>("");
     const [roomDescriptionInput, setRoomDescriptionInput] =
@@ -111,12 +118,23 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
                     }
                 });
                 setCustomRooms(customRooms);
+                setSearchedRooms(customRooms);
                 setLoadingCustomRooms(false);
             })
             .catch((e) => {
                 setCustomRooms([]);
                 setLoadingCustomRooms(false);
             });
+    }
+
+    function filteringRoomsByName() {
+        let searchedRooms: CustomRoom[] = [];
+        customRooms.forEach((customRoom) => {
+            if (customRoom.roomName.includes(searchingRoomNameInput)) {
+                searchedRooms.push(customRoom);
+            }
+        });
+        setSearchedRooms(searchedRooms);
     }
 
     function selectRoom(roomId: string) {
@@ -209,6 +227,7 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
         searchingRoomNameInput,
         loadingCustomRooms,
         customRooms,
+        searchedRooms,
         selectedRoomId,
         roomNameInput,
         roomDescriptionInput,
@@ -217,10 +236,12 @@ export default function CustomRoomModalProvider({ children }: ChildrenProp) {
         passwordConfirmInput,
         allowMic,
         creatingRoom,
+        filteringRoomsByName,
         setShowList,
-        setsearchingRoomNameInput,
+        setSearchingRoomNameInput,
         setSelectedRoomId,
         selectRoom,
+        setSearchedRooms,
         enterRoom,
         setRoomNameInput,
         setRoomDescriptionInput,

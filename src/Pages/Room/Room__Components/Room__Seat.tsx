@@ -191,7 +191,7 @@ const Container = styled.div`
 const MicrophoneIconContainer = styled.div<{ peerMuted: boolean }>`
     position: absolute;
     right: 12px;
-    bottom: 32px;
+    bottom: 12px;
     display: flex;
     justify-content: center;
     align-items: center;

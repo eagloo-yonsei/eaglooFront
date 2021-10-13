@@ -16,8 +16,13 @@ export default function CustomRoomModalList() {
 }
 
 function RoomListHeader() {
-    const { searchingRoomNameInput, setsearchingRoomNameInput } =
-        useCustomRoomModalContext();
+    const {
+        customRooms,
+        searchingRoomNameInput,
+        filteringRoomsByName,
+        setSearchedRooms,
+        setSearchingRoomNameInput,
+    } = useCustomRoomModalContext();
     return (
         <SearchHeader>
             <SearchIcon>
@@ -28,10 +33,17 @@ function RoomListHeader() {
                 spellCheck="false"
                 value={searchingRoomNameInput}
                 placeholder="방 이름을 입력해주세요"
-                onChange={(e) => setsearchingRoomNameInput(e.target.value)}
+                onChange={(e) => {
+                    setSearchingRoomNameInput(e.target.value);
+                    if (e.target.value == "") {
+                        setSearchedRooms(customRooms);
+                    } else {
+                        filteringRoomsByName();
+                    }
+                }}
                 onKeyPress={(e) => {
                     if (e.key === "Enter") {
-                        // TODO (utility) 사용자 설정 방 검색
+                        filteringRoomsByName();
                     }
                 }}
             />
@@ -40,7 +52,7 @@ function RoomListHeader() {
 }
 
 function RoomList() {
-    const { customRooms, loadingCustomRooms } = useCustomRoomModalContext();
+    const { searchedRooms, loadingCustomRooms } = useCustomRoomModalContext();
     if (loadingCustomRooms) {
         return (
             <LoadingMessage>
@@ -53,7 +65,7 @@ function RoomList() {
     } else {
         return (
             <RoomListContainer>
-                {customRooms.map((customRoom) => {
+                {searchedRooms.map((customRoom) => {
                     return (
                         <CustomRoomModalRoomButton
                             room={customRoom}
