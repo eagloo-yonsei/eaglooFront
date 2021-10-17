@@ -18,12 +18,10 @@ const Container = styled.div`
     align-items: center;
     width: 70%;
     height: 100%;
-    color: white;
     font-size: 30px;
     font-family: ${(props) => props.theme.plainTextFont};
     padding: 20px;
     padding-bottom: 45px;
-    overflow: hidden;
 `;
 
 const PostBoardPreview = styled.img`
@@ -35,5 +33,7 @@ const PostBoardPreview = styled.img`
 `;
 
 const PreparingMessage = styled.div`
-    z-index: 10;
+    position: absolute;
+    top: 270px;
+    color: white;
 `;
