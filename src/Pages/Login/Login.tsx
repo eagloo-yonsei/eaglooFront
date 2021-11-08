@@ -11,15 +11,16 @@ export default function Login() {
             <LoginProvider>
                 <LoginContainer />
             </LoginProvider>
-            <BannerContainer>
+            {/* <BannerContainer>
                 <HomeBanner background_image={false}/>
-            </BannerContainer>
+            </BannerContainer> */}
         </>
     );
 }
 
 const BannerContainer = styled(HeaderPageContainer)`
     position : absolute;
+    z-index: 1;
     top : 20px;
     right : 100px;
 `;
