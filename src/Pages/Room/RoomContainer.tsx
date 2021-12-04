@@ -23,4 +23,5 @@ const Container = styled(FullScreenContainer)`
     flex-direction: column;
     font-family: ${(props) => props.theme.plainTextFont};
     padding: 30px;
+    padding-bottom: 10px;
 `;

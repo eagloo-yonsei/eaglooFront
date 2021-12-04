@@ -10,6 +10,7 @@ import {
     API_ENDPOINT,
     ChildrenProp,
     User,
+    RoomType,
     RoomUsingInfo,
 } from "../../Constants";
 import io, { Socket } from "socket.io-client";
@@ -51,6 +52,14 @@ export default function AppProvider({ children }: ChildrenProp) {
         id: "c8c095e6-777b-43f4-a727-bfce7f0e3192",
         email: "tester",
         isAdmin: false,
+        owningRooms: [],
+    };
+    const initialRoomUsingInfo: RoomUsingInfo = {
+        roomType: RoomType.CUSTOM,
+        roomId: "6b0d7561-5bad-4d93-8aa4-587edb9ca101",
+        roomName: "Ycc 모여라",
+        seatNo: 1,
+        endTime: new Date().getTime() + 1000 * 60 * 60 * 2,
     };
     const socketRef = useRef<Socket | undefined>();
     const userStream = useRef<HTMLVideoElement>(null);
@@ -63,7 +72,11 @@ export default function AppProvider({ children }: ChildrenProp) {
     // 방에 입장한 경우 저장되는 정보
     const [roomUsingInfo, setRoomUsingInfo] = useState<
         RoomUsingInfo | undefined
-    >(undefined);
+    >(
+        API_ENDPOINT === "http://localhost:5000"
+            ? initialRoomUsingInfo
+            : undefined
+    );
     const [showCustomRoomModal, setShowCustomRoomModal] =
         useState<boolean>(false);
     const [schedulerOpen, setSchedulerOpen] = useState<boolean>(false);
