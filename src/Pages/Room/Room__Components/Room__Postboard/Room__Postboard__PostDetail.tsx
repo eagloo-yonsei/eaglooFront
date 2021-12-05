@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { PostCategory } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,19 +21,49 @@ export default function RoomPostboardPostDetail() {
 }
 
 function Header() {
-    const { togglePostCommentsOpen, closePostDetail } =
-        useRoomPostboardContext();
+    const { userInfo } = useAppContext();
+    const {
+        selectedPost,
+        togglePostScrap,
+        togglePostCommentsOpen,
+        closePostDetail,
+    } = useRoomPostboardContext();
+    const [alreadyScrap, setAlreadyScrap] = useState(false);
+
+    useEffect(() => {
+        var flag = false;
+        for (var i = 0; i < selectedPost!.postScraps.length; i++) {
+            if (selectedPost!.postScraps[i].userId == userInfo!.id) {
+                setAlreadyScrap(true);
+                flag = true;
+            }
+        }
+        if (!flag) {
+            setAlreadyScrap(false);
+        }
+        return () => {};
+    }, [selectedPost]);
 
     return (
         <HeaderContainer>
             <LeftHeader>
-                <HeaderIcon
-                    onClick={() => {
-                        // toggleComment()
-                    }}
-                >
-                    <FontAwesomeIcon icon={faStar} />
-                </HeaderIcon>
+                {alreadyScrap ? (
+                    <YellowStarIcon
+                        onClick={() => {
+                            togglePostScrap(selectedPost!);
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faStar} />
+                    </YellowStarIcon>
+                ) : (
+                    <GrayStarIcon
+                        onClick={() => {
+                            togglePostScrap(selectedPost!);
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faStar} />
+                    </GrayStarIcon>
+                )}
             </LeftHeader>
             <RightHeader>
                 <HeaderIcon
@@ -97,20 +128,24 @@ const LeftHeader = styled.div`
     width: fit-content;
     gap: 20px;
     height: 100%;
-    color: gray;
-    opacity: 0.8;
 `;
 
-const RightHeader = styled(LeftHeader)`
-    color: white;
-    opacity: 1;
-`;
+const RightHeader = styled(LeftHeader)``;
 
 const HeaderIcon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
     cursor: pointer;
+`;
+
+const YellowStarIcon = styled(HeaderIcon)`
+    color: yellow;
+`;
+
+const GrayStarIcon = styled(HeaderIcon)`
+    color: gray;
 `;
 
 const BodyContainer = styled.div`

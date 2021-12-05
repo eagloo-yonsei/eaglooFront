@@ -57,7 +57,7 @@ function LeftHeader() {
 }
 
 function RightHeader() {
-    const { postsArrangedByNewest, arrangePostsByDate } =
+    const { postsArrangedByNewest, arrangePostsByDate, getPosts } =
         useRoomPostboardContext();
     return (
         <RightHeaderContainer>
@@ -77,7 +77,7 @@ function RightHeader() {
             |
             <RefreshButton
                 onClick={() => {
-                    // getPost()
+                    getPosts();
                 }}
             >
                 <FontAwesomeIcon icon={faRedoAlt} />

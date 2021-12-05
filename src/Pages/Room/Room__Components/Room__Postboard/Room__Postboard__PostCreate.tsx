@@ -75,9 +75,9 @@ function Footer() {
         createPost,
         postCreating,
         createPostAsAnonymous,
-        createPostAsChat,
+        createPostAsQuestion,
         toggleCreatePostAsAnonymous,
-        toggleCreatePostAsChat,
+        toggleCreatePostAsQuestion,
     } = useRoomPostboardContext();
 
     return (
@@ -95,10 +95,10 @@ function Footer() {
                 {`익명`} */}
                 <CheckBox
                     onClick={() => {
-                        toggleCreatePostAsChat();
+                        toggleCreatePostAsQuestion();
                     }}
                 >
-                    {createPostAsChat && <FontAwesomeIcon icon={faCheck} />}
+                    {createPostAsQuestion && <FontAwesomeIcon icon={faCheck} />}
                 </CheckBox>
                 {`질문`}
             </FooterOptionRow>
