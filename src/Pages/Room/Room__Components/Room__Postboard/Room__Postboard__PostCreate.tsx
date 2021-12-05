@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCheck } from "@fortawesome/free-solid-svg-icons";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default function RoomPostboardPostCreate() {
     return (
@@ -34,6 +35,7 @@ function Header() {
 
 function Body() {
     const {
+        postCreating,
         newPostTitleInput,
         newPostContentsInput,
         setNewPostTitleInput,
@@ -43,6 +45,7 @@ function Body() {
     return (
         <BodyContainer>
             <TitleInput
+                disabled={postCreating}
                 spellCheck="false"
                 value={newPostTitleInput}
                 placeholder="제목"
@@ -53,6 +56,7 @@ function Body() {
                 }}
             />
             <ContentsInput
+                disabled={postCreating}
                 spellCheck="false"
                 value={newPostContentsInput}
                 placeholder="내용을 입력해주세요"
@@ -69,6 +73,7 @@ function Body() {
 function Footer() {
     const {
         createPost,
+        postCreating,
         createPostAsAnonymous,
         createPostAsChat,
         toggleCreatePostAsAnonymous,
@@ -78,7 +83,7 @@ function Footer() {
     return (
         <FooterContainer>
             <FooterOptionRow>
-                <CheckBox
+                {/* <CheckBox
                     onClick={() => {
                         toggleCreatePostAsAnonymous();
                     }}
@@ -87,7 +92,7 @@ function Footer() {
                         <FontAwesomeIcon icon={faCheck} />
                     )}
                 </CheckBox>
-                {`익명`}
+                {`익명`} */}
                 <CheckBox
                     onClick={() => {
                         toggleCreatePostAsChat();
@@ -103,7 +108,15 @@ function Footer() {
                         createPost();
                     }}
                 >
-                    {`제출하기`}
+                    {postCreating ? (
+                        <CircularProgress
+                            color="inherit"
+                            size={16}
+                            thickness={5}
+                        />
+                    ) : (
+                        `제출하기`
+                    )}
                 </SubmitButton>
             </FooterSubmitButtonRow>
         </FooterContainer>

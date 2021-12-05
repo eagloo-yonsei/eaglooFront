@@ -8,6 +8,7 @@ import {
     PostFilter,
     PostCategory,
 } from "../../../../Constants";
+import { toastErrorMessage } from "../../../../Utils";
 
 interface RoomPostboardContext {
     posts: Post[];
@@ -16,11 +17,13 @@ interface RoomPostboardContext {
     createPostAsChat: boolean;
     newPostTitleInput: string;
     newPostContentsInput: string;
+    postCreating: boolean;
     postFilter: PostFilter;
     postsArrangedByNewest: boolean;
     selectedPost: Post | null;
     postCommentsOpen: boolean;
     newCommentInput: string;
+    addingComment: boolean;
     openPostCreate: () => void;
     closePostCreate: () => void;
     createPost: () => void;
@@ -45,11 +48,13 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     createPostAsChat: false,
     newPostTitleInput: "",
     newPostContentsInput: "",
+    postCreating: false,
     postFilter: PostFilter.ALL,
     postsArrangedByNewest: true,
     selectedPost: null,
     postCommentsOpen: false,
     newCommentInput: "",
+    addingComment: false,
     openPostCreate: () => {},
     closePostCreate: () => {},
     createPost: () => {},
@@ -128,7 +133,9 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     ];
 
     const { userInfo, roomUsingInfo } = useAppContext();
-    const [posts, setPosts] = useState<Post[]>(initialPosts);
+    const [posts, setPosts] = useState<Post[]>(
+        API_ENDPOINT === "http://localhost:5000" ? initialPosts : []
+    );
     const [postCreateOpened, setPostCreateOpened] = useState<boolean>(false);
     const [createPostAsAnonymous, setCreatePostAsAnonymous] =
         useState<boolean>(false);
@@ -136,20 +143,40 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     const [newPostTitleInput, setNewPostTitleInput] = useState<string>("");
     const [newPostContentsInput, setNewPostContentsInput] =
         useState<string>("");
+    const [postCreating, setPostCreating] = useState<boolean>(false);
     const [postFilter, setPostFilter] = useState<PostFilter>(PostFilter.ALL);
     const [postsArrangedByNewest, setPostsArrangedByNewest] =
         useState<boolean>(true);
-    const [selectedPost, setSelectedPost] = useState<any | null>(null);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
     const [postCommentsOpen, setPostCommentsOpen] = useState<boolean>(false);
     const [newCommentInput, setNewCommentInput] = useState<string>("");
+    const [addingComment, setAddingComment] = useState<boolean>(false);
 
     useEffect(() => {
         getPosts();
         return () => {};
     }, []);
 
-    function getPosts() {
-        console.log(roomUsingInfo?.roomId);
+    async function getPosts() {
+        if (!roomUsingInfo) {
+            return;
+        } else {
+            await axios
+                .get<{ posts: Post[]; success: boolean; message: string }>(
+                    `${API_ENDPOINT}/api/post/room/${roomUsingInfo.roomId}`
+                )
+                .then((response) => {
+                    // if (response.data.success) {
+                    //     setPosts(response.data.posts);
+                    // } else {
+                    //     toastErrorMessage(response.data.message);
+                    // }
+                })
+                .catch((error) => {
+                    toastErrorMessage("포스트보드 받아오기에 실패했습니다.");
+                    console.log(error);
+                });
+        }
     }
 
     function openPostCreate() {
@@ -161,7 +188,39 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         setPostCreateOpened(false);
     }
 
-    function createPost() {}
+    async function createPost() {
+        if (postCreating) {
+            return;
+        }
+        setPostCreating(true);
+        await axios
+            .post<{ success: boolean; message: string }>(
+                `${API_ENDPOINT}/api/post/post`,
+                {
+                    userId: userInfo?.id,
+                    roomId: roomUsingInfo?.roomId,
+                    postTitle: newPostTitleInput,
+                    postContents: newPostContentsInput,
+                    category: createPostAsChat
+                        ? PostCategory.CHAT
+                        : PostCategory.QUESTION,
+                }
+            )
+            .then((response) => {
+                if (response.data.success) {
+                    // TODO
+                } else {
+                    toastErrorMessage("포스트 생성에 실패했습니다.");
+                }
+            })
+            .catch((error) => {
+                toastErrorMessage("포스트 생성에 실패했습니다.");
+                console.log(error);
+            })
+            .finally(() => {
+                setPostCreating(false);
+            });
+    }
 
     function toggleCreatePostAsAnonymous() {
         setCreatePostAsAnonymous(!createPostAsAnonymous);
@@ -201,7 +260,36 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         setPostCommentsOpen(false);
     }
 
-    function addComment() {}
+    async function addComment() {
+        if (addingComment) {
+            return;
+        }
+        setAddingComment(true);
+        await axios
+            .post<{ success: boolean; message: string }>(
+                `${API_ENDPOINT}/api/post/postComment`,
+                {
+                    userId: userInfo?.id,
+                    postId: selectedPost?.id,
+                    comment: newCommentInput,
+                }
+            )
+            .then((response) => {
+                if (response.data.success) {
+                    // TODO
+                } else {
+                    toastErrorMessage("댓글 생성에 실패했습니다.");
+                }
+            })
+            .catch((error) => {
+                toastErrorMessage("댓글 생성에 실패했습니다.");
+                console.log(error);
+                console.log(error);
+            })
+            .finally(() => {
+                setAddingComment(false);
+            });
+    }
 
     const roomPostboardContext = {
         posts,
@@ -210,11 +298,13 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         createPostAsChat,
         newPostTitleInput,
         newPostContentsInput,
+        postCreating,
         postFilter,
         postsArrangedByNewest,
         selectedPost,
         postCommentsOpen,
         newCommentInput,
+        addingComment,
         openPostCreate,
         closePostCreate,
         createPost,
