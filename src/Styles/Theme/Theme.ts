@@ -27,6 +27,21 @@ export default {
     chattingPeerMessageBox: "#E8F4FF",
     chattingSelfMessage: "white",
     chattingSelfMessageBox: "#5D90D2",
+    // color__postboard
+    postboardBackground: "#142065",
+    postCreateBackground: "#79A4D8",
+    postCreateButton: "#1D74FF",
+    postCommentsBackground: "#79A4D8",
+    postFilterSelected: "#8CAAEA",
+    postFilterUnselected: "#495F7A",
+    postHeartIconColor: "#FF6E6E",
+    postCommentIconColor: "#1D74FF",
+    postCommentUserNameColor: "#1D5496",
+    questionPost: "#D3E0EF",
+    chatPost: "#FFDC97",
+    postTitleColor: "black",
+    postContentsColor: "#506572",
+    postFont: "NexonGothicLv1Bold",
     // color__task
     taskLightBlue: "#b3d0ff",
     // color__scheduler

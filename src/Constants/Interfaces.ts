@@ -114,3 +114,29 @@ export interface ChattingContent {
     writtenTime: string;
     key: number;
 }
+
+export interface Post {
+    id: string;
+    category: PostCategory;
+    title: string;
+    contents: string;
+    authorId: string;
+    roomId: string;
+    // postlikes: PostLike[];
+    // postScraps: PostScrap[];
+    // postComments: PostComment[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export enum PostFilter {
+    ALL = "ALL",
+    QUESTION = "QUESTION",
+    CHAT = "CHAT",
+    MINE = "MINE",
+}
+
+export enum PostCategory {
+    QUESTION = "QUESTION",
+    CHAT = "CHAT",
+}
