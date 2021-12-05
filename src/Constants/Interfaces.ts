@@ -122,9 +122,9 @@ export interface Post {
     contents: string;
     authorId: string;
     roomId: string;
-    // postlikes: PostLike[];
-    // postScraps: PostScrap[];
-    // postComments: PostComment[];
+    postlikes: PostLike[];
+    postScraps: PostScrap[];
+    postComments: PostComment[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -139,4 +139,26 @@ export enum PostFilter {
 export enum PostCategory {
     QUESTION = "QUESTION",
     CHAT = "CHAT",
+}
+
+export interface PostLike {
+    id: string;
+    postId: string;
+    userId: string;
+}
+
+export interface PostScrap {
+    id: string;
+    postId: string;
+    userId: string;
+}
+
+export interface PostComment {
+    id: string;
+    postId: string;
+    userId: string;
+    userName: string;
+    comment: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

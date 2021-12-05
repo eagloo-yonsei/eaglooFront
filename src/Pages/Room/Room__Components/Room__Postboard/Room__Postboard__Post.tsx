@@ -1,20 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { Post, PostCategory } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
 export default function RoomPostBoardPost({ post }: { post: Post }) {
-    const { showPostDetail } = useRoomPostboardContext();
-
     return (
-        <Container
-            onClick={() => {
-                showPostDetail(post);
-            }}
-            postCategory={post.category}
-        >
+        <Container postCategory={post.category}>
             <Header post={post} />
             <Body post={post} />
             <Footer post={post} />
@@ -23,10 +17,44 @@ export default function RoomPostBoardPost({ post }: { post: Post }) {
 }
 
 function Header({ post }: { post: Post }) {
+    const { userInfo } = useAppContext();
+    const { togglePostScrap } = useRoomPostboardContext();
+    const [alreadyScrap, setAlreadyScrap] = useState(false);
+
+    useEffect(() => {
+        var flag = false;
+        for (var i = 0; i < post.postScraps.length; i++) {
+            if (post.postScraps[i].userId == userInfo!.id) {
+                setAlreadyScrap(true);
+                flag = true;
+            }
+        }
+        if (!flag) {
+            setAlreadyScrap(false);
+        }
+        return () => {};
+    }, [post]);
+
     return (
         <HeaderContainer>
             <LeftHeaderContainer>
-                <FontAwesomeIcon icon={faStar} />
+                {alreadyScrap ? (
+                    <YellowStarIcon
+                        onClick={() => {
+                            togglePostScrap(post);
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faStar} />
+                    </YellowStarIcon>
+                ) : (
+                    <GrayStarIcon
+                        onClick={() => {
+                            togglePostScrap(post);
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faStar} />
+                    </GrayStarIcon>
+                )}
             </LeftHeaderContainer>
             <RightHeaderContainer></RightHeaderContainer>
         </HeaderContainer>
@@ -34,8 +62,14 @@ function Header({ post }: { post: Post }) {
 }
 
 function Body({ post }: { post: Post }) {
+    const { showPostDetail } = useRoomPostboardContext();
+
     return (
-        <BodyContainer>
+        <BodyContainer
+            onClick={() => {
+                showPostDetail(post);
+            }}
+        >
             <PostTitle>
                 {`${post.category == PostCategory.QUESTION ? `[질문] ` : ``}
             ${post.category == PostCategory.CHAT ? `[잡담] ` : ``}
@@ -47,16 +81,21 @@ function Body({ post }: { post: Post }) {
 }
 
 function Footer({ post }: { post: Post }) {
+    const { togglePostLike } = useRoomPostboardContext();
     return (
         <FooterContainer>
-            <HeartIcon>
+            <HeartIcon
+                onClick={() => {
+                    togglePostLike(post);
+                }}
+            >
                 <FontAwesomeIcon icon={faHeart} />
             </HeartIcon>
-            {`0`}
+            {`${post.postlikes.length}`}
             <CommentIcon>
                 <FontAwesomeIcon icon={faComment} />
             </CommentIcon>
-            {`0`}
+            {`${post.postComments.length}`}
         </FooterContainer>
     );
 }
@@ -79,7 +118,6 @@ const Container = styled.div<{ postCategory: PostCategory }>`
             : props.theme.chatPost};
     border-radius: 15px;
     overflow: hidden;
-    cursor: pointer;
 `;
 
 const PostComponent = styled.div`
@@ -98,9 +136,21 @@ const HeaderContainer = styled(PostComponent)`
 
 const LeftHeaderContainer = styled.div`
     font-size: 18px;
-    color: gray;
-    opacity: 0.7;
+`;
+
+const HeaderIcon = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+`;
+
+const YellowStarIcon = styled(HeaderIcon)`
+    color: yellow;
+`;
+
+const GrayStarIcon = styled(HeaderIcon)`
+    color: gray;
 `;
 
 const RightHeaderContainer = styled.div``;
@@ -110,6 +160,7 @@ const BodyContainer = styled(PostComponent)`
     flex-direction: column;
     gap: 8px;
     height: calc(100% - 85px);
+    cursor: pointer;
 `;
 
 const PostTitle = styled.div`
@@ -144,6 +195,7 @@ const FooterContainer = styled(PostComponent)`
 
 const HeartIcon = styled.div`
     color: ${(props) => props.theme.postHeartIconColor};
+    cursor: pointer;
 `;
 
 const CommentIcon = styled.div`

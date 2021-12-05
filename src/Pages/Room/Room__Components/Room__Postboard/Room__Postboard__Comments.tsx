@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
+import { PostComment } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
 export default function RoomPostBoardComments() {
     const { postCommentsOpen } = useRoomPostboardContext();
@@ -23,10 +25,25 @@ export default function RoomPostBoardComments() {
 }
 
 function Header() {
-    const { closePostComments } = useRoomPostboardContext();
+    const { selectedPost, togglePostLike, closePostComments } =
+        useRoomPostboardContext();
+
     return (
         <HeaderContainer>
-            <LeftHeader></LeftHeader>
+            <LeftHeader>
+                <HeartIcon
+                    onClick={() => {
+                        togglePostLike(selectedPost!);
+                    }}
+                >
+                    <FontAwesomeIcon icon={faHeart} />
+                </HeartIcon>
+                {`${selectedPost?.postlikes.length}`}
+                <CommentIcon>
+                    <FontAwesomeIcon icon={faComment} />
+                </CommentIcon>
+                {`${selectedPost?.postComments.length}`}
+            </LeftHeader>
             <RightHeader>
                 <HeaderIcon
                     onClick={() => {
@@ -41,44 +58,34 @@ function Header() {
 }
 
 function Body() {
+    const { selectedPost } = useRoomPostboardContext();
     return (
         <BodyContainer>
-            <CommentEach />
+            {selectedPost?.postComments.map((comment) => {
+                return <CommentEach key={comment.id} comment={comment} />;
+            })}
         </BodyContainer>
     );
 }
 
-function CommentEach() {
+function CommentEach({ comment }: { comment: PostComment }) {
     return (
-        <>
-            <CommentEachContainer>
-                <CommentUserName>{`익명 1`}</CommentUserName>
-                <CommentContents>{`런어스 공지방 보면 올라와있습니다`}</CommentContents>
-            </CommentEachContainer>
-            <CommentEachContainer>
-                <CommentUserName>{`익명 1`}</CommentUserName>
-                <CommentContents>{`고맙습니다`}</CommentContents>
-            </CommentEachContainer>
-            <CommentEachContainer>
-                <CommentUserName>{`익명 1`}</CommentUserName>
-                <CommentContents>{`대단히 고맙습니다람쥐가 언덕을 넘어간다 여러줄 댓글`}</CommentContents>
-            </CommentEachContainer>
-            <CommentEachContainer>
-                <CommentUserName>{`익명 1`}</CommentUserName>
-                <CommentContents>{`런어스 공지방 보면 올라와있습니다`}</CommentContents>
-            </CommentEachContainer>
-        </>
+        <CommentEachContainer>
+            <CommentUserName>{`${comment.userName}`}</CommentUserName>
+            <CommentContents>{`${comment.comment}`}</CommentContents>
+        </CommentEachContainer>
     );
 }
 
 function Footer() {
-    const { newCommentInput, setNewCommentInput, addComment } =
+    const { newCommentInput, setNewCommentInput, addComment, addingComment } =
         useRoomPostboardContext();
 
     return (
         <FooterContainer>
             <CommentInput
                 type="text"
+                disabled={addingComment}
                 spellCheck="false"
                 value={newCommentInput}
                 placeholder="새 댓글 입력"
@@ -89,7 +96,7 @@ function Footer() {
                 }}
                 onKeyPress={(e) => {
                     if (e.key === "Enter") {
-                        // addComment();
+                        addComment();
                     }
                 }}
             />
@@ -131,6 +138,7 @@ const HeaderContainer = styled(CommentsComponent)`
     align-items: center;
     height: 30px;
     font-size: 24px;
+    font-family: ${(props) => props.theme.postFont};
 `;
 
 const LeftHeader = styled.div`
@@ -139,6 +147,15 @@ const LeftHeader = styled.div`
     width: fit-content;
     gap: 20px;
     height: 100%;
+`;
+
+const HeartIcon = styled.div`
+    color: ${(props) => props.theme.postHeartIconColor};
+    cursor: pointer;
+`;
+
+const CommentIcon = styled.div`
+    color: ${(props) => props.theme.postCommentIconColor};
 `;
 
 const RightHeader = styled(LeftHeader)`
