@@ -114,6 +114,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         if (!roomUsingInfo) {
             return;
         } else {
+            const URL: string = await roomUsingInfo?.roomId.includes('public') ? `${API_ENDPOINT}/api/post/roomPublic/${roomUsingInfo.roomId.split('public')[1]}` : `${API_ENDPOINT}/api/post/room/${roomUsingInfo.roomId}`
             await axios
                 // TODO (bug?)
                 // posts 가 query 되어서 옴 : 백엔드 단에서 select 하기 때문에 발생하는 현상인듯 함
@@ -121,7 +122,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
                     posts: { posts: Post[] };
                     success: boolean;
                     message: string;
-                }>(`${API_ENDPOINT}/api/post/room/${roomUsingInfo.roomId}`)
+                }>(URL)
                 .then((response) => {
                     if (response.data.success) {
                         setPosts(response.data.posts.posts);
