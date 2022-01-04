@@ -282,7 +282,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
                 isPublicRoom ? `${API_ENDPOINT}/api/post/postPublic` : `${API_ENDPOINT}/api/post/post`,
                 {
                     userId: userInfo?.id,
-                    roomId: isPublicRoom ? roomUsingInfo?.roomId.split('public')[1] : roomUsingInfo?.roomId,
+                    roomId: isPublicRoom ? Number(roomUsingInfo?.roomId.split('public')[1]) : roomUsingInfo?.roomId,
                     postTitle: newPostTitleInput,
                     postContents: newPostContentsInput,
                     category: createPostAsQuestion
