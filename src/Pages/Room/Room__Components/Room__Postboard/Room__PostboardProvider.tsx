@@ -104,6 +104,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     const [postCommentsOpen, setPostCommentsOpen] = useState<boolean>(false);
     const [newCommentInput, setNewCommentInput] = useState<string>("");
     const [addingComment, setAddingComment] = useState<boolean>(false);
+    const isPublicRoom = roomUsingInfo && roomUsingInfo.roomId.includes('public');
 
     useEffect(() => {
         getPosts();
@@ -118,15 +119,16 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
             await axios
                 // TODO (bug?)
                 // posts 가 query 되어서 옴 : 백엔드 단에서 select 하기 때문에 발생하는 현상인듯 함
-                .get<{
-                    posts: { posts: Post[] };
-                    success: boolean;
-                    message: string;
-                }>(URL)
+                .get(isPublicRoom ? `${API_ENDPOINT}/api/post/roomPublic/${roomUsingInfo.roomId.split('public')[1]}` : `${API_ENDPOINT}/api/post/room/${roomUsingInfo.roomId}`)
                 .then((response) => {
                     if (response.data.success) {
-                        setPosts(response.data.posts.posts);
-                        setWholePosts(response.data.posts.posts);
+                        if(isPublicRoom) {
+                            setPosts(response.data.posts);
+                            setWholePosts(response.data.posts);
+                        } else {
+                            setPosts(response.data.posts.posts);
+                            setWholePosts(response.data.posts.posts);
+                        }
                     } else {
                         toastErrorMessage(response.data.message);
                     }
@@ -228,18 +230,14 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         // TODO (code clearance)
         // 밑의 주석친 코드로 실행하면 posts가 getPosts() 하기 이전의 상태를 참조함
         await axios
-            .get<{
-                posts: { posts: Post[] };
-                success: boolean;
-                message: string;
-            }>(`${API_ENDPOINT}/api/post/room/${roomUsingInfo!.roomId}`)
+            .get(isPublicRoom ? `${API_ENDPOINT}/api/post/roomPublic/${roomUsingInfo!.roomId.split('public')[1]}` : `${API_ENDPOINT}/api/post/room/${roomUsingInfo!.roomId}`)
             .then((response) => {
                 if (response.data.success) {
-                    setPosts(response.data.posts.posts);
-                    setWholePosts(response.data.posts.posts);
+                    setPosts(isPublicRoom ? response.data.posts : response.data.posts.posts);
+                    setWholePosts(isPublicRoom ? response.data.posts : response.data.posts.posts);
                     if (selectedPost?.id == postId) {
                         const renewalSelectedPost =
-                            response.data.posts.posts.find((post) => {
+                            response.data.posts.posts.find((post: any) => {
                                 return post.id == postId;
                             });
                         if (renewalSelectedPost) {
@@ -281,10 +279,10 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         setPostCreating(true);
         await axios
             .post<{ newPost: Post; success: boolean; message: string }>(
-                `${API_ENDPOINT}/api/post/post`,
+                isPublicRoom ? `${API_ENDPOINT}/api/post/postPublic` : `${API_ENDPOINT}/api/post/post`,
                 {
                     userId: userInfo?.id,
-                    roomId: roomUsingInfo?.roomId,
+                    roomId: isPublicRoom ? roomUsingInfo?.roomId.split('public')[1] : roomUsingInfo?.roomId,
                     postTitle: newPostTitleInput,
                     postContents: newPostContentsInput,
                     category: createPostAsQuestion

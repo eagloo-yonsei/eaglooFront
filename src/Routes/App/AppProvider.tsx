@@ -82,6 +82,15 @@ export default function AppProvider({ children }: ChildrenProp) {
     const [schedulerOpen, setSchedulerOpen] = useState<boolean>(false);
 
     useEffect(() => {
+        const _eagloo_login = localStorage.getItem('_eagloo_login');
+        const _eagloo_userInfo = localStorage.getItem('_eagloo_userInfo');
+        if (_eagloo_login && _eagloo_userInfo) {
+            setIsLoggedIn(true);
+            setUserInfo(JSON.parse(_eagloo_userInfo));
+        }
+    }, []);
+    
+    useEffect(() => {
         if (isLoggedIn) {
             if (userInfo && !userInfo.isAdmin && !socketRef.current) {
                 socketRef.current = io(API_ENDPOINT, {

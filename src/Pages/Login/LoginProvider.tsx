@@ -57,6 +57,8 @@ export default function LoginProvider({ children }: ChildrenProp) {
                 if (data.success) {
                     setIsLoggedIn(true);
                     setUserInfo(data.user as User);
+                    localStorage.setItem('_eagloo_login', 'true');
+                    localStorage.setItem('_eagloo_userInfo', JSON.stringify(data.user))
                     toastLoginSuccessMessage(data.user.nickName || emailInput);
                     history.goBack();
                     // history.push("/");
