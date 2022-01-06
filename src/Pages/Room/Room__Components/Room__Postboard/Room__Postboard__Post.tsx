@@ -18,7 +18,7 @@ export default function RoomPostBoardPost({ post }: { post: Post }) {
 
 function Header({ post }: { post: Post }) {
     const { userInfo } = useAppContext();
-    const { togglePostScrap } = useRoomPostboardContext();
+    const { togglePostScrap, getUpdatedAt } = useRoomPostboardContext();
     const [alreadyScrap, setAlreadyScrap] = useState(false);
 
     useEffect(() => {
@@ -56,7 +56,14 @@ function Header({ post }: { post: Post }) {
                     </GrayStarIcon>
                 )}
             </LeftHeaderContainer>
-            <RightHeaderContainer></RightHeaderContainer>
+            <RightHeaderContainer>
+                 {/* TODO (enhancement) - 새로 추가한 글은 새로고침하지 않으면 undefined로 뜨는 문제 해결 필요  */}
+                 {
+                    post?.updatedAt !== undefined ?
+                        <UpdatedAt>{getUpdatedAt(post)}</UpdatedAt>
+                        : <></>
+                }
+            </RightHeaderContainer>
         </HeaderContainer>
     );
 }
@@ -200,4 +207,15 @@ const HeartIcon = styled.div`
 
 const CommentIcon = styled.div`
     color: ${(props) => props.theme.postCommentIconColor};
+`;
+
+const UpdatedAt = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: fit-content;
+    color: ${(props) => props.theme.postUpdatedAtBackground};
+    font-size: 8px;
+    line-height: 15px;
+    overflow: auto;
 `;

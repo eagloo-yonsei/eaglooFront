@@ -43,6 +43,7 @@ interface RoomPostboardContext {
     setNewPostTitleInput: (input: string) => void;
     setNewPostContentsInput: (input: string) => void;
     setNewCommentInput: (input: string) => void;
+    getUpdatedAt: (targetPost: Post) => string;
 }
 
 const InitialRoomPostboardContext: RoomPostboardContext = {
@@ -77,6 +78,7 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     setNewPostTitleInput: () => {},
     setNewPostContentsInput: () => {},
     setNewCommentInput: () => {},
+    getUpdatedAt: () => "",
 };
 
 const RoomPostboardContext = createContext<RoomPostboardContext>(
@@ -431,6 +433,11 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         getPosts();
     }
 
+    function getUpdatedAt(selectedPost: Post) {
+        let updatedAt = selectedPost!.updatedAt.toString().slice(2,16).replace(/\-/g,'/').replace('T',' ');
+        return updatedAt;
+    }
+
     const roomPostboardContext = {
         posts,
         postCreateOpened,
@@ -463,6 +470,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         setNewPostTitleInput,
         setNewPostContentsInput,
         setNewCommentInput,
+        getUpdatedAt,
     };
 
     return (

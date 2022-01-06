@@ -86,7 +86,7 @@ function Header() {
 }
 
 function Body() {
-    const { selectedPost } = useRoomPostboardContext();
+    const { selectedPost, getUpdatedAt } = useRoomPostboardContext();
 
     return (
         <BodyContainer>
@@ -95,6 +95,13 @@ function Body() {
             ${selectedPost?.category == PostCategory.CHAT ? `[잡담] ` : ``}
             ${selectedPost?.title}`}</Title>
             <Contents>{`${selectedPost?.contents}`}</Contents>
+
+            {/* TODO (enhancement) - 새로 추가한 글은 새로고침하지 않으면 undefined로 뜨는 문제 해결 필요  */}
+            {
+                selectedPost?.updatedAt !== undefined ?
+                    <UpdatedAt>{getUpdatedAt(selectedPost)}</UpdatedAt>
+                    : <></>
+            }
         </BodyContainer>
     );
 }
@@ -171,5 +178,12 @@ const Contents = styled(Title)`
     color: ${(props) => props.theme.postContentsColor};
     font-size: 18px;
     line-height: 28px;
+    overflow: auto;
+`;
+
+const UpdatedAt = styled(Title)`
+    color: ${(props) => props.theme.postDetailUpdatedAtBackground};
+    font-size: 12px;
+    line-height: 22px;
     overflow: auto;
 `;
