@@ -4,11 +4,12 @@ import RoomPostboardHeader from "./Room__Postboard__Header";
 import RoomPostboardPost from "./Room__Postboard__Post";
 import RoomPostboardPostCreate from "./Room__Postboard__PostCreate";
 import RoomPostboardPostDetail from "./Room__Postboard__PostDetail";
+import RoomPostboardPostUpdate from "./Room__Postboard__PostUpdate";
 import RoomPostBoardComments from "./Room__Postboard__Comments";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 
 export default function RoomPostBoardContainer() {
-    const { posts, postCreateOpened, selectedPost } = useRoomPostboardContext();
+    const { posts, postCreateOpened, selectedPost, postUpdateOpened } = useRoomPostboardContext();
     return (
         <Container>
             <RoomPostboardHeader />
@@ -16,7 +17,7 @@ export default function RoomPostBoardContainer() {
                 {postCreateOpened && <RoomPostboardPostCreate />}
                 {selectedPost && (
                     <>
-                        <RoomPostboardPostDetail />
+                        {postUpdateOpened ? <RoomPostboardPostUpdate /> : <RoomPostboardPostDetail />}
                         <RoomPostBoardComments />
                     </>
                 )}

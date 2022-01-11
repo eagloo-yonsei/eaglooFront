@@ -4,7 +4,7 @@ import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { PostCategory } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faComment, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faComment, faTimes, faPen, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function RoomPostboardPostDetail() {
     const { selectedPost } = useRoomPostboardContext();
@@ -27,10 +27,16 @@ function Header() {
         togglePostScrap,
         togglePostCommentsOpen,
         closePostDetail,
+        togglePostUpdateOpen,
+        deletePostWithComments,
     } = useRoomPostboardContext();
     const [alreadyScrap, setAlreadyScrap] = useState(false);
 
+    const [compareUserId, setCompareUserId] = useState(false);
     useEffect(() => {
+        userInfo!.id === selectedPost!.authorId ? (setCompareUserId(true))
+            : setCompareUserId(false)
+            
         var flag = false;
         for (var i = 0; i < selectedPost!.postScraps.length; i++) {
             if (selectedPost!.postScraps[i].userId == userInfo!.id) {
@@ -66,6 +72,25 @@ function Header() {
                 )}
             </LeftHeader>
             <RightHeader>
+                {compareUserId ? (
+                    <>
+                    <HeaderIcon
+                    onClick={() => {
+                        togglePostUpdateOpen(selectedPost!);
+                    }}
+                >
+                    <FontAwesomeIcon icon={faPen} />
+                </HeaderIcon>
+                <HeaderIcon
+                    onClick={() => {
+                        deletePostWithComments();
+                    }}
+                >
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                </HeaderIcon>
+                </>
+                ) : (<></>)}
+                
                 <HeaderIcon
                     onClick={() => {
                         togglePostCommentsOpen();
