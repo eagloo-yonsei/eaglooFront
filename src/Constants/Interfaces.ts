@@ -115,6 +115,20 @@ export interface ChattingContent {
     key: number;
 }
 
+export interface PreviewPost {
+    id: string;
+    category: string;
+    title: string;
+    contents: string;
+    authorId: string;
+    roomId: string;
+    postlikes: PostLike[];
+    postScraps: PostScrap[];
+    postComments: PostComment[];
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface Post {
     id: string;
     category: PostCategory;

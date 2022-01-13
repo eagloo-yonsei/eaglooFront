@@ -2,11 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import RoomPostboardHeader from "./Room__Postboard__Header";
 import RoomPostboardPost from "./Room__Postboard__Post";
+import RoomPostboardPreviewPost from "./Room__Postboard__PreviewPost";
 import RoomPostboardPostCreate from "./Room__Postboard__PostCreate";
 import RoomPostboardPostDetail from "./Room__Postboard__PostDetail";
 import RoomPostboardPostUpdate from "./Room__Postboard__PostUpdate";
 import RoomPostBoardComments from "./Room__Postboard__Comments";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
+import {preview} from "../../../../data/previewPostData.json";
 
 export default function RoomPostBoardContainer() {
     const { posts, postCreateOpened, selectedPost, postUpdateOpened } = useRoomPostboardContext();
@@ -21,9 +23,13 @@ export default function RoomPostBoardContainer() {
                         <RoomPostBoardComments />
                     </>
                 )}
-                {posts.map((post) => {
+                {posts.length>0 ? (posts.map((post) => {
+                    console.log(posts);
                     return <RoomPostboardPost key={post.id} post={post} />;
-                })}
+                })) : (preview.map((p) => {
+                    return <RoomPostboardPreviewPost key={p.id} post={p} />;
+                }))
+            }
             </PostsContainer>
         </Container>
     );
