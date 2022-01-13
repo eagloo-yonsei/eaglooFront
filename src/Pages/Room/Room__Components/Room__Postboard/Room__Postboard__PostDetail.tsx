@@ -28,7 +28,7 @@ function Header() {
         togglePostCommentsOpen,
         closePostDetail,
         togglePostUpdateOpen,
-        deletePostWithComments,
+        deletePost,
     } = useRoomPostboardContext();
     const [alreadyScrap, setAlreadyScrap] = useState(false);
 
@@ -83,7 +83,7 @@ function Header() {
                 </HeaderIcon>
                 <HeaderIcon
                     onClick={() => {
-                        deletePostWithComments();
+                        deletePost(selectedPost!);
                     }}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />

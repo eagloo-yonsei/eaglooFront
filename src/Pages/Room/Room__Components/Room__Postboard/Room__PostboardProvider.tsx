@@ -43,7 +43,6 @@ interface RoomPostboardContext {
     closePostUpdate: () => void;
     updatePost: (targetPost: Post) => void;
     deletePost: (targetPost: Post) => void;
-    deletePostWithComments:() => void;
     filteringPosts: (filter: PostFilter) => void;
     arrangePostsByDate: (byNewest: boolean) => void;
     showPostDetail: (post: Post) => void;
@@ -92,7 +91,6 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     closePostUpdate: () => {},
     updatePost: () => {},
     deletePost: () => {},
-    deletePostWithComments:() => {},
     filteringPosts: () => {},
     arrangePostsByDate: () => {},
     showPostDetail: () => {},
@@ -420,27 +418,6 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
                 });
     }
 
-    {/* TODO (enhancement) - 모든 댓글 삭제 -> 글 삭제 구조여서 속도저하 문제 해결 필요  */}
-    async function deletePostWithComments() {
-        if (postDeleting) {
-            return;
-        }
-        setPostDeleting(true);
-
-        let postComments = selectedPost!.postComments;
-        (postComments.length > 0) ? (
-            await Promise.all(
-                postComments.map((postComment) => {
-                    deleteComment(postComment);
-                }
-                )
-            ).then( ()=>{
-                deletePost(selectedPost);
-            }
-        )) : 
-        deletePost(selectedPost);
-    }
-
     function filteringPosts(filter: PostFilter) {
         let filteredPosts: Post[] = [];
         switch (filter) {
@@ -616,7 +593,6 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         closePostUpdate,
         updatePost,
         deletePost,
-        deletePostWithComments,
         filteringPosts,
         arrangePostsByDate,
         showPostDetail,
