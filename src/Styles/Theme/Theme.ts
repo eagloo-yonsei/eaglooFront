@@ -32,6 +32,8 @@ export default {
     postCreateBackground: "#79A4D8",
     postCreateButton: "#1D74FF",
     postCommentsBackground: "#79A4D8",
+    postUpdatedAtBackground: "#A58A63",
+    postDetailUpdatedAtBackground: "#79A4D8",
     postFilterSelected: "#8CAAEA",
     postFilterUnselected: "#495F7A",
     postHeartIconColor: "#FF6E6E",

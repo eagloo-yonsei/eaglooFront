@@ -1,82 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useAppContext } from "../../../../Routes/App/AppProvider";
-import { useRoomPostboardContext } from "./Room__PostboardProvider";
-import { Post, PostCategory } from "../../../../Constants";
+import { PreviewPost, PostCategory } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
-export default function RoomPostBoardPost({ post }: { post: Post }) {
+export default function RoomPostBoardPreviewPost({ post }: { post: PreviewPost }) {
     return (
         <Container postCategory={post.category}>
-            <Header post={post} />
+            <Header />
             <Body post={post} />
             <Footer post={post} />
         </Container>
     );
 }
 
-function Header({ post }: { post: Post }) {
-    const { userInfo } = useAppContext();
-    const { togglePostScrap, getUpdatedAt } = useRoomPostboardContext();
-    const [alreadyScrap, setAlreadyScrap] = useState(false);
-
-    useEffect(() => {
-        var flag = false;
-        for (var i = 0; i < post.postScraps.length; i++) {
-            if (post.postScraps[i].userId == userInfo!.id) {
-                setAlreadyScrap(true);
-                flag = true;
-            }
-        }
-        if (!flag) {
-            setAlreadyScrap(false);
-        }
-        return () => {};
-    }, [post]);
-
+function Header() {
     return (
         <HeaderContainer>
             <LeftHeaderContainer>
-                {alreadyScrap ? (
-                    <YellowStarIcon
-                        onClick={() => {
-                            togglePostScrap(post);
-                        }}
-                    >
+                    <YellowStarIcon>
                         <FontAwesomeIcon icon={faStar} />
                     </YellowStarIcon>
-                ) : (
-                    <GrayStarIcon
-                        onClick={() => {
-                            togglePostScrap(post);
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faStar} />
-                    </GrayStarIcon>
-                )}
             </LeftHeaderContainer>
             <RightHeaderContainer>
-                 {/* TODO (enhancement) - 새로 추가한 글은 새로고침하지 않으면 undefined로 뜨는 문제 해결 필요  */}
-                 {
-                    post?.updatedAt !== undefined ?
-                        <UpdatedAt>{getUpdatedAt(post)}</UpdatedAt>
-                        : <></>
+                {/* TODO (enhancement) - 새로 추가한 글은 새로고침하지 않으면 undefined로 뜨는 문제 해결 필요  */}
+                {
+                        <UpdatedAt>{"00/00/00 00:00"}</UpdatedAt>
                 }
             </RightHeaderContainer>
         </HeaderContainer>
     );
 }
 
-function Body({ post }: { post: Post }) {
-    const { showPostDetail } = useRoomPostboardContext();
-
+function Body({ post }: { post: PreviewPost }) {
     return (
-        <BodyContainer
-            onClick={() => {
-                showPostDetail(post);
-            }}
-        >
+        <BodyContainer>
             <PostTitle>
                 {`${post.category == PostCategory.QUESTION ? `[질문] ` : ``}
             ${post.category == PostCategory.CHAT ? `[잡담] ` : ``}
@@ -87,15 +45,10 @@ function Body({ post }: { post: Post }) {
     );
 }
 
-function Footer({ post }: { post: Post }) {
-    const { togglePostLike } = useRoomPostboardContext();
+function Footer({ post }: { post: PreviewPost }) {
     return (
         <FooterContainer>
-            <HeartIcon
-                onClick={() => {
-                    togglePostLike(post);
-                }}
-            >
+            <HeartIcon>
                 <FontAwesomeIcon icon={faHeart} />
             </HeartIcon>
             {`${post.postlikes.length}`}
@@ -110,7 +63,7 @@ function Footer({ post }: { post: Post }) {
 // TODO (bug, enhancement)
 // Postboard__Post의 Container 내부에 들어가는 div들을 relative로 지정하지 않으면
 // Postboard의 height가 늘어나면서 윗줄을 잡아먹고 PostCreate와 PostCreate까지 늘어나버림
-const Container = styled.div<{ postCategory: PostCategory }>`
+const Container = styled.div<{ postCategory: String }>`
     position: relative;
     display: flex;
     flex-direction: column;
@@ -125,6 +78,7 @@ const Container = styled.div<{ postCategory: PostCategory }>`
             : props.theme.chatPost};
     border-radius: 15px;
     overflow: hidden;
+    opacity: 0.7;
 `;
 
 const PostComponent = styled.div`
@@ -154,10 +108,6 @@ const HeaderIcon = styled.div`
 
 const YellowStarIcon = styled(HeaderIcon)`
     color: yellow;
-`;
-
-const GrayStarIcon = styled(HeaderIcon)`
-    color: gray;
 `;
 
 const RightHeaderContainer = styled.div``;
@@ -215,7 +165,7 @@ const UpdatedAt = styled.div`
     width: 100%;
     height: fit-content;
     color: ${(props) => props.theme.postUpdatedAtBackground};
-    font-size: 8px;
+    font-size: 7px;
     line-height: 15px;
     overflow: auto;
 `;

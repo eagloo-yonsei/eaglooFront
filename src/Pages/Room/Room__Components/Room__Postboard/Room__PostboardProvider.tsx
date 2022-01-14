@@ -18,13 +18,19 @@ interface RoomPostboardContext {
     createPostAsQuestion: boolean;
     newPostTitleInput: string;
     newPostContentsInput: string;
+    postUpdateOpened: boolean;
+    updatePostTitleInput: string;
+    updatePostContentsInput: string;
     postCreating: boolean;
+    postUpdating: boolean;
+    postDeleting: boolean;
     postFilter: PostFilter;
     postsArrangedByNewest: boolean;
     selectedPost: Post | null;
     postCommentsOpen: boolean;
     newCommentInput: string;
     addingComment: boolean;
+    deletingComment: boolean;
     getPosts: () => void;
     togglePostLike: (targetPost: Post) => void;
     togglePostScrap: (targetPost: Post) => void;
@@ -33,6 +39,10 @@ interface RoomPostboardContext {
     createPost: () => void;
     toggleCreatePostAsAnonymous: () => void;
     toggleCreatePostAsQuestion: () => void;
+    togglePostUpdateOpen: (targetPost: Post) => void;
+    closePostUpdate: () => void;
+    updatePost: (targetPost: Post) => void;
+    deletePost: (targetPost: Post) => void;
     filteringPosts: (filter: PostFilter) => void;
     arrangePostsByDate: (byNewest: boolean) => void;
     showPostDetail: (post: Post) => void;
@@ -40,9 +50,13 @@ interface RoomPostboardContext {
     togglePostCommentsOpen: () => void;
     closePostComments: () => void;
     addComment: () => void;
+    deleteComment: (targerPostComment: PostComment) => void;
     setNewPostTitleInput: (input: string) => void;
     setNewPostContentsInput: (input: string) => void;
+    setUpdatePostTitleInput: (input: string) => void;
+    setUpdatePostContentsInput: (input: string) => void;
     setNewCommentInput: (input: string) => void;
+    getUpdatedAt: (targetPost: Post) => string;
 }
 
 const InitialRoomPostboardContext: RoomPostboardContext = {
@@ -52,13 +66,19 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     createPostAsQuestion: false,
     newPostTitleInput: "",
     newPostContentsInput: "",
+    postUpdateOpened: false,
+    updatePostTitleInput: "",
+    updatePostContentsInput: "",
     postCreating: false,
+    postUpdating: false,
+    postDeleting: false,
     postFilter: PostFilter.ALL,
     postsArrangedByNewest: true,
     selectedPost: null,
     postCommentsOpen: false,
     newCommentInput: "",
     addingComment: false,
+    deletingComment: false,
     getPosts: () => {},
     togglePostLike: () => {},
     togglePostScrap: () => {},
@@ -67,6 +87,10 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     createPost: () => {},
     toggleCreatePostAsAnonymous: () => {},
     toggleCreatePostAsQuestion: () => {},
+    togglePostUpdateOpen: () => {},
+    closePostUpdate: () => {},
+    updatePost: () => {},
+    deletePost: () => {},
     filteringPosts: () => {},
     arrangePostsByDate: () => {},
     showPostDetail: () => {},
@@ -74,9 +98,13 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     togglePostCommentsOpen: () => {},
     closePostComments: () => {},
     addComment: () => {},
+    deleteComment: () => {},
     setNewPostTitleInput: () => {},
     setNewPostContentsInput: () => {},
+    setUpdatePostTitleInput: () => {},
+    setUpdatePostContentsInput: () => {},
     setNewCommentInput: () => {},
+    getUpdatedAt: () => "",
 };
 
 const RoomPostboardContext = createContext<RoomPostboardContext>(
@@ -96,7 +124,13 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     const [newPostTitleInput, setNewPostTitleInput] = useState<string>("");
     const [newPostContentsInput, setNewPostContentsInput] =
         useState<string>("");
+    const [postUpdateOpened, setPostUpdateOpened] = useState<boolean>(false);
+    const [updatePostTitleInput, setUpdatePostTitleInput] = useState<string>("");
+    const [updatePostContentsInput, setUpdatePostContentsInput] =
+        useState<string>("");
     const [postCreating, setPostCreating] = useState<boolean>(false);
+    const [postUpdating, setPostUpdating] = useState<boolean>(false);
+    const [postDeleting, setPostDeleting] = useState<boolean>(false);
     const [postFilter, setPostFilter] = useState<PostFilter>(PostFilter.ALL);
     const [postsArrangedByNewest, setPostsArrangedByNewest] =
         useState<boolean>(true);
@@ -104,6 +138,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     const [postCommentsOpen, setPostCommentsOpen] = useState<boolean>(false);
     const [newCommentInput, setNewCommentInput] = useState<string>("");
     const [addingComment, setAddingComment] = useState<boolean>(false);
+    const [deletingComment, setDeletingComment] = useState<boolean>(false);
 
     useEffect(() => {
         getPosts();
@@ -318,6 +353,71 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         setCreatePostAsQuestion(!createPostAsQuestion);
     }
 
+    function togglePostUpdateOpen(selectedPost: Post) {
+        setPostUpdateOpened(!postUpdateOpened);
+        setUpdatePostTitleInput(selectedPost.title);
+        setUpdatePostContentsInput(selectedPost.contents);
+        //closePostDetail();
+    }
+
+    function closePostUpdate() {
+        setPostUpdateOpened(false);
+        closePostDetail();
+    }
+
+    async function updatePost(selectedPost: Post|null) {
+        if (postUpdating) {
+            return;
+        }
+        setPostUpdating(true);
+    
+        await axios.put<{
+            success: boolean;
+            message: string;
+        }>(`${API_ENDPOINT}/api/post/post/${selectedPost!.id}`, {
+            postId: selectedPost!.id,
+            postTitle: updatePostTitleInput,
+            postContents: updatePostContentsInput,
+          })
+          .then((response) => {
+                    if (response.data.success) {
+                        setPosts(posts.map(post => (post.id === selectedPost!.id) ? {...post, title: updatePostTitleInput, contents : updatePostContentsInput} : post));
+                    } else {
+                        toastErrorMessage("글 수정에 실패했습니다.");
+                    }
+                })
+                .catch((error) => {
+                    toastErrorMessage("글 수정에 실패했습니다.");
+                    console.error(error);
+                })
+                .finally(() => {
+                    setPostUpdating(false);
+                });
+       }
+
+    async function deletePost(selectedPost:Post|null) {
+        await axios
+                .delete<{ success: boolean }>(
+                    `${API_ENDPOINT}/api/post/post/${selectedPost!.id}`
+                )
+                .then((response) => {
+                    if (response.data.success) {
+                        //getPosts();
+                        setPosts(posts.filter(post => post.id !== selectedPost!.id));
+                        closePostDetail();
+                    } else {
+                        toastErrorMessage("포스트 삭제에 실패했습니다.");
+                    }
+                })
+                .catch((error) => {
+                    toastErrorMessage("포스트 삭제에 실패했습니다.");
+                    console.error(error);
+                })
+                .finally(() => {
+                    setPostDeleting(false);
+                });
+    }
+
     function filteringPosts(filter: PostFilter) {
         let filteredPosts: Post[] = [];
         switch (filter) {
@@ -415,6 +515,31 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
             });
     }
 
+    async function deleteComment(postComment: PostComment) {
+        if (deletingComment) {
+            return;
+        }
+        setDeletingComment(true);
+    
+             await axios.delete<{ success: boolean }>(
+                    `${API_ENDPOINT}/api/post/postComment/${postComment.id}`
+                )
+                .then((response) => {
+                    if (response.data.success) {
+                        refreshComments();
+                    } else {
+                        toastErrorMessage("댓글 삭제에 실패했습니다.");
+                    }
+                })
+                .catch((error) => {
+                    toastErrorMessage("댓글 삭제에 실패했습니다.");
+                    console.error(error);
+                })
+                .finally(() => {
+                    setDeletingComment(false);
+                });
+        }
+
     async function refreshComments() {
         await axios
             .get<{ post: Post; success: boolean; message: string }>(
@@ -431,6 +556,11 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         getPosts();
     }
 
+    function getUpdatedAt(selectedPost: Post) {
+        let updatedAt = selectedPost!.updatedAt.toString().slice(2,16).replace(/\-/g,'/').replace('T',' ');
+        return updatedAt;
+    }
+
     const roomPostboardContext = {
         posts,
         postCreateOpened,
@@ -438,13 +568,19 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         createPostAsQuestion,
         newPostTitleInput,
         newPostContentsInput,
+        postUpdateOpened,
+        updatePostTitleInput,
+        updatePostContentsInput,
         postCreating,
+        postUpdating,
+        postDeleting,
         postFilter,
         postsArrangedByNewest,
         selectedPost,
         postCommentsOpen,
         newCommentInput,
         addingComment,
+        deletingComment,
         getPosts,
         togglePostLike,
         togglePostScrap,
@@ -453,6 +589,10 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         createPost,
         toggleCreatePostAsAnonymous,
         toggleCreatePostAsQuestion,
+        togglePostUpdateOpen,
+        closePostUpdate,
+        updatePost,
+        deletePost,
         filteringPosts,
         arrangePostsByDate,
         showPostDetail,
@@ -460,9 +600,13 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         togglePostCommentsOpen,
         closePostComments,
         addComment,
+        deleteComment,
         setNewPostTitleInput,
         setNewPostContentsInput,
+        setUpdatePostTitleInput,
+        setUpdatePostContentsInput,
         setNewCommentInput,
+        getUpdatedAt,
     };
 
     return (
