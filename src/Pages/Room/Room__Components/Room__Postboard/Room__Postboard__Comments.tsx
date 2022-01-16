@@ -5,6 +5,7 @@ import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { PostComment } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import CommentSubmitIcon from "../../../../Resources/Img/CommentSubmit.png";
 
 export default function RoomPostBoardComments() {
     const { postCommentsOpen } = useRoomPostboardContext();
@@ -83,23 +84,30 @@ function Footer() {
 
     return (
         <FooterContainer>
-            <CommentInput
-                type="text"
-                disabled={addingComment}
-                spellCheck="false"
-                value={newCommentInput}
-                placeholder="새 댓글 입력"
-                onChange={(e) => {
-                    if (e.target.value.length <= 150) {
-                        setNewCommentInput(e.target.value);
-                    }
-                }}
-                onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                        addComment();
-                    }
-                }}
-            />
+            <CommentInputContainer>
+                <CommentInput
+                    type="text"
+                    disabled={addingComment}
+                    spellCheck="false"
+                    value={newCommentInput}
+                    placeholder="새 댓글 입력"
+                    onChange={(e) => {
+                        if (e.target.value.length <= 150) {
+                            setNewCommentInput(e.target.value);
+                        }
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            addComment();
+                        }
+                    }}
+                />
+                <CommentSendIcon onClick={() => {
+                    addComment();
+                }}>
+                    <CommentSendImg src={CommentSubmitIcon} alt="comment submit icon"/>
+                </CommentSendIcon>
+            </CommentInputContainer>
         </FooterContainer>
     );
 }
@@ -211,15 +219,26 @@ const FooterContainer = styled(CommentsComponent)`
     height: 36px;
 `;
 
-const CommentInput = styled.input`
+const CommentInputContainer = styled.div`
+display:flex;
     width: 100%;
     height: 100%;
     font-size: 16px;
     font-family: ${(props) => props.theme.postFont};
     background-color: ${(props) => props.theme.questionPost};
-    padding: 0 12px;
     border: none;
     border-radius: 8px;
+`;
+
+const CommentInput = styled.input`
+    display: flex;
+    width:85%;
+    height:100%;
+    margin-left:10px;
+    font-size: 16px;
+    font-family: ${(props) => props.theme.postFont};
+    background-color: ${(props) => props.theme.questionPost};
+    border: none;
     :focus {
         outline: none;
     }
@@ -228,6 +247,20 @@ const CommentInput = styled.input`
         font-family: ${(props) => props.theme.postFont};
         color: ${(props) => props.theme.postCommentsBackground};
     }
+`;
+
+const CommentSendIcon = styled.div`
+    display: flex;
+    width:15%;
+    height:100%;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: ${(props) => props.theme.postCreateBackground};
+`;
+
+const CommentSendImg = styled.img`
+    width:24px;
 `;
 
 // TODO (enhancement dumbcode)
