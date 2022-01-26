@@ -44,6 +44,7 @@ export default {
     postTitleColor: "black",
     postContentsColor: "#506572",
     postFont: "NexonGothicLv1Bold",
+    commentControlBackground: "#EF7726",
     // color__task
     taskLightBlue: "#b3d0ff",
     // color__scheduler

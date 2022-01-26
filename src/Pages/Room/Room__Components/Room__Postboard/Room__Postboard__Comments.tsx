@@ -4,8 +4,10 @@ import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
 import { PostComment } from "../../../../Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faHeart, faComment, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import CommentSubmitIcon from "../../../../Resources/Img/CommentSubmit.png";
+import CommentUpdateIcon from "../../../../Resources/Img/CommentUpdate.png";
+import CommentDeleteIcon from "../../../../Resources/Img/CommentDelete.png";
 
 export default function RoomPostBoardComments() {
     const { postCommentsOpen } = useRoomPostboardContext();
@@ -70,22 +72,44 @@ function Body() {
 }
 
 function CommentEach({ comment }: { comment: PostComment }) {
-    return (
+    const { deleteComment, toggleUpdateCommentsOpen, closeUpdateComments } = useRoomPostboardContext();
+    const { userInfo } = useAppContext();
+    const [hide, setHide] = useState<boolean>(true); 
+    const [compareUserId, setCompareUserId] = useState(false);
+
+        useEffect(() => {
+       userInfo!.id === comment.userId ? setCompareUserId(true) : setCompareUserId(false);
+    }, []);
+      return (
         <CommentEachContainer>
             <CommentUserName>{`${comment.userName}`}</CommentUserName>
-            <CommentContents>{`${comment.comment}`}</CommentContents>
+            <CommentEachContainerRow>
+                
+                <CommentContents>{`${comment.comment}`}
+                {!hide ?
+                (compareUserId ? <CommentControlContents>
+                    <CommentControlButton onClick={(e) => { toggleUpdateCommentsOpen(comment) }} src={CommentUpdateIcon} className="test"/>
+                    <CommentControlButton onClick={(e) => { deleteComment(comment) }} src={CommentDeleteIcon}/>
+                </CommentControlContents> : <></>)
+                   : <>{closeUpdateComments()}</>}
+                </CommentContents>
+
+                <CommentControllMenu onClick={(e) => { setHide(!hide) }}>
+                    <FontAwesomeIcon icon={faEllipsisH} />
+                </CommentControllMenu>
+            </CommentEachContainerRow>
         </CommentEachContainer>
     );
 }
 
 function Footer() {
-    const { newCommentInput, setNewCommentInput, addComment, addingComment } =
+    const { newCommentInput, setNewCommentInput, addComment, addingComment, selectedComment, updateCommentInput, setUpdateCommentInput,  updateComment, updatingComment, updateCommentsOpen } =
         useRoomPostboardContext();
 
     return (
         <FooterContainer>
             <CommentInputContainer>
-                <CommentInput
+                {!updateCommentsOpen ? (<CommentInput
                     type="text"
                     disabled={addingComment}
                     spellCheck="false"
@@ -101,9 +125,26 @@ function Footer() {
                             addComment();
                         }
                     }}
-                />
+                /> ) :
+                (<CommentInput
+                    type="text"
+                    disabled={updatingComment}
+                    spellCheck="false"
+                    value={updateCommentInput}
+                    placeholder={updateCommentInput}
+                    onChange={(e) => {
+                        if (e.target.value.length <= 150) {
+                            setUpdateCommentInput(e.target.value);
+                        }
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            updateComment(selectedComment!);
+                        }
+                    }}
+                /> ) }
                 <CommentSendIcon onClick={() => {
-                    addComment();
+                    !updateCommentsOpen ? addComment() : updateComment(selectedComment!);
                 }}>
                     <CommentSendImg src={CommentSubmitIcon} alt="comment submit icon"/>
                 </CommentSendIcon>
@@ -197,11 +238,17 @@ const CommentEachContainer = styled.div`
     font-family: ${(props) => props.theme.postFont};
 `;
 
+const CommentEachContainerRow = styled.div`
+display: flex;
+flex-direction: row;
+`;
+
 const CommentUserName = styled.div`
     color: ${(props) => props.theme.postCommentUserNameColor};
 `;
 
 const CommentContents = styled.div`
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     width: fit-content;
@@ -213,6 +260,32 @@ const CommentContents = styled.div`
     background-color: ${(props) => props.theme.questionPost};
     border-radius: 12px;
     padding: 10px 12px;
+`;
+
+const CommentControllMenu = styled.div`
+    display: flex;
+    padding:10px 5px 10px 5px;
+    color: ${(props) => props.theme.questionPost};
+`;
+
+const CommentControlContents = styled.div`
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    color: ${(props) => props.theme.postContentsColor};
+    //background-color: rgba${(props) => props.theme.commentControlBackground};
+    background-color: rgba(239, 119, 38, 0.8);
+    border-radius: 10px;
+    padding: 10px 12px;
+    width:100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+`;
+
+const CommentControlButton = styled.img`
+    width:14px;
+    height: 14px;
 `;
 
 const FooterContainer = styled(CommentsComponent)`
