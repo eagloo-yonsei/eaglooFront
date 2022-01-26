@@ -28,13 +28,17 @@ export default function RoomPostBoardContainer() {
             <RoomPostBoardComments />
           </>
         )}
-        {posts.length > 0
-          ? posts.map((post) => {
-              return <RoomPostboardPost key={post.id} post={post} />;
-            })
-          : preview.map((p) => {
-              return <RoomPostboardPreviewPost key={p.id} post={p} />;
-            })}
+
+        {posts.length > 0 ? (
+          posts.map((post) => {
+            return <RoomPostboardPost key={post.id} post={post} />;
+          })
+        ) : (
+          <></>
+        )}
+        {preview.map((p) => {
+          return <RoomPostboardPreviewPost key={p.id} post={p} />;
+        })}
       </PostsContainer>
     </Container>
   );
