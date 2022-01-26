@@ -72,7 +72,7 @@ function Body() {
 }
 
 function CommentEach({ comment }: { comment: PostComment }) {
-    const { deleteComment, toggleUpdateCommentsOpen, closeUpdateComments } = useRoomPostboardContext();
+    const { deleteComment, toggleUpdateCommentsOpen } = useRoomPostboardContext();
     const { userInfo } = useAppContext();
     const [hide, setHide] = useState<boolean>(true); 
     const [compareUserId, setCompareUserId] = useState(false);
@@ -91,7 +91,7 @@ function CommentEach({ comment }: { comment: PostComment }) {
                     <CommentControlButton onClick={(e) => { toggleUpdateCommentsOpen(comment) }} src={CommentUpdateIcon} className="test"/>
                     <CommentControlButton onClick={(e) => { deleteComment(comment) }} src={CommentDeleteIcon}/>
                 </CommentControlContents> : <></>)
-                   : <>{closeUpdateComments()}</>}
+                   : <></>}
                 </CommentContents>
 
                 <CommentControllMenu onClick={(e) => { setHide(!hide) }}>
