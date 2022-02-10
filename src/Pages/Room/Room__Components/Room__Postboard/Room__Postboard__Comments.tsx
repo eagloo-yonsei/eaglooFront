@@ -8,6 +8,7 @@ import { faTimes, faHeart, faComment, faEllipsisH } from "@fortawesome/free-soli
 import CommentSubmitIcon from "../../../../Resources/Img/CommentSubmit.png";
 import CommentUpdateIcon from "../../../../Resources/Img/CommentUpdate.png";
 import CommentDeleteIcon from "../../../../Resources/Img/CommentDelete.png";
+import CommentReportIcon from "../../../../Resources/Img/CommentReport.png";
 
 export default function RoomPostBoardComments() {
     const { postCommentsOpen } = useRoomPostboardContext();
@@ -85,16 +86,17 @@ function CommentEach({ comment }: { comment: PostComment }) {
             <CommentUserName>{`${comment.userName}`}</CommentUserName>
             <CommentEachContainerRow>
                 
-                <CommentContents>{`${comment.comment}`}
+                <CommentContents>{`${comment.comment}`}</CommentContents>
                 {!hide ?
                 (compareUserId ? <CommentControlContents>
                     <CommentControlButton onClick={(e) => { toggleUpdateCommentsOpen(comment) }} src={CommentUpdateIcon} className="test"/>
                     <CommentControlButton onClick={(e) => { deleteComment(comment) }} src={CommentDeleteIcon}/>
+                    <CommentControlButton onClick={(e) => {  }} src={CommentReportIcon}/>
                 </CommentControlContents> : <></>)
                    : <></>}
-                </CommentContents>
+                
 
-                <CommentControllMenu onClick={(e) => { setHide(!hide) }}>
+                <CommentControllMenu isHide={hide} onClick={(e) => { setHide(!hide) }}>
                     <FontAwesomeIcon icon={faEllipsisH} />
                 </CommentControllMenu>
             </CommentEachContainerRow>
@@ -260,32 +262,33 @@ const CommentContents = styled.div`
     background-color: ${(props) => props.theme.questionPost};
     border-radius: 12px;
     padding: 10px 12px;
+    z-index: 100;
 `;
 
-const CommentControllMenu = styled.div`
-    display: flex;
+const CommentControllMenu = styled.div<{isHide: boolean}>`
     padding:10px 5px 10px 5px;
     color: ${(props) => props.theme.questionPost};
+    display: ${(props)=> (props.isHide ? "flex" : "none")};
 `;
 
 const CommentControlContents = styled.div`
-    position: absolute;
+    position: relative;
     display: flex;
     justify-content: space-between;
     color: ${(props) => props.theme.postContentsColor};
     //background-color: rgba${(props) => props.theme.commentControlBackground};
-    background-color: rgba(239, 119, 38, 0.8);
+    background-color: rgba(239, 119, 38, 1);
     border-radius: 10px;
-    padding: 10px 12px;
-    width:100%;
+    padding: 10px 12px 10px 20px;
+    width:100px;
     height: 100%;
     top: 0px;
-    left: 0px;
+    right: 15px;
 `;
 
 const CommentControlButton = styled.img`
-    width:14px;
-    height: 14px;
+    width:16px;
+    height: 16px;
 `;
 
 const FooterContainer = styled(CommentsComponent)`
