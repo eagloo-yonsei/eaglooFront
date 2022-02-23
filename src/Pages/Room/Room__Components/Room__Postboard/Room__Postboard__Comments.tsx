@@ -278,12 +278,14 @@ const CommentControllMenu = styled.div<{isHide: boolean}>`
     padding:10px 5px 10px 5px;
     color: ${(props) => props.theme.questionPost};
     display: ${(props)=> (props.isHide ? "flex" : "none")};
+    align-items: center;
 `;
 
 const CommentControlContents = styled.div`
     position: relative;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     color: ${(props) => props.theme.postContentsColor};
     //background-color: rgba${(props) => props.theme.commentControlBackground};
     background-color: rgba(239, 119, 38, 1);
