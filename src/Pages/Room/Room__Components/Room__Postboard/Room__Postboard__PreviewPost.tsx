@@ -78,7 +78,7 @@ const Container = styled.div<{ postCategory: String }>`
             : props.theme.chatPost};
     border-radius: 15px;
     overflow: hidden;
-    opacity: 0.7;
+    opacity: 0.4;
 `;
 
 const PostComponent = styled.div`
