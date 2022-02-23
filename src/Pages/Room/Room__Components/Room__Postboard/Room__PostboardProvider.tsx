@@ -181,11 +181,13 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
                 .then((response) => {
                     if (response.data.success) {
                         if(isPublicRoom) {
-                            setPosts(response.data.posts);
-                            setWholePosts(response.data.posts);
+                            let posts: Post[] = [...response.data.posts].reverse();
+                            setPosts(posts.reverse());
+                            setWholePosts(posts.reverse());
                         } else {
-                            setPosts(response.data.posts.posts);
-                            setWholePosts(response.data.posts.posts);
+                            let posts: Post[] = [...response.data.posts.posts].reverse();
+                            setPosts(posts.reverse());
+                            setWholePosts(posts.reverse());
                         }
                     } else {
                         toastErrorMessage(response.data.message);
@@ -481,7 +483,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     }
 
     function arrangePostsByDate(byNewest: boolean) {
-        if (byNewest != postsArrangedByNewest) {
+        if (byNewest !== postsArrangedByNewest) {
             let arrangedPosts: Post[] = [...posts].reverse();
             setPosts(arrangedPosts);
             setPostsArrangedByNewest(byNewest);
