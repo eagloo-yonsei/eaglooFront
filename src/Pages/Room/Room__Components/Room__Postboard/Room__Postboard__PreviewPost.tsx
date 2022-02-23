@@ -107,7 +107,8 @@ const HeaderIcon = styled.div`
 `;
 
 const YellowStarIcon = styled(HeaderIcon)`
-    color: yellow;
+    color: ${(props)=> props.theme.postScrapColor};
+    filter: drop-shadow(0px 0px 6px #000000);
 `;
 
 const RightHeaderContainer = styled.div``;
@@ -123,7 +124,8 @@ const BodyContainer = styled(PostComponent)`
 const PostTitle = styled.div`
     display: flex;
     width: 100%;
-    height: 18px;
+    height: 20px;
+    padding: 2px 0px 2px 0px;
     color: ${(props) => props.theme.postTitleColor};
     overflow: hidden;
     white-space: nowrap;
