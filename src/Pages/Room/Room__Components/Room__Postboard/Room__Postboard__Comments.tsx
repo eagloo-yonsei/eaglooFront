@@ -100,10 +100,13 @@ function CommentEach({ comment }: { comment: PostComment}) {
                     <CommentControlButton onClick={(e) => { toggleUpdateCommentsOpen(comment) }} src={CommentUpdateIcon} className="test"/>
                     <CommentControlButton onClick={(e) => { deleteComment(comment) }} src={CommentDeleteIcon}/>
                     <CommentControlButton onClick={(e) => {  }} src={CommentReportIcon}/>
-                </CommentControlContents> : <></>)
+                </CommentControlContents> 
+                : 
+                <CommentControlContents style={{width:"45px"}}>
+                    <CommentControlButton onClick={(e) => {  }} src={CommentReportIcon}/>
+                </CommentControlContents>)
                    : <></>}
-                
-
+                   
                 <CommentControllMenu isHide={hide} onClick={toggleCommentControl}>
                     <FontAwesomeIcon icon={faEllipsisH} />
                 </CommentControllMenu>
