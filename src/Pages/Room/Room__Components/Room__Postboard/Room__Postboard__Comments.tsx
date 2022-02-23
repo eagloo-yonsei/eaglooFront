@@ -271,6 +271,7 @@ const CommentContents = styled.div`
     border-radius: 12px;
     padding: 10px 12px;
     z-index: 100;
+    word-break:break-all;
 `;
 
 const CommentControllMenu = styled.div<{isHide: boolean}>`
