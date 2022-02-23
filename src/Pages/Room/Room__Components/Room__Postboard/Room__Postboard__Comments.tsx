@@ -63,26 +63,34 @@ function Header() {
 
 function Body() {
     const { selectedPost } = useRoomPostboardContext();
+
     return (
-        <BodyContainer>
+        <BodyContainer >
             {selectedPost?.postComments.map((comment) => {
-                return <CommentEach key={comment.id} comment={comment} />;
+                return <CommentEach key={comment.id} comment={comment}/>;
             })}
         </BodyContainer>
     );
 }
 
-function CommentEach({ comment }: { comment: PostComment }) {
+function CommentEach({ comment }: { comment: PostComment}) {
     const { deleteComment, toggleUpdateCommentsOpen } = useRoomPostboardContext();
     const { userInfo } = useAppContext();
-    const [hide, setHide] = useState<boolean>(true); 
+    const [hide, setHide] = useState<boolean>(true);
     const [compareUserId, setCompareUserId] = useState(false);
+
+    const toggleCommentControl =() => {
+        setHide((prev) => !prev);
+      };
 
         useEffect(() => {
        userInfo!.id === comment.userId ? setCompareUserId(true) : setCompareUserId(false);
     }, []);
+    const stopPropagation = (e: { stopPropagation: () => void; }) => {
+        e.stopPropagation();
+      };
       return (
-        <CommentEachContainer>
+        <CommentEachContainer onClick={stopPropagation} onMouseLeave={() => {setHide(true)}}>
             <CommentUserName>{`${comment.userName}`}</CommentUserName>
             <CommentEachContainerRow>
                 
@@ -96,7 +104,7 @@ function CommentEach({ comment }: { comment: PostComment }) {
                    : <></>}
                 
 
-                <CommentControllMenu isHide={hide} onClick={(e) => { setHide(!hide) }}>
+                <CommentControllMenu isHide={hide} onClick={toggleCommentControl}>
                     <FontAwesomeIcon icon={faEllipsisH} />
                 </CommentControllMenu>
             </CommentEachContainerRow>
