@@ -173,7 +173,8 @@ const HeaderIcon = styled.div`
 `;
 
 const YellowStarIcon = styled(HeaderIcon)`
-    color: yellow;
+    color: ${(props)=> props.theme.postScrapColor};
+    filter: drop-shadow(0px 0px 6px #000000);
 `;
 
 const GrayStarIcon = styled(HeaderIcon)`
