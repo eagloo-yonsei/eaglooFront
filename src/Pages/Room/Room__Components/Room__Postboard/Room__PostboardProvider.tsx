@@ -27,10 +27,8 @@ interface RoomPostboardContext {
     postFilter: PostFilter;
     postsArrangedByNewest: boolean;
     selectedPost: Post | null;
-    selectedComment: PostComment | null;
     postCommentsOpen: boolean;
     newCommentInput: string;
-    updateCommentsOpen: boolean;
     updateCommentInput: string;
     addingComment: boolean;
     updatingComment: boolean;
@@ -53,8 +51,6 @@ interface RoomPostboardContext {
     closePostDetail: () => void;
     togglePostCommentsOpen: () => void;
     closePostComments: () => void;
-    toggleUpdateCommentsOpen: (targerPostComment: PostComment) => void;
-    closeUpdateComments: () => void;
     addComment: () => void;
     updateComment: (targerPostComment: PostComment) => void;
     deleteComment: (targerPostComment: PostComment) => void;
@@ -83,9 +79,7 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     postFilter: PostFilter.ALL,
     postsArrangedByNewest: true,
     selectedPost: null,
-    selectedComment: null,
     postCommentsOpen: false,
-    updateCommentsOpen: false,
     newCommentInput: "",
     updateCommentInput: "",
     addingComment: false,
@@ -109,8 +103,6 @@ const InitialRoomPostboardContext: RoomPostboardContext = {
     closePostDetail: () => {},
     togglePostCommentsOpen: () => {},
     closePostComments: () => {},
-    toggleUpdateCommentsOpen: () => {},
-    closeUpdateComments: () => {},
     addComment: () => {},
     updateComment: () => {},
     deleteComment: () => {},
@@ -151,11 +143,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     const [postsArrangedByNewest, setPostsArrangedByNewest] =
         useState<boolean>(true);
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-    const [selectedComment, setSelectedComment] = useState<PostComment | null>(
-    null
-  );
     const [postCommentsOpen, setPostCommentsOpen] = useState<boolean>(false);
-    const [updateCommentsOpen, setUpdateCommentsOpen] = useState<boolean>(false);
     const [newCommentInput, setNewCommentInput] = useState<string>("");
     const [updateCommentInput, setUpdateCommentInput] = useState<string>("");
     const [addingComment, setAddingComment] = useState<boolean>(false);
@@ -181,11 +169,13 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
                 .then((response) => {
                     if (response.data.success) {
                         if(isPublicRoom) {
-                            setPosts(response.data.posts);
-                            setWholePosts(response.data.posts);
+                            let posts: Post[] = [...response.data.posts].reverse();
+                            setPosts(posts.reverse());
+                            setWholePosts(posts.reverse());
                         } else {
-                            setPosts(response.data.posts.posts);
-                            setWholePosts(response.data.posts.posts);
+                            let posts: Post[] = [...response.data.posts.posts].reverse();
+                            setPosts(posts.reverse());
+                            setWholePosts(posts.reverse());
                         }
                     } else {
                         toastErrorMessage(response.data.message);
@@ -481,7 +471,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
     }
 
     function arrangePostsByDate(byNewest: boolean) {
-        if (byNewest != postsArrangedByNewest) {
+        if (byNewest !== postsArrangedByNewest) {
             let arrangedPosts: Post[] = [...posts].reverse();
             setPosts(arrangedPosts);
             setPostsArrangedByNewest(byNewest);
@@ -503,17 +493,6 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
 
     function closePostComments() {
         setPostCommentsOpen(false);
-    }
-
-     function toggleUpdateCommentsOpen(comment: PostComment) {
-        setUpdateCommentsOpen(!updateCommentsOpen);
-        setUpdateCommentInput(comment.comment);
-        setSelectedComment(comment);
-    }
-
-     function closeUpdateComments() {
-        setUpdateCommentsOpen(false);
-        setUpdateCommentInput("");
     }
 
     async function addComment() {
@@ -564,7 +543,6 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
       });
       if (response.data.success) {
         refreshComments();
-        closeUpdateComments();
       } else {
         toastErrorMessage("댓글 수정에 실패했습니다.");
       }
@@ -639,9 +617,7 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         postFilter,
         postsArrangedByNewest,
         selectedPost,
-        selectedComment,
         postCommentsOpen,
-        updateCommentsOpen,
         newCommentInput,
         updateCommentInput,
         addingComment,
@@ -665,8 +641,6 @@ export default function RoomPostboardProvider({ children }: ChildrenProp) {
         closePostDetail,
         togglePostCommentsOpen,
         closePostComments,
-        toggleUpdateCommentsOpen,
-        closeUpdateComments,
         addComment,
         updateComment,
         deleteComment,
