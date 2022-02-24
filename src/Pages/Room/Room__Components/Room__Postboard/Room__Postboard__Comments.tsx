@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useAppContext } from "../../../../Routes/App/AppProvider";
 import { useRoomPostboardContext } from "./Room__PostboardProvider";
@@ -67,17 +67,20 @@ function Body() {
     return (
         <BodyContainer >
             {selectedPost?.postComments.map((comment) => {
-                return <CommentEach key={comment.id} comment={comment}/>;
+                return <CommentEach key={comment.id} comment={comment} />;
             })}
         </BodyContainer>
     );
 }
 
 function CommentEach({ comment }: { comment: PostComment}) {
-    const { deleteComment, toggleUpdateCommentsOpen } = useRoomPostboardContext();
+    const { deleteComment, updateComment, setUpdateCommentInput } = useRoomPostboardContext();
     const { userInfo } = useAppContext();
     const [hide, setHide] = useState<boolean>(true);
     const [compareUserId, setCompareUserId] = useState(false);
+
+    const [editable, setEditable] = useState(false);
+    const inputRef = useRef<HTMLDivElement>(null);
 
     const toggleCommentControl =() => {
         setHide((prev) => !prev);
@@ -89,15 +92,44 @@ function CommentEach({ comment }: { comment: PostComment}) {
     const stopPropagation = (e: { stopPropagation: () => void; }) => {
         e.stopPropagation();
       };
+
+      const handleInputEvent = (e: React.ChangeEvent<HTMLDivElement>) => {
+        setUpdateCommentInput(e.target.innerText);
+       
+      };  
+      const handleFocus = async() => {
+        await setEditable(true);
+        focusContentEditableTextToEnd(inputRef.current!);
+      }
+
+      const focusContentEditableTextToEnd = (element: HTMLElement) => {
+        if (element.innerText.length === 0) {
+          element.focus();
+          return;
+        }
+        setEditable(true);
+        const selection = window.getSelection();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(element);
+        newRange.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(newRange);
+      };
+
       return (
-        <CommentEachContainer onClick={stopPropagation} onMouseLeave={() => {setHide(true)}}>
+        <CommentEachContainer onClick={stopPropagation} onMouseLeave={() => {setHide(true); setEditable(false);}}>
             <CommentUserName>{`${comment.userName}`}</CommentUserName>
             <CommentEachContainerRow>
                 
-                <CommentContents>{`${comment.comment}`}</CommentContents>
+                <CommentContents ref={ inputRef } contentEditable={ editable } suppressContentEditableWarning={true} onInput={handleInputEvent} onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                            updateComment(comment);
+                            setEditable(false);
+                        }
+                    }}>{comment.comment}</CommentContents>
                 {!hide ?
                 (compareUserId ? <CommentControlContents>
-                    <CommentControlButton onClick={(e) => { toggleUpdateCommentsOpen(comment) }} src={CommentUpdateIcon} className="test"/>
+                    <CommentControlButton onClick={(e) => { handleFocus()}} src={CommentUpdateIcon} className="test"/>
                     <CommentControlButton onClick={(e) => { deleteComment(comment) }} src={CommentDeleteIcon}/>
                     <CommentControlButton onClick={(e) => {  }} src={CommentReportIcon}/>
                 </CommentControlContents> 
@@ -116,13 +148,13 @@ function CommentEach({ comment }: { comment: PostComment}) {
 }
 
 function Footer() {
-    const { newCommentInput, setNewCommentInput, addComment, addingComment, selectedComment, updateCommentInput, setUpdateCommentInput,  updateComment, updatingComment, updateCommentsOpen } =
+    const { newCommentInput, setNewCommentInput, addComment, addingComment } =
         useRoomPostboardContext();
 
     return (
         <FooterContainer>
             <CommentInputContainer>
-                {!updateCommentsOpen ? (<CommentInput
+                <CommentInput
                     type="text"
                     disabled={addingComment}
                     spellCheck="false"
@@ -138,26 +170,9 @@ function Footer() {
                             addComment();
                         }
                     }}
-                /> ) :
-                (<CommentInput
-                    type="text"
-                    disabled={updatingComment}
-                    spellCheck="false"
-                    value={updateCommentInput}
-                    placeholder={updateCommentInput}
-                    onChange={(e) => {
-                        if (e.target.value.length <= 150) {
-                            setUpdateCommentInput(e.target.value);
-                        }
-                    }}
-                    onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                            updateComment(selectedComment!);
-                        }
-                    }}
-                /> ) }
+                />
                 <CommentSendIcon onClick={() => {
-                    !updateCommentsOpen ? addComment() : updateComment(selectedComment!);
+                    addComment();
                 }}>
                     <CommentSendImg src={CommentSubmitIcon} alt="comment submit icon"/>
                 </CommentSendIcon>
@@ -275,6 +290,12 @@ const CommentContents = styled.div`
     padding: 10px 12px;
     z-index: 100;
     word-break:break-all;
+
+    &:empty:before {
+  content: attr(placeholder);
+  color: grey;
+  display: inline-block;
+};
 `;
 
 const CommentControllMenu = styled.div<{isHide: boolean}>`
