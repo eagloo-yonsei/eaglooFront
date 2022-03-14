@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SignupEmailAndSecret from "./Signup__EmailAndSecret";
 import SignupPassword from "./Signup__Password";
 import SignupNickNameAndRealName from "./Signup__NickNameAndRealName";
+import SignupNameAndPassword from "./Signup__NameAndPassword"
 import EaglooIconBox from "../../Components/EaglooIconBox";
 import { useSignupContext } from "./SignupProvider";
 import { FullPageContainer } from "../../Styles/StyledComponents";
@@ -24,11 +25,7 @@ function InputSwitcher() {
     if (!secretAuthenticated) {
         return <SignupEmailAndSecret />;
     } else {
-        if (!completeSettingPassword) {
-            return <SignupPassword />;
-        } else {
-            return <SignupNickNameAndRealName />;
-        }
+        return <SignupNameAndPassword/>;
     }
 }
 

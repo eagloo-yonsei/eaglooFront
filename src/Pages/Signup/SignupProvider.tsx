@@ -45,6 +45,7 @@ interface SignupContext {
     checkNickNameDuplicate: () => void;
     setNickNameAvailable: (status: boolean) => void;
     setNickNameAndRealName: () => void;
+    setNameAndPassword: () => void;
     emailInputRef?: RefObject<HTMLInputElement>;
     secretInputRef?: RefObject<HTMLInputElement>;
     passwordInputRef?: RefObject<HTMLInputElement>;
@@ -78,6 +79,7 @@ const InitialSignupContext: SignupContext = {
     checkNickNameDuplicate: () => {},
     setNickNameAvailable: () => {},
     setNickNameAndRealName: () => {},
+    setNameAndPassword: () => {},
 };
 
 const SignupContext = createContext<SignupContext>(InitialSignupContext);
@@ -257,6 +259,11 @@ export default function SignupProvider({ children }: ChildrenProp) {
             });
     }
 
+    async function setNameAndPassword() {
+        await setPassword();
+        setNickNameAndRealName();
+    }
+
     const signupContext = {
         emailInput,
         secretInput,
@@ -285,6 +292,7 @@ export default function SignupProvider({ children }: ChildrenProp) {
         checkNickNameDuplicate,
         setNickNameAvailable,
         setNickNameAndRealName,
+        setNameAndPassword,
         emailInputRef,
         secretInputRef,
         passwordInputRef,
